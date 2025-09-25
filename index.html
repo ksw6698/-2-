@@ -12,7 +12,7 @@
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
-    .slider-wrapper { display: flex; }
+    .slider-wrapper { display: flex; transition: transform 0.5s ease-in-out; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
@@ -47,6 +47,22 @@
             </div>
             <div class="slide">
                 <video id="video-2" src="3번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-3" src="4번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-4" src="5번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-5" src="6번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-6" src="7번영상.mp4" muted playsinline></video>
                 <div class="replay-btn-wrapper">
                     <button class="replay-btn">↻</button>
                     <div class="replay-text">다시보기</div>
@@ -78,11 +94,23 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    const stepLabels = ["1단계: 제품 커버 열기", "2단계: 필터 커버 열기", "3단계: 기존 필터 분리"];
+    const stepLabels = [
+        "1단계: 제품 커버 열기", 
+        "2단계: 필터 커버 열기", 
+        "3단계: 기존 필터 분리",
+        "4단계: 새 필터 장착",
+        "5단계: 필터 커버 닫기",
+        "6단계: 제품 커버 닫기",
+        "7단계: 교체 완료"
+    ];
     const textData = [
         { description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." },
         { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." },
-        { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }
+        { description: "필터를 뒤로 힘껏 밀어 분리해주세요." },
+        { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." },
+        { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." },
+        { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." },
+        { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
@@ -178,21 +206,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateButtonVisibility() {
         hideAllButtons();
-        replayBtnWrappers[currentIndex].classList.add('show');
-        if (currentIndex === totalSlides - 1) {
-            if (ratingForm) {
-                ratingForm.reset();
-                if(ratingValueInput) ratingValueInput.value = "";
+        if (!videos[currentIndex] || videos[currentIndex].ended) {
+            replayBtnWrappers[currentIndex].classList.add('show');
+            
+            if (currentIndex === 0) {
+                // 첫번째 슬라이드에서는 '다음' 버튼만
+                nextBtn.classList.add('show');
+            } else if (currentIndex > 0 && currentIndex < totalSlides - 1) {
+                // 중간 슬라이드에서는 '이전', '다음' 버튼
+                prevBtn.classList.add('show');
+                nextBtn.classList.add('show');
+            } else if (currentIndex === totalSlides - 1) {
+                // 마지막 슬라이드에서는 '이전', '처음부터' 버튼
+                prevBtn.classList.add('show');
+                restartBtn.classList.add('show');
             }
-        }
-        if (currentIndex === 0) {
-            nextBtn.classList.add('show');
-        } else if (currentIndex > 0 && currentIndex < totalSlides - 1) {
-            prevBtn.classList.add('show');
-            nextBtn.classList.add('show');
-        } else if (currentIndex === totalSlides - 1) {
-            prevBtn.classList.add('show');
-            restartBtn.classList.add('show');
         }
     }
     
@@ -201,9 +229,11 @@ document.addEventListener('DOMContentLoaded', function() {
         currentIndex = index;
         updateAdditionalText(currentIndex);
         updateActiveStepButton(currentIndex);
-        videos.forEach(video => {
-            video.pause();
-            video.currentTime = 0;
+        videos.forEach((video, vidIndex) => {
+            if (vidIndex !== index) {
+                video.pause();
+                video.currentTime = 0;
+            }
         });
         hideAllButtons();
         if (videos[currentIndex]) {
@@ -228,12 +258,8 @@ document.addEventListener('DOMContentLoaded', function() {
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) { goToSlide(currentIndex - 1); } });
     restartBtn.addEventListener('click', () => { goToSlide(0); });
 
-    updateAdditionalText(0);
-    updateActiveStepButton(0);
-    hideAllButtons();
-    if (videos[currentIndex]) {
-        videos[currentIndex].play().catch(error => { console.log("Autoplay was prevented: ", error); });
-    }
+    // 초기 상태 설정
+    goToSlide(0);
 });
 </script>
 
