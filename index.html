@@ -38,8 +38,16 @@
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
-    /* ✨ 세 번째 줄 텍스트 스타일 추가 */
-    .tertiary-text { color: #777; margin-top: 8px; display: block; font-size: 0.8em; font-style: italic; }
+    
+    /* ✨ 이 부분이 수정되었습니다. */
+    .tertiary-text { 
+        color: #D32F2F;      /* 눈에 띄는 붉은색으로 변경 */
+        margin-top: 8px;
+        display: block;
+        font-size: 0.9em;     /* 글씨 크기 키움 */
+        font-style: normal;   /* 기울임 제거 */
+        font-weight: bold;    /* 굵게 처리 */
+    }
 
     .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
@@ -100,7 +108,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     
-    // ✨ 7단계에 세 번째 줄 텍스트(tertiary)를 추가했습니다.
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
         { primary: "PUSH 부분을 눌러 필터 커버 열기", secondary: "딸깍 소리와 함께 커버가 열립니다." },
@@ -108,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
         { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면 딸깍 소리와 함께 커버가 닫힙니다. " },
         { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤 앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다. 용기 사이즈를 확인해주세요.", tertiary: "사용이 완료된 필터는 플라스틱 분리배출 시 재활용 됩니다." }
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다. 용기 사이즈를 확인해주세요.", tertiary: "사용이 완료된 필터는 플라스틱 분리 배출 시 재활용 됩니다." }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
@@ -192,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', () => goToSlide(parseInt(button.dataset.slideTo, 10)));
     });
 
-    // ✨ 세 번째 줄 텍스트를 표시하도록 함수를 수정했습니다.
     function updateAdditionalText(index) {
         if (textData[index]) {
             const item = textData[index];
