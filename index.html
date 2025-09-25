@@ -88,8 +88,8 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -102,7 +102,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 스크립트 코드는 수정사항 없습니다.
-    const stepLabels = ["1단계: 제품 커버 열기", "2단계: 필터 커버 열기", "3단계: 기존 필터 분리", "4단계: 새 필터 장착", "5단계: 필터 커버 닫기", "6단계: 제품 커버 닫기", "7단계: 교체 완료"];
+    const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [{ description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." }, { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." }, { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }, { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." }, { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." }, { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." }, { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }];
     const additionalDescription = document.getElementById('additional-description');
     const stepNavigation = document.querySelector('.step-navigation');
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (selectedRating <= 3) {
-                    alert('불편하셨던 점을 알려주시면 큰 도움이 됩니다.');
+                    alert('혹시 아쉬운 점이나 바꿀 부분 있을까요?');
                     if(reasonWrapper) reasonWrapper.style.display = 'block';
                 } else {
                     if(reasonWrapper) reasonWrapper.style.display = 'none';
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(submitReasonBtn) {
         submitReasonBtn.addEventListener('click', function() {
             if (reasonTextarea.value.trim() === "") {
-                alert("사유를 입력해주세요.");
+                alert("개선이 필요한 내용을 작성해주세요.");
                 return;
             }
             submitForm();
