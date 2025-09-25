@@ -23,36 +23,35 @@
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
     
-    /* ✨ 영상 위 오버레이 (다시보기, 만족도 평가) - 구조 단순화 */
-    .replay-btn-wrapper {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    /* ✨ 영상 위 오버레이 (구조 단순화) */
+    .overlay-wrapper {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         display: none; /* JS로 제어 */
         flex-direction: column; align-items: center; justify-content: center;
         background-color: rgba(0, 0, 0, 0.6);
-        border-radius: 15px; padding: 20px;
-        z-index: 20; pointer-events: none;
-        width: 85%; max-width: 350px; box-sizing: border-box;
+        z-index: 20;
     }
-    .replay-btn-wrapper.show { display: flex; pointer-events: auto; }
+    .overlay-wrapper.show { display: flex; }
 
     /* 다시보기 영역 */
-    .replay-action { display: flex; flex-direction: column; align-items: center; }
-    .replay-action .replay-btn { background-color: transparent; border: 2px solid white; width: 45px; height: 45px; border-radius: 50%; font-size: 16px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 5px; color: white; }
-    .replay-action .replay-text { color: #e0e0e0; font-size: 0.9em; font-weight: normal; }
+    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .replay-action .replay-btn { border: 2px solid white; width: 45px; height: 45px; border-radius: 50%; font-size: 16px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
+    .replay-action .replay-text { color: #e0e0e0; font-size: 0.9em; }
     
     /* 구분선 */
-    .rating-divider { width: 80%; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px 0; }
+    .rating-divider { width: 80%; max-width: 200px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px 0; }
 
-    /* 만족도 평가 공통 */
-    #ratingForm { width: 100%; }
-    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+    /* 만족도 평가 */
+    #ratingForm { width: 100%; text-align: center; }
+    .rating-content { display: flex; flex-direction: column; align-items: center; }
+    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
     /* 사유 입력창 */
-    .reason-input-wrapper { margin-top: 15px; width: 100%; }
-    .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
+    .reason-input-wrapper { margin-top: 15px; width: 90%; max-width: 300px; }
+    .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
     /* 하단 텍스트 영역 */
@@ -63,7 +62,6 @@
 
     @media (max-width: 768px) {
         .slider-btn { padding: 10px 15px; font-size: 14px; }
-        .replay-btn-wrapper { padding: 15px; }
         .rating-prompt { font-size: 1em; }
         .satisfaction-rating .star { font-size: 25px; }
     }
@@ -74,36 +72,13 @@
 <div class="main-container">
     <div class="slider-container">
         <div class="slider-wrapper">
-            <div class="slide"><video id="video-0" src="1번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            <div class="slide"><video id="video-1" src="2번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            <div class="slide"><video id="video-2" src="3번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            <div class="slide"><video id="video-3" src="4번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            <div class="slide"><video id="video-4" src="5번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            <div class="slide"><video id="video-5" src="6번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><div class="replay-action"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div></div>
-            
-            <div class="slide">
-                <video id="video-6" src="7번영상.mp4" muted playsinline></video>
-                <div class="replay-btn-wrapper" id="finalOverlay">
-                    <div class="replay-action">
-                        <button class="replay-btn">↻</button>
-                        <div class="replay-text">다시보기</div>
-                    </div>
-                    <div class="rating-divider"></div>
-                    <form id="ratingForm">
-                        <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
-                        <div class="rating-content">
-                            <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
-                            <div class="satisfaction-rating">
-                                <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
-                            </div>
-                        </div>
-                        <div class="reason-input-wrapper" style="display: none;">
-                            <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
-                            <button type="button" class="submit-reason-btn">제출</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <div class="slide"><video id="video-0" src="1번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-1" src="2번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-2" src="3번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-3" src="4번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-4" src="5번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-5" src="6번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
+            <div class="slide"><video id="video-6" src="7번영상.mp4" muted playsinline></video><div class="overlay-wrapper"></div></div>
         </div>
         <div class="button-wrapper">
             <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
@@ -118,7 +93,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ✨ JavaScript 로직 재구성
+    // ✨ JavaScript 로직을 완전히 새로 작성했습니다.
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
@@ -127,31 +102,37 @@ document.addEventListener('DOMContentLoaded', function() {
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
         { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면<br>딸깍 소리와 함께 커버가 닫힙니다. " },
         { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤<br>앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "폐필터는 플라스틱 분리배출 해주세요. <br> 재활용 업체로 보내집니다" }
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "(99, 98, ..., 0 종료)" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
-    const sliderWrapper = document.querySelector('.slider-wrapper');
+    const slides = document.querySelectorAll('.slide');
     const videos = document.querySelectorAll('.slide video');
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
     const restartBtn = document.querySelector('.restart-btn');
-    const replayBtnWrappers = document.querySelectorAll('.replay-btn-wrapper');
-    const replayBtns = document.querySelectorAll('.replay-btn');
-
-    const finalOverlay = document.getElementById('finalOverlay');
-    const ratingForm = document.getElementById('ratingForm');
-    const ratingValueInput = document.getElementById('ratingValue');
-    const finalReplayAction = finalOverlay ? finalOverlay.querySelector('.replay-action') : null;
-    const finalDivider = finalOverlay ? finalOverlay.querySelector('.rating-divider') : null;
-    const ratingContent = finalOverlay ? finalOverlay.querySelector('.rating-content') : null;
-    const reasonWrapper = finalOverlay ? finalOverlay.querySelector('.reason-input-wrapper') : null;
-    const reasonTextarea = document.getElementById('satisfactionReason');
-    const submitReasonBtn = document.querySelector('.submit-reason-btn');
     let currentIndex = 0;
-    const totalSlides = videos.length;
 
-    function submitForm() {
+    // ✨ 오버레이 내용을 동적으로 생성하기 위한 HTML 템플릿
+    const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
+    const ratingFormHTML = `
+        <div class="rating-divider"></div>
+        <form id="ratingForm">
+            <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
+            <div class="rating-content">
+                <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
+                <div class="satisfaction-rating">
+                    <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+                </div>
+            </div>
+            <div class="reason-input-wrapper" style="display: none;">
+                <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
+                <button type="button" class="submit-reason-btn">제출</button>
+            </div>
+        </form>`;
+
+    function submitForm(overlay) {
+        const ratingForm = overlay.querySelector('#ratingForm');
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
         
@@ -159,101 +140,121 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
-            replayBtnWrappers[currentIndex].classList.remove('show');
-            updateButtonVisibility();
+            overlay.classList.remove('show');
+            showBottomButtons(); // 하단 버튼 다시 표시
         }).catch(error => { console.error('제출 실패:', error); alert('제출에 실패했습니다.'); });
     }
 
-    if (ratingForm) {
-        const stars = ratingForm.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const selectedRating = parseInt(this.dataset.rating, 10);
-                ratingValueInput.value = selectedRating;
-                stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
-
-                if (selectedRating <= 3) {
-                    if(finalReplayAction) finalReplayAction.style.display = 'none';
-                    if(finalDivider) finalDivider.style.display = 'none';
-                    if(ratingContent) ratingContent.style.display = 'none';
-                    if(reasonWrapper) reasonWrapper.style.display = 'block';
-                    prevBtn.classList.remove('show');
-                    restartBtn.classList.remove('show');
-                } else {
-                    submitForm();
-                }
+    function setupOverlayEventListeners(overlay) {
+        const replayAction = overlay.querySelector('.replay-action');
+        if (replayAction) {
+            replayAction.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                videos[currentIndex].play();
             });
-        });
-    }
-    
-    if(submitReasonBtn) {
-        submitReasonBtn.addEventListener('click', function() {
-            if (reasonTextarea.value.trim() === "") { alert("사유를 입력해주세요."); return; }
-            submitForm();
-        });
-    }
+        }
 
-    function updateAdditionalText(index) {
-        if (textData[index]) {
-            const item = textData[index];
-            let htmlContent = `<span class="primary-text">${item.primary}</span>`;
-            if (item.secondary) htmlContent += `<span class="secondary-text">${item.secondary}</span>`;
-            if (item.tertiary) htmlContent += `<span class="tertiary-text">${item.tertiary}</span>`;
-            additionalDescription.innerHTML = htmlContent;
+        const ratingForm = overlay.querySelector('#ratingForm');
+        if (ratingForm) {
+            const stars = ratingForm.querySelectorAll('.star');
+            const ratingContent = ratingForm.querySelector('.rating-content');
+            const reasonWrapper = ratingForm.querySelector('.reason-input-wrapper');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const selectedRating = parseInt(star.dataset.rating, 10);
+                    ratingForm.querySelector('#ratingValue').value = selectedRating;
+                    stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
+
+                    if (selectedRating <= 3) {
+                        if(replayAction) replayAction.style.display = 'none';
+                        if(overlay.querySelector('.rating-divider')) overlay.querySelector('.rating-divider').style.display = 'none';
+                        if(ratingContent) ratingContent.style.display = 'none';
+                        if(reasonWrapper) reasonWrapper.style.display = 'block';
+                        hideBottomButtons();
+                    } else {
+                        submitForm(overlay);
+                    }
+                });
+            });
+
+            const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
+            if (submitReasonBtn) {
+                submitReasonBtn.addEventListener('click', () => {
+                    if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
+                        alert("사유를 입력해주세요.");
+                        return;
+                    }
+                    submitForm(overlay);
+                });
+            }
         }
     }
-    
-    function hideAllOverlays() {
-        replayBtnWrappers.forEach(wrapper => wrapper.classList.remove('show'));
-        // 3점 이하 선택 시 숨겼던 요소들 다시 보이게 초기화
-        if(finalReplayAction) finalReplayAction.style.display = 'flex';
-        if(finalDivider) finalDivider.style.display = 'block';
-        if(ratingContent) ratingContent.style.display = 'block';
-        if(reasonWrapper) reasonWrapper.style.display = 'none';
-    }
 
-    function hideAllBottomButtons() {
+    function showOverlay() {
+        const overlay = slides[currentIndex].querySelector('.overlay-wrapper');
+        let overlayContent = replayHTML;
+        if (currentIndex === videos.length - 1) { // 마지막 슬라이드
+            overlayContent += ratingFormHTML;
+        }
+        overlay.innerHTML = overlayContent;
+        setupOverlayEventListeners(overlay);
+        overlay.classList.add('show');
+    }
+    
+    function hideBottomButtons() {
         prevBtn.classList.remove('show');
         nextBtn.classList.remove('show');
         restartBtn.classList.remove('show');
     }
-
-    function updateButtonVisibility() {
-        hideAllBottomButtons();
-        hideAllOverlays();
-        if (!videos[currentIndex] || videos[currentIndex].ended) {
-            replayBtnWrappers[currentIndex].classList.add('show');
-            if (currentIndex === 0) nextBtn.classList.add('show'); 
-            else if (currentIndex > 0 && currentIndex < totalSlides - 1) { prevBtn.classList.add('show'); nextBtn.classList.add('show'); } 
-            else if (currentIndex === totalSlides - 1) { prevBtn.classList.add('show'); restartBtn.classList.add('show'); }
-        }
-    }
     
-    function goToSlide(index) {
-        sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
-        currentIndex = index;
-        updateAdditionalText(currentIndex);
-        document.querySelectorAll('.step-btn').forEach((button, btnIndex) => button.classList.toggle('active', btnIndex === index));
-        videos.forEach((video, vidIndex) => { if (vidIndex !== index) { video.pause(); video.currentTime = 0; } });
-        hideAllBottomButtons();
-        hideAllOverlays();
-        if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented: ", e));
+    function showBottomButtons() {
+        hideBottomButtons();
+        if (currentIndex === 0) nextBtn.classList.add('show'); 
+        else if (currentIndex > 0 && currentIndex < videos.length - 1) { prevBtn.classList.add('show'); nextBtn.classList.add('show'); } 
+        else if (currentIndex === videos.length - 1) { prevBtn.classList.add('show'); restartBtn.classList.add('show'); }
     }
 
-    videos.forEach((video, index) => video.addEventListener('ended', () => { if(index === currentIndex) updateButtonVisibility(); }));
-    replayBtns.forEach((btn, index) => {
-        btn.addEventListener('click', () => { 
-            if(index === currentIndex) { 
-                replayBtnWrappers[currentIndex].classList.remove('show');
-                videos[currentIndex].play(); 
-            } 
+    function goToSlide(index) {
+        document.querySelector('.slider-wrapper').style.transform = `translateX(-${index * 100}%)`;
+        currentIndex = index;
+        
+        // 텍스트 업데이트
+        const item = textData[index];
+        let htmlContent = `<span class="primary-text">${item.primary}</span>`;
+        if (item.secondary) htmlContent += `<span class="secondary-text">${item.secondary}</span>`;
+        if (item.tertiary) htmlContent += `<span class="tertiary-text">${item.tertiary}</span>`;
+        additionalDescription.innerHTML = htmlContent;
+
+        // 스텝 버튼 활성화
+        document.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
+        
+        // 비디오 정지 및 오버레이 숨기기
+        videos.forEach((video, vidIndex) => { 
+            if (vidIndex !== index) video.pause(); 
+            slides[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
+        });
+
+        hideBottomButtons();
+        if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented"));
+    }
+
+    videos.forEach((video, index) => {
+        video.addEventListener('ended', () => {
+            if (index === currentIndex) {
+                showOverlay();
+                showBottomButtons();
+            }
         });
     });
-    
+
     document.querySelectorAll('.step-btn').forEach((button, index) => button.addEventListener('click', () => goToSlide(index)));
-    nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); });
+    nextBtn.addEventListener('click', () => { if (currentIndex < videos.length - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
+    
+    // 초기화
+    document.querySelectorAll('.step-navigation').innerHTML = stepLabels.map(label => `<button class="step-btn">${label}</button>`).join('');
     goToSlide(0);
 });
 </script>
