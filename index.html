@@ -31,6 +31,15 @@
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; }
 
+    /* ✨ 별점 안내 문구 스타일 추가 */
+    .rating-prompt {
+        color: white;
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* 그림자 효과 추가 */
+    }
+
     .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
@@ -38,15 +47,13 @@
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
-    
-    /* ✨ 이 부분이 수정되었습니다. */
     .tertiary-text { 
-        color: #D32F2F;      /* 눈에 띄는 붉은색으로 변경 */
+        color: #D32F2F;
         margin-top: 8px;
         display: block;
-        font-size: 0.9em;     /* 글씨 크기 키움 */
-        font-style: normal;   /* 기울임 제거 */
-        font-weight: bold;    /* 굵게 처리 */
+        font-size: 0.9em;
+        font-style: normal;
+        font-weight: bold;
     }
 
     .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
@@ -60,6 +67,7 @@
         .replay-btn-wrapper { padding-bottom: 60px; }
         .replay-btn { width: 50px; height: 50px; font-size: 18px; }
         .replay-text { font-size: 1em; }
+        .rating-prompt { font-size: 1em; }
         .satisfaction-rating .star { font-size: 25px; }
     }
 </style>
@@ -82,6 +90,7 @@
                     <div class="replay-text">다시보기</div>
                     <form id="ratingForm">
                         <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
+                        <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
                         <div class="satisfaction-rating">
                             <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
                         </div>
@@ -106,16 +115,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // JavaScript 코드는 수정사항 없습니다.
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
-    
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
         { primary: "PUSH 부분을 눌러 필터 커버 열기", secondary: "딸깍 소리와 함께 커버가 열립니다." },
         { primary: "필터를 뒤로 힘껏 밀어서 분리하기", secondary: "약간의 물이 떨어질 수 있습니다.<br>깨끗하게 닦아주세요." },
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
-        { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면 <br>딸깍 소리와 함께 커버가 닫힙니다. " },
-        { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤 <br>앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "사용이 완료된 필터는 플라스틱 분리 배출 시 재활용 됩니다." }
+        { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면<br>딸깍 소리와 함께 커버가 닫힙니다. " },
+        { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤<br>앞으로 끝까지 당겨서 닫아주세요." },
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "(99, 98, ..., 0 종료)" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
