@@ -24,6 +24,12 @@
     .replay-btn-wrapper.show { display: flex; }
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; pointer-events: auto; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; pointer-events: auto; }
+    
+    /* ✨ 클릭 활성화를 위해 추가 */
+    #ratingForm {
+        pointer-events: auto;
+    }
+
     .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; pointer-events: auto; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
@@ -79,8 +85,8 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터 ↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -93,8 +99,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
-    const textData = [{ description: "추출구 아래 컵 놓기" }, { description: "필터 커버의 PUSH 부분 눌러 커버 열기" }, { description: "필터를 뒤로 힘껏 밀어 분리하기" }, { description: "새 필터의 마개 제거 후 앞으로 힘껏 당겨 체결하기" }, { description: "필터 커버 닫기" }, { description: "제품 커버를 홈에 맞춰 앞으로 당겨 체결 하기" }, { description: "추출 버튼 눌러 필터 자동 세척 하기(99, 98, ···, 0 종료)" }];
+    const stepLabels = ["1단계: 제품 커버 열기", "2단계: 필터 커버 열기", "3단계: 기존 필터 분리", "4단계: 새 필터 장착", "5단계: 필터 커버 닫기", "6단계: 제품 커버 닫기", "7단계: 교체 완료"];
+    const textData = [{ description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." }, { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." }, { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }, { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." }, { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." }, { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." }, { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }];
     const additionalDescription = document.getElementById('additional-description');
     const stepNavigation = document.querySelector('.step-navigation');
     const sliderWrapper = document.querySelector('.slider-wrapper');
@@ -140,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (selectedRating <= 3) {
-                    alert('개선점을 알려주신 분들 중 추첨을 통해 치킨 상품권을 드립니다.');
+                    alert('불편하셨던 점을 알려주시면 큰 도움이 됩니다.');
                     if(reasonWrapper) reasonWrapper.style.display = 'block';
                 } else {
                     if(reasonWrapper) reasonWrapper.style.display = 'none';
@@ -194,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
     replayBtns.forEach((btn, index) => btn.addEventListener('click', () => { if(index === currentIndex) { hideAllButtons(); videos[currentIndex].play(); } }));
     nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
-    restartBtn.addEventListener('click', () => goToSlide(0));
+    restartBtn.addEventListener('click', () => goToSlide(0);
     goToSlide(0);
 });
 </script>
