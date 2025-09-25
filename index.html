@@ -14,6 +14,8 @@
     .slider-wrapper { display: flex; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
+
+    /* ✨ 버튼 영역은 그대로 유지 (화면 하단 버튼들) */
     .button-wrapper { position: absolute; bottom: 10px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
@@ -21,54 +23,76 @@
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
     
-    .replay-btn-wrapper {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        text-align: center; z-index: 20; display: none; flex-direction: column;
-        align-items: center; justify-content: center; padding: 20px;
-        background-color: rgba(0, 0, 0, 0.5); /* ✨ 배경을 살짝 추가하여 가독성 확보 */
-        border-radius: 15px; /* ✨ 부드러운 모서리 */
-        pointer-events: none;
+    /* ✨ 다시보기 버튼/텍스트 Wrapper - 영상 중앙 상단 */
+    .replay-only-wrapper {
+        position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); /* 중앙 상단으로 위치 조정 */
+        text-align: center; z-index: 21; /* 만족도 폼보다 위에 */
+        display: none; flex-direction: column; align-items: center; justify-content: center;
+        pointer-events: none; /* 클릭 이벤트 통과 */
     }
-    .replay-btn-wrapper.show { display: flex; pointer-events: auto; }
-    /* ✨ 다시보기 아이콘 크기 조정 */
-    .replay-btn { background-color: transparent; border: 2px solid white; width: 50px; height: 50px; border-radius: 50%; font-size: 18px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 8px; }
-    /* ✨ 다시보기 텍스트 크기 및 색상 조정 */
-    .replay-text { color: #e0e0e0; font-size: 1em; font-weight: normal; }
+    .replay-only-wrapper.show { display: flex; pointer-events: auto; }
 
-    /* ✨ 구분선 스타일 추가 */
-    .rating-divider {
-        width: 60%;
-        height: 1px;
-        background-color: rgba(255, 255, 255, 0.4);
-        margin: 15px 0;
+    /* ✨ 다시보기 버튼 스타일 - 작게 */
+    .replay-only-wrapper .replay-btn {
+        background-color: rgba(0, 0, 0, 0.6); /* 배경색 추가 */
+        border: 2px solid white; width: 45px; height: 45px; border-radius: 50%;
+        font-size: 16px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 5px;
+        color: white;
     }
-
-    .rating-prompt {
-        color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px;
+    /* ✨ 다시보기 텍스트 스타일 - 작게 */
+    .replay-only-wrapper .replay-text {
+        color: #e0e0e0; font-size: 0.9em; font-weight: normal;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
-    .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
+
+
+    /* ✨ 만족도 평가 폼 Wrapper - 영상 중앙 하단 */
+    .rating-form-wrapper {
+        position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); /* 중앙 하단으로 위치 조정 */
+        text-align: center; z-index: 20;
+        display: none; flex-direction: column; align-items: center; justify-content: center;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 15px;
+        pointer-events: none; /* 클릭 이벤트 통과 */
+        max-width: 90%; /* 너무 넓어지지 않게 */
+        box-sizing: border-box;
+    }
+    .rating-form-wrapper.show { display: flex; pointer-events: auto; }
+    
+    /* ✨ 3점 이하 선택 시 사유 입력 창 */
+    .reason-input-wrapper {
+        margin-top: 15px; width: 100%; max-width: 300px; /* 너비 조절 */
+    }
+    .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
+    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
+    .submit-reason-btn:hover { background-color: #0056b3; }
+
+    /* 일반 상태의 만족도 평가 관련 스타일 */
+    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+    .satisfaction-rating { margin-top: 0px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
-    
+
+    /* 추가 텍스트 영역 */
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
     .tertiary-text { color: #D32F2F; margin-top: 8px; display: block; font-size: 0.9em; font-style: normal; font-weight: bold; }
 
-    .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
-    .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
-    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
-    .submit-reason-btn:hover { background-color: #0056b3; }
-
     @media (max-width: 768px) {
         .button-wrapper { padding: 0 10px; bottom: 5px; }
         .slider-btn { padding: 10px 15px; font-size: 14px; border-radius: 20px; }
-        .replay-btn-wrapper { padding-bottom: 20px; } /* 패딩값 통일 */
-        .replay-btn { width: 45px; height: 45px; font-size: 16px; }
-        .replay-text { font-size: 0.9em; }
+        
+        .replay-only-wrapper { top: 20%; }
+        .replay-only-wrapper .replay-btn { width: 40px; height: 40px; font-size: 14px; }
+        .replay-only-wrapper .replay-text { font-size: 0.85em; }
+
+        .rating-form-wrapper { bottom: 5%; padding: 15px; }
         .rating-prompt { font-size: 1em; }
         .satisfaction-rating .star { font-size: 25px; }
+        .reason-input-wrapper textarea { font-size: 13px; }
+        .submit-reason-btn { font-size: 14px; padding: 8px; }
     }
 </style>
 </head>
@@ -77,25 +101,27 @@
 <div class="main-container">
     <div class="slider-container">
         <div class="slider-wrapper">
-            <div class="slide"><video id="video-0" src="1번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-1" src="2번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-2" src="3번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-3" src="4번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-4" src="5번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-5" src="6번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-0" src="1번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-1" src="2번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-2" src="3번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-3" src="4번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-4" src="5번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide"><video id="video-5" src="6번영상.mp4" muted playsinline></video><div class="replay-only-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
             <div class="slide">
                 <video id="video-6" src="7번영상.mp4" muted playsinline></video>
-                <div class="replay-btn-wrapper">
-                    <div class="replay-action">
-                        <button class="replay-btn">↻</button>
-                        <div class="replay-text">다시보기</div>
-                    </div>
-                    <div class="rating-divider"></div>
+                <div class="replay-only-wrapper" id="finalReplayWrapper"> 
+                    <button class="replay-btn">↻</button>
+                    <div class="replay-text">다시보기</div>
+                </div>
+                
+                <div class="rating-form-wrapper" id="finalRatingWrapper">
                     <form id="ratingForm">
                         <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
-                        <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
-                        <div class="satisfaction-rating">
-                            <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+                        <div class="rating-content">
+                            <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
+                            <div class="satisfaction-rating">
+                                <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+                            </div>
                         </div>
                         <div class="reason-input-wrapper" style="display: none;">
                             <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
@@ -117,8 +143,7 @@
 </div>
 
 <script>
-    // JavaScript 코드는 수정사항 없습니다.
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
@@ -127,7 +152,7 @@
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
         { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면<br>딸깍 소리와 함께 커버가 닫힙니다. " },
         { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤<br>앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "사용한 필터는 플라스틱 분리배출로 재활용 됩니다!" }
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "(99, 98, ..., 0 종료)" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
@@ -137,12 +162,21 @@
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
     const restartBtn = document.querySelector('.restart-btn');
-    const replayBtnWrappers = document.querySelectorAll('.replay-btn-wrapper');
-    const replayBtns = document.querySelectorAll('.replay-btn');
+    // ✨ 모든 슬라이드의 다시보기 버튼/텍스트 Wrapper
+    const replayOnlyWrappers = document.querySelectorAll('.replay-only-wrapper'); 
+    // ✨ 7단계 슬라이드 전용 다시보기 Wrapper (ID로 접근)
+    const finalReplayWrapper = document.getElementById('finalReplayWrapper');
+    // ✨ 7단계 슬라이드 전용 만족도 평가 Wrapper (ID로 접근)
+    const finalRatingWrapper = document.getElementById('finalRatingWrapper'); 
+    
+    // 이전에 replayBtns였던 것을 replayOnlyWrappers의 내부 버튼으로 다시 선택
+    const replayBtns = document.querySelectorAll('.replay-only-wrapper .replay-btn');
+
+
     const ratingForm = document.getElementById('ratingForm');
     const ratingValueInput = document.getElementById('ratingValue');
-    const ratingContainer = document.querySelector('.satisfaction-rating');
-    const reasonWrapper = document.querySelector('.reason-input-wrapper');
+    const ratingContent = finalRatingWrapper.querySelector('.rating-content'); // 별점 질문, 별점 포함
+    const reasonWrapper = finalRatingWrapper.querySelector('.reason-input-wrapper');
     const reasonTextarea = document.getElementById('satisfactionReason');
     const submitReasonBtn = document.querySelector('.submit-reason-btn');
     let currentIndex = 0;
@@ -157,15 +191,18 @@
         }).then(() => {
             alert('소중한 의견 감사합니다!');
             if(reasonWrapper) reasonWrapper.style.display = 'none';
-            updateButtonVisibility();
+            // ✨ 제출 후에는 만족도 평가 전체를 숨김
+            if (finalRatingWrapper) finalRatingWrapper.classList.remove('show'); 
+            updateButtonVisibility(); // 하단 버튼들은 다시 표시
         }).catch(error => {
             console.error('제출 실패:', error);
             alert('제출에 실패했습니다. 다시 시도해주세요.');
         });
     }
 
-    if (ratingContainer) {
-        stars = ratingContainer.querySelectorAll('.star');
+    // ✨ 별점 로직은 finalRatingWrapper 내부에서만 동작하도록 수정
+    if (finalRatingWrapper) {
+        const stars = finalRatingWrapper.querySelectorAll('.star');
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 const selectedRating = parseInt(this.dataset.rating, 10);
@@ -177,10 +214,14 @@
 
                 if (selectedRating <= 3) {
                     alert('불편하셨던 점을 알려주시면 큰 도움이 됩니다.');
+                    // ✨ 3점 이하일 때, 질문/별점 숨기고 사유 입력만 표시
+                    if(ratingContent) ratingContent.style.display = 'none'; 
                     if(reasonWrapper) reasonWrapper.style.display = 'block';
+                    // 하단 버튼 숨김 (사유 입력에 집중)
                     prevBtn.classList.remove('show');
                     restartBtn.classList.remove('show');
                 } else {
+                    // 4점 이상일 때 바로 제출
                     if(reasonWrapper) reasonWrapper.style.display = 'none';
                     submitForm();
                 }
@@ -225,28 +266,59 @@
         }
     }
 
-    function updateActiveStepButton(index) { stepButtons.forEach((button, btnIndex) => button.classList.toggle('active', btnIndex === index)); }
-    function hideAllButtons() { prevBtn.classList.remove('show'); nextBtn.classList.remove('show'); restartBtn.classList.remove('show'); replayBtnWrappers.forEach(wrapper => wrapper.classList.remove('show')); }
+    function hideAllButtons() { 
+        prevBtn.classList.remove('show'); 
+        nextBtn.classList.remove('show'); 
+        restartBtn.classList.remove('show'); 
+        // ✨ 모든 다시보기 Wrapper 숨김
+        replayOnlyWrappers.forEach(wrapper => wrapper.classList.remove('show')); 
+        // ✨ 최종 만족도 Wrapper 숨김
+        if (finalRatingWrapper) finalRatingWrapper.classList.remove('show');
+        // ✨ 3점 이하 선택 시 숨겨진 질문/별점 다시 보이게
+        if (ratingContent) ratingContent.style.display = 'flex'; 
+        if (reasonWrapper) reasonWrapper.style.display = 'none'; // 사유 입력창 숨김
+    }
+
     function updateButtonVisibility() {
-        hideAllButtons();
+        hideAllButtons(); // 초기화
+        
         if (!videos[currentIndex] || videos[currentIndex].ended) {
-            replayBtnWrappers[currentIndex].classList.add('show');
-            if (currentIndex === 0) nextBtn.classList.add('show'); 
-            else if (currentIndex > 0 && currentIndex < totalSlides - 1) { prevBtn.classList.add('show'); nextBtn.classList.add('show'); } 
-            else if (currentIndex === totalSlides - 1) { prevBtn.classList.add('show'); restartBtn.classList.add('show'); }
+            // 모든 슬라이드에서 다시보기 버튼/텍스트를 보여줌
+            replayOnlyWrappers[currentIndex].classList.add('show'); 
+
+            if (currentIndex === 0) {
+                nextBtn.classList.add('show');
+            } else if (currentIndex > 0 && currentIndex < totalSlides - 1) {
+                prevBtn.classList.add('show');
+                nextBtn.classList.add('show');
+            } else if (currentIndex === totalSlides - 1) { // 마지막 슬라이드
+                prevBtn.classList.add('show');
+                restartBtn.classList.add('show');
+                // ✨ 마지막 슬라이드일 때만 만족도 평가를 보여줌
+                if (finalRatingWrapper) finalRatingWrapper.classList.add('show');
+            }
         }
     }
+
     function goToSlide(index) {
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
         updateAdditionalText(currentIndex);
-        updateActiveStepButton(currentIndex);
+        stepButtons.forEach((button, btnIndex) => button.classList.toggle('active', btnIndex === index));
         videos.forEach((video, vidIndex) => { if (vidIndex !== index) { video.pause(); video.currentTime = 0; } });
-        hideAllButtons();
+        hideAllButtons(); // 슬라이드 이동 시 모든 버튼, 폼 숨김
         if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented: ", e));
     }
+
     videos.forEach((video, index) => video.addEventListener('ended', () => { if(index === currentIndex) updateButtonVisibility(); }));
-    replayBtns.forEach((btn, index) => btn.addEventListener('click', () => { if(index === currentIndex) { hideAllButtons(); videos[currentIndex].play(); } }));
+    // ✨ 각 슬라이드의 다시보기 버튼을 클릭했을 때 해당 슬라이드 비디오 재생
+    replayBtns.forEach((btn, index) => btn.addEventListener('click', () => { 
+        if(index === currentIndex) { 
+            hideAllButtons(); // 다시보기 시 모든 오버레이 숨김
+            videos[currentIndex].play(); 
+        } 
+    }));
+
     nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
