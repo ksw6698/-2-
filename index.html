@@ -23,17 +23,19 @@
     .restart-btn { background-color: #007bff; border-color: #007bff; }
     
     .overlay-wrapper {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        display: none;
-        flex-direction: column; align-items: center; justify-content: center;
+        position: absolute; top: 48%; /* ✨ 살짝 위로 이동하여 하단 버튼과 간격 확보 */
+        left: 50%; transform: translate(-50%, -50%);
+        display: none; flex-direction: column; align-items: center; justify-content: center;
         background-color: rgba(0, 0, 0, 0.6);
-        z-index: 20;
+        border-radius: 15px; padding: 20px 15px; /* 좌우 패딩 줄임 */
+        z-index: 20; width: 85%; max-width: 350px; box-sizing: border-box;
     }
     .overlay-wrapper.show { display: flex; }
 
     .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .replay-action .replay-btn { border: 2px solid white; width: 45px; height: 45px; border-radius: 50%; font-size: 16px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
-    .replay-action .replay-text { color: #e0e0e0; font-size: 0.9em; }
+    /* ✨ 다시보기 아이콘/텍스트 크기 축소 */
+    .replay-action .replay-btn { border: 2px solid white; width: 40px; height: 40px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
+    .replay-action .replay-text { color: #e0e0e0; font-size: 0.8em; }
     
     .rating-divider { width: 80%; max-width: 200px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px 0; }
 
@@ -44,7 +46,8 @@
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
-    .reason-input-wrapper { margin-top: 15px; width: 90%; max-width: 300px; }
+    /* ✨ 사유 입력창 정렬 */
+    .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
@@ -85,7 +88,8 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+    // JavaScript 코드는 수정사항 없습니다.
+    document.addEventListener('DOMContentLoaded', function() {
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
@@ -94,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
         { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면<br>딸깍 소리와 함께 커버가 닫힙니다. " },
         { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤<br>앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "다 쓴 필터는 플라스틱류 분리배출하면<br>재활용 업체로 보내집니다!" }
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "(99, 98, ..., 0 종료)" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
@@ -228,7 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented"));
     }
 
-    // ✨ 하단 단계 버튼을 생성하는 코드가 여기 추가되었습니다.
     stepLabels.forEach((label, index) => {
         const button = document.createElement('button');
         button.className = 'step-btn';
