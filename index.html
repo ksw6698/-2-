@@ -5,31 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>필터 교체 방법 샘플</title>
 <style>
-    /* CSS는 변경 사항 없습니다. */
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
-    .slider-wrapper { display: flex; }
+    .slider-wrapper { 
+        display: flex; 
+        /* transition: transform 0.5s ease-in-out; */
+    }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
-    .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
+
+    /* 버튼 래퍼 위치 조정 */
+    .button-wrapper { 
+        position: absolute; 
+        bottom: 10px; 
+        left: 0; 
+        width: 100%; 
+        padding: 0 25px; 
+        box-sizing: border-box; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        z-index: 10; 
+        pointer-events: none; 
+    }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
     .slider-btn.show { opacity: 1; transform: translateY(0); display: block; }
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
-    .replay-btn-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 20; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+
+    /* 재생 버튼 및 만족도 평가 래퍼 위치 조정 */
+    .replay-btn-wrapper { 
+        position: absolute; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        text-align: center; 
+        z-index: 20; 
+        display: none; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        pointer-events: none; 
+        padding-bottom: 80px; /* 하단 버튼 영역과 겹치지 않도록 여백 추가 */
+    }
     .replay-btn-wrapper.show { display: flex; }
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; pointer-events: auto; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; pointer-events: auto; }
-    .satisfaction-rating { margin-top: 20px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; pointer-events: auto; }
+
+    /* 만족도 별점 영역 마진 조정 */
+    .satisfaction-rating { 
+        margin-top: 15px; 
+        display: flex; 
+        flex-direction: row-reverse; 
+        justify-content: center; 
+        gap: 5px; 
+        pointer-events: auto; 
+    }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     .satisfaction-rating:hover .star.selected ~ .star:not(:hover) { color: #bbb; }
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; }
+
+    /* 모바일 반응형 조정을 위한 미디어 쿼리 추가 */
+    @media (max-width: 768px) {
+        .button-wrapper {
+            padding: 0 10px;
+            bottom: 5px;
+        }
+        .slider-btn {
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 20px;
+        }
+        .replay-btn-wrapper {
+            padding-bottom: 60px;
+        }
+        .replay-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .replay-text {
+            font-size: 1em;
+        }
+        .satisfaction-rating .star {
+            font-size: 25px;
+        }
+    }
 </style>
 </head>
 <body>
@@ -80,8 +147,8 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음 ❯</button><button class="slider-btn restart-btn">처음부터 ↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -95,22 +162,22 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     const stepLabels = [
-        "①", 
-        "②", 
-        "③",
-        "④",
-        "⑤",
-        "⑥",
-        "⑦"
+        "1단계: 제품 커버 열기", 
+        "2단계: 필터 커버 열기", 
+        "3단계: 기존 필터 분리",
+        "4단계: 새 필터 장착",
+        "5단계: 필터 커버 닫기",
+        "6단계: 제품 커버 닫기",
+        "7단계: 교체 완료"
     ];
     const textData = [
-        { description: "추출구 아래에 컵 놓기" },
-        { description: "상단 커버를 힘을 줘서 밀어서 분리" },
-        { description: "필터 커버 분리" },
-        { description: "기존 필터를 힘을 줘서 밀어 분리" },
-        { description: "새 필터의 마개를 제거하고 체결하기" },
-        { description: "상단 커버를 뒤에서 앞으로 당겨 체결" },
-        { description: "추출 버튼을 눌러서 필터 헹굼 진행(3분 이상 동작)" }
+        { description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." },
+        { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." },
+        { description: "필터를 뒤로 힘껏 밀어 분리해주세요." },
+        { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." },
+        { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." },
+        { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." },
+        { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
