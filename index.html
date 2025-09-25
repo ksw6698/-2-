@@ -21,7 +21,6 @@
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
     
-    /* ✨ 여기가 핵심 수정 부분입니다. */
     .replay-btn-wrapper {
         position: absolute; top: 50%; left: 50%;
         transform: translate(-50%, -50%);
@@ -29,11 +28,11 @@
         display: none; flex-direction: column;
         align-items: center; justify-content: center;
         padding-bottom: 80px;
-        pointer-events: none; /* 평소에는 클릭 비활성화 */
+        pointer-events: none;
     }
     .replay-btn-wrapper.show {
         display: flex;
-        pointer-events: auto; /* .show 클래스가 붙었을 때만 전체 클릭 활성화 */
+        pointer-events: auto;
     }
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; }
@@ -43,6 +42,21 @@
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     .satisfaction-rating:hover .star.selected ~ .star:not(:hover) { color: #bbb; }
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; }
+    
+    /* ✨ 기존 문구 스타일 */
+    #additional-description .primary-text {
+        color: #007bff; /* 파란색으로 변경 */
+        font-weight: bold;
+    }
+    
+    /* ✨ 추가 문구 스타일 */
+    #additional-description .secondary-text {
+        color: #555; /* 회색으로 설정 (원하는 색상으로 변경 가능) */
+        margin-top: 5px; /* 위 문구와의 간격 */
+        display: block; /* 줄바꿈 */
+        font-size: 0.9em; /* 조금 작게 */
+    }
+
     .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
@@ -88,22 +102,27 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
 </div>
 
 <div class="additional-text-area">
-    <p id="additional-description"></p>
+    <p id="additional-description">
+        <span class="primary-text">필터 교체가 완료되었습니다. 도움이 되셨나요?</span><br>
+        <span class="secondary-text">잠시 시간을 내어 만족도를 평가해주세요.</span> </p>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 스크립트 코드는 수정사항 없습니다.
-    const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
-    const textData = [{ description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." }, { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." }, { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }, { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." }, { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." }, { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." }, { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }];
+    // 스크립트 코드에서 `textData` 부분을 삭제하고, `updateAdditionalText` 함수를 아래와 같이 수정했습니다.
+    const stepLabels = ["1단계: 제품 커버 열기", "2단계: 필터 커버 열기", "3단계: 기존 필터 분리", "4단계: 새 필터 장착", "5단계: 필터 커버 닫기", "6단계: 제품 커버 닫기", "7단계: 교체 완료"];
+    
+    // textData를 직접 HTML에 넣었으므로 이 배열은 이제 필요 없습니다.
+    // const textData = [{ description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." }, { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." }, { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }, { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." }, { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." }, { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." }, { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }];
+    
     const additionalDescription = document.getElementById('additional-description');
     const stepNavigation = document.querySelector('.step-navigation');
     const sliderWrapper = document.querySelector('.slider-wrapper');
@@ -124,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function submitForm() {
         const formData = new FormData(ratingForm);
-        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
+        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu2_nBK5rJfMbopa4w/formResponse';
         
         fetch(actionURL, {
             method: 'POST', body: formData, mode: 'no-cors'
@@ -149,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (selectedRating <= 3) {
-                    alert('혹시 아쉬운 점이나 바꿀 부분 있을까요?');
+                    alert('불편하셨던 점을 알려주시면 큰 도움이 됩니다.');
                     if(reasonWrapper) reasonWrapper.style.display = 'block';
                 } else {
                     if(reasonWrapper) reasonWrapper.style.display = 'none';
@@ -162,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(submitReasonBtn) {
         submitReasonBtn.addEventListener('click', function() {
             if (reasonTextarea.value.trim() === "") {
-                alert("개선이 필요한 내용을 작성해주세요.");
+                alert("사유를 입력해주세요.");
                 return;
             }
             submitForm();
@@ -182,7 +201,15 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', () => goToSlide(parseInt(button.dataset.slideTo, 10)));
     });
 
-    function updateAdditionalText(index) { if (textData[index]) additionalDescription.textContent = textData[index].description; }
+    // ✨ updateAdditionalText 함수를 HTML에서 직접 가져오는 방식으로 수정했습니다.
+    function updateAdditionalText(index) {
+        if (index === totalSlides - 1) { // 마지막 슬라이드일 경우
+            additionalDescription.innerHTML = '<span class="primary-text">필터 교체가 완료되었습니다. 도움이 되셨나요?</span><br><span class="secondary-text">잠시 시간을 내어 만족도를 평가해주세요.</span>';
+        } else if (textData[index]) { // 다른 슬라이드일 경우
+            additionalDescription.innerHTML = `<span class="primary-text">${textData[index].description}</span>`;
+        }
+    }
+
     function updateActiveStepButton(index) { stepButtons.forEach((button, btnIndex) => button.classList.toggle('active', btnIndex === index)); }
     function hideAllButtons() { prevBtn.classList.remove('show'); nextBtn.classList.remove('show'); restartBtn.classList.remove('show'); replayBtnWrappers.forEach(wrapper => wrapper.classList.remove('show')); }
     function updateButtonVisibility() {
@@ -197,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function goToSlide(index) {
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
-        updateAdditionalText(currentIndex);
+        updateAdditionalText(currentIndex); // 텍스트 업데이트 함수 호출
         updateActiveStepButton(currentIndex);
         videos.forEach((video, vidIndex) => { if (vidIndex !== index) { video.pause(); video.currentTime = 0; } });
         hideAllButtons();
