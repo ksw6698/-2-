@@ -79,8 +79,8 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터 ↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (selectedRating <= 3) {
-                    alert('불편하셨던 점을 알려주시면 큰 도움이 됩니다.');
+                    alert('개선점을 알려주신 분들 중 추첨을 통해 치킨 상품권을 드립니다.');
                     if(reasonWrapper) reasonWrapper.style.display = 'block';
                 } else {
                     if(reasonWrapper) reasonWrapper.style.display = 'none';
