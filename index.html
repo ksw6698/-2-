@@ -20,16 +20,10 @@
     .slider-btn.show { opacity: 1; transform: translateY(0); display: block; }
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
-    .replay-btn-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 20; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; padding-bottom: 80px; }
+    .replay-btn-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 20; display: none; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 80px; }
     .replay-btn-wrapper.show { display: flex; }
-    .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; pointer-events: auto; }
-    .replay-text { color: white; font-size: 1.1em; font-weight: bold; pointer-events: auto; }
-    
-    /* ✨ 여기가 수정된 부분입니다. */
-    #ratingForm,
-    #ratingForm * {
-        pointer-events: auto;
-    }
+    .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; }
+    .replay-text { color: white; font-size: 1.1em; font-weight: bold; }
 
     .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
@@ -57,12 +51,30 @@
 <div class="main-container">
     <div class="slider-container">
         <div class="slider-wrapper">
-            <div class="slide"><video id="video-0" src="1번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-1" src="2번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-2" src="3번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-3" src="4번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-4" src="5번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
-            <div class="slide"><video id="video-5" src="6번영상.mp4" muted playsinline></video><div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div></div>
+            <div class="slide">
+                <video id="video-0" src="1번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-1" src="2번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-2" src="3번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-3" src="4번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-4" src="5번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
+            <div class="slide">
+                <video id="video-5" src="6번영상.mp4" muted playsinline></video>
+                <div class="replay-btn-wrapper"><button class="replay-btn">↻</button><div class="replay-text">다시보기</div></div>
+            </div>
             <div class="slide">
                 <video id="video-6" src="7번영상.mp4" muted playsinline></video>
                 <div class="replay-btn-wrapper">
@@ -71,11 +83,7 @@
                     <form id="ratingForm">
                         <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
                         <div class="satisfaction-rating">
-                            <span class="star" data-rating="5">★</span>
-                            <span class="star" data-rating="4">★</span>
-                            <span class="star" data-rating="3">★</span>
-                            <span class="star" data-rating="2">★</span>
-                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
                         </div>
                         <div class="reason-input-wrapper" style="display: none;">
                             <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
@@ -99,7 +107,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
+    // 스크립트 부분은 이전과 동일합니다.
     const stepLabels = ["1단계: 제품 커버 열기", "2단계: 필터 커버 열기", "3단계: 기존 필터 분리", "4단계: 새 필터 장착", "5단계: 필터 커버 닫기", "6단계: 제품 커버 닫기", "7단계: 교체 완료"];
     const textData = [{ description: "상단 제품 커버의 표시된 부분을 잡고 힘껏 밀어 분리해주세요." }, { description: "필터 커버의 PUSH 부분을 눌러 커버를 열어주세요." }, { description: "필터를 뒤로 힘껏 밀어 분리해주세요." }, { description: "새 필터를 홈에 맞춰 앞으로 당겨주세요." }, { description: "필터 커버를 '딸깍' 소리가 나도록 닫아주세요." }, { description: "제품 커버를 홈에 맞춰 위에서 아래로 끼워주세요." }, { description: "필터 교체가 완료되었습니다. 도움이 되셨나요?" }];
     const additionalDescription = document.getElementById('additional-description');
