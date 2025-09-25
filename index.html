@@ -24,22 +24,29 @@
     .replay-btn-wrapper {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         text-align: center; z-index: 20; display: none; flex-direction: column;
-        align-items: center; justify-content: center; padding-bottom: 80px;
+        align-items: center; justify-content: center; padding: 20px;
+        background-color: rgba(0, 0, 0, 0.5); /* ✨ 배경을 살짝 추가하여 가독성 확보 */
+        border-radius: 15px; /* ✨ 부드러운 모서리 */
         pointer-events: none;
     }
     .replay-btn-wrapper.show { display: flex; pointer-events: auto; }
-    .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; }
-    .replay-text { color: white; font-size: 1.1em; font-weight: bold; }
+    /* ✨ 다시보기 아이콘 크기 조정 */
+    .replay-btn { background-color: transparent; border: 2px solid white; width: 50px; height: 50px; border-radius: 50%; font-size: 18px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 8px; }
+    /* ✨ 다시보기 텍스트 크기 및 색상 조정 */
+    .replay-text { color: #e0e0e0; font-size: 1em; font-weight: normal; }
 
-    /* ✨ 별점 안내 문구 스타일 추가 */
-    .rating-prompt {
-        color: white;
-        font-size: 1.1em;
-        font-weight: bold;
-        margin-bottom: 10px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* 그림자 효과 추가 */
+    /* ✨ 구분선 스타일 추가 */
+    .rating-divider {
+        width: 60%;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.4);
+        margin: 15px 0;
     }
 
+    .rating-prompt {
+        color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
     .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
@@ -47,14 +54,7 @@
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
-    .tertiary-text { 
-        color: #D32F2F;
-        margin-top: 8px;
-        display: block;
-        font-size: 0.9em;
-        font-style: normal;
-        font-weight: bold;
-    }
+    .tertiary-text { color: #D32F2F; margin-top: 8px; display: block; font-size: 0.9em; font-style: normal; font-weight: bold; }
 
     .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
@@ -64,9 +64,9 @@
     @media (max-width: 768px) {
         .button-wrapper { padding: 0 10px; bottom: 5px; }
         .slider-btn { padding: 10px 15px; font-size: 14px; border-radius: 20px; }
-        .replay-btn-wrapper { padding-bottom: 60px; }
-        .replay-btn { width: 50px; height: 50px; font-size: 18px; }
-        .replay-text { font-size: 1em; }
+        .replay-btn-wrapper { padding-bottom: 20px; } /* 패딩값 통일 */
+        .replay-btn { width: 45px; height: 45px; font-size: 16px; }
+        .replay-text { font-size: 0.9em; }
         .rating-prompt { font-size: 1em; }
         .satisfaction-rating .star { font-size: 25px; }
     }
@@ -86,8 +86,11 @@
             <div class="slide">
                 <video id="video-6" src="7번영상.mp4" muted playsinline></video>
                 <div class="replay-btn-wrapper">
-                    <button class="replay-btn">↻</button>
-                    <div class="replay-text">다시보기</div>
+                    <div class="replay-action">
+                        <button class="replay-btn">↻</button>
+                        <div class="replay-text">다시보기</div>
+                    </div>
+                    <div class="rating-divider"></div>
                     <form id="ratingForm">
                         <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
                         <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
@@ -114,8 +117,8 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
     // JavaScript 코드는 수정사항 없습니다.
+    document.addEventListener('DOMContentLoaded', function() {
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { primary: "새 필터 제품에 장착하기", secondary: "파란색 마개를 꼭 제거하고 장착해주세요." },
         { primary: "필터 커버 닫기", secondary: "PUSH 부분을 살짝 누르면<br>딸깍 소리와 함께 커버가 닫힙니다. " },
         { primary: "제품 커버 닫기", secondary: "커버를 제품의 홈에 맞춘 뒤<br>앞으로 끝까지 당겨서 닫아주세요." },
-        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "다 쓴 필터는 플라스틱 분리배출하시면<br>재활용 업체로 보내집니다" }
+        { primary: "추출 버튼 눌러 필터 자동 헹굼 진행", secondary: "추출구로 물이 3분 이상 추출 됩니다.<br>용기 사이즈를 확인해주세요.", tertiary: "(99, 98, ..., 0 종료)" }
     ];
 
     const additionalDescription = document.getElementById('additional-description');
