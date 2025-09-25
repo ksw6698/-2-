@@ -11,113 +11,37 @@
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
-    .slider-wrapper { 
-        display: flex; 
-    }
+    .slider-wrapper { display: flex; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
-    .button-wrapper { 
-        position: absolute; 
-        bottom: 10px; 
-        left: 0; 
-        width: 100%; 
-        padding: 0 25px; 
-        box-sizing: border-box; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        z-index: 10; 
-        pointer-events: none; 
-    }
+    .button-wrapper { position: absolute; bottom: 10px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
     .slider-btn.show { opacity: 1; transform: translateY(0); display: block; }
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
-    .replay-btn-wrapper { 
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-        text-align: center; 
-        z-index: 20; 
-        display: none; 
-        flex-direction: column; 
-        align-items: center; 
-        justify-content: center; 
-        pointer-events: none; 
-        padding-bottom: 80px;
-    }
+    .replay-btn-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 20; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; padding-bottom: 80px; }
     .replay-btn-wrapper.show { display: flex; }
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; pointer-events: auto; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; pointer-events: auto; }
-    .satisfaction-rating { 
-        margin-top: 15px; 
-        display: flex; 
-        flex-direction: row-reverse; 
-        justify-content: center; 
-        gap: 5px; 
-        pointer-events: auto; 
-    }
+    .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; pointer-events: auto; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     .satisfaction-rating:hover .star.selected ~ .star:not(:hover) { color: #bbb; }
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; }
 
-    .reason-input-wrapper {
-        margin-top: 15px;
-        width: 100%;
-        max-width: 320px;
-    }
-    .reason-input-wrapper textarea {
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-        resize: vertical;
-    }
-    .submit-reason-btn {
-        width: 100%;
-        margin-top: 10px;
-        padding: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .submit-reason-btn:hover {
-        background-color: #0056b3;
-    }
+    .reason-input-wrapper { margin-top: 15px; width: 100%; max-width: 320px; }
+    .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
+    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
+    .submit-reason-btn:hover { background-color: #0056b3; }
 
     @media (max-width: 768px) {
-        .button-wrapper {
-            padding: 0 10px;
-            bottom: 5px;
-        }
-        .slider-btn {
-            padding: 10px 15px;
-            font-size: 14px;
-            border-radius: 20px;
-        }
-        .replay-btn-wrapper {
-            padding-bottom: 60px;
-        }
-        .replay-btn {
-            width: 50px;
-            height: 50px;
-            font-size: 18px;
-        }
-        .replay-text {
-            font-size: 1em;
-        }
-        .satisfaction-rating .star {
-            font-size: 25px;
-        }
+        .button-wrapper { padding: 0 10px; bottom: 5px; }
+        .slider-btn { padding: 10px 15px; font-size: 14px; border-radius: 20px; }
+        .replay-btn-wrapper { padding-bottom: 60px; }
+        .replay-btn { width: 50px; height: 50px; font-size: 18px; }
+        .replay-text { font-size: 1em; }
+        .satisfaction-rating .star { font-size: 25px; }
     }
 </style>
 </head>
@@ -147,7 +71,7 @@
                             <span class="star" data-rating="1">★</span>
                         </div>
                         <div class="reason-input-wrapper" style="display: none;">
-                            <textarea id="satisfactionReason" name="entry.xxxxxxxxxx" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
+                            <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
                             <button type="button" class="submit-reason-btn">제출하기</button>
                         </div>
                     </form>
@@ -155,8 +79,8 @@
             </div>
         </div>
         <div class="button-wrapper">
-            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
-            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터 ↻</button></div>
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전으로 가기</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음으로 이동 ❯</button><button class="slider-btn restart-btn">처음부터 다시 보기 ↻</button></div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -183,21 +107,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const ratingForm = document.getElementById('ratingForm');
     const ratingValueInput = document.getElementById('ratingValue');
     const ratingContainer = document.querySelector('.satisfaction-rating');
-    let currentIndex = 0;
-    const totalSlides = videos.length;
-
     const reasonWrapper = document.querySelector('.reason-input-wrapper');
     const reasonTextarea = document.getElementById('satisfactionReason');
     const submitReasonBtn = document.querySelector('.submit-reason-btn');
+    let currentIndex = 0;
+    const totalSlides = videos.length;
 
     function submitForm() {
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
         
         fetch(actionURL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors'
+            method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
             if(reasonWrapper) reasonWrapper.style.display = 'none';
@@ -213,12 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
             star.addEventListener('click', function() {
                 const selectedRating = parseInt(this.dataset.rating, 10);
                 ratingValueInput.value = selectedRating;
-
                 stars.forEach(s => {
                     s.classList.remove('selected');
-                    if (parseInt(s.dataset.rating) <= selectedRating) {
-                        s.classList.add('selected');
-                    }
+                    if (parseInt(s.dataset.rating) <= selectedRating) s.classList.add('selected');
                 });
 
                 if (selectedRating <= 3) {
@@ -250,20 +168,15 @@ document.addEventListener('DOMContentLoaded', function() {
         stepNavigation.appendChild(button);
     });
     const stepButtons = document.querySelectorAll('.step-btn');
-    stepButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const slideIndex = parseInt(button.dataset.slideTo, 10);
-            goToSlide(slideIndex);
-        });
-    });
-    function updateAdditionalText(index) { if (textData[index]) { additionalDescription.textContent = textData[index].description; } }
-    function updateActiveStepButton(index) { stepButtons.forEach((button, btnIndex) => { button.classList.toggle('active', btnIndex === index); }); }
+    stepButtons.forEach(button => button.addEventListener('click', () => goToSlide(parseInt(button.dataset.slideTo, 10))));
+    function updateAdditionalText(index) { if (textData[index]) additionalDescription.textContent = textData[index].description; }
+    function updateActiveStepButton(index) { stepButtons.forEach((button, btnIndex) => button.classList.toggle('active', btnIndex === index)); }
     function hideAllButtons() { prevBtn.classList.remove('show'); nextBtn.classList.remove('show'); restartBtn.classList.remove('show'); replayBtnWrappers.forEach(wrapper => wrapper.classList.remove('show')); }
     function updateButtonVisibility() {
         hideAllButtons();
         if (!videos[currentIndex] || videos[currentIndex].ended) {
             replayBtnWrappers[currentIndex].classList.add('show');
-            if (currentIndex === 0) { nextBtn.classList.add('show'); } 
+            if (currentIndex === 0) nextBtn.classList.add('show'); 
             else if (currentIndex > 0 && currentIndex < totalSlides - 1) { prevBtn.classList.add('show'); nextBtn.classList.add('show'); } 
             else if (currentIndex === totalSlides - 1) { prevBtn.classList.add('show'); restartBtn.classList.add('show'); }
         }
@@ -275,13 +188,13 @@ document.addEventListener('DOMContentLoaded', function() {
         updateActiveStepButton(currentIndex);
         videos.forEach((video, vidIndex) => { if (vidIndex !== index) { video.pause(); video.currentTime = 0; } });
         hideAllButtons();
-        if (videos[currentIndex]) { videos[currentIndex].play().catch(error => { console.log("Autoplay was prevented: ", error); }); }
+        if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented: ", e));
     }
-    videos.forEach((video, index) => { video.addEventListener('ended', () => { if(index === currentIndex) { updateButtonVisibility(); } }); });
-    replayBtns.forEach((btn, index) => { btn.addEventListener('click', () => { if(index === currentIndex) { hideAllButtons(); videos[currentIndex].play(); } }); });
-    nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) { goToSlide(currentIndex + 1); } });
-    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { goToSlide(currentIndex - 1); } });
-    restartBtn.addEventListener('click', () => { goToSlide(0); });
+    videos.forEach((video, index) => video.addEventListener('ended', () => { if(index === currentIndex) updateButtonVisibility(); }));
+    replayBtns.forEach((btn, index) => btn.addEventListener('click', () => { if(index === currentIndex) { hideAllButtons(); videos[currentIndex].play(); } }));
+    nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
+    restartBtn.addEventListener('click', () => goToSlide(0));
     goToSlide(0);
 });
 </script>
