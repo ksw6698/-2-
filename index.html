@@ -25,12 +25,13 @@
     .replay-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; cursor: pointer; place-content: center; display: grid; margin: 0 auto 10px; pointer-events: auto; }
     .replay-text { color: white; font-size: 1.1em; font-weight: bold; pointer-events: auto; }
     
-    /* ✨ 클릭 활성화를 위해 추가 */
-    #ratingForm {
+    /* ✨ 여기가 수정된 부분입니다. */
+    #ratingForm,
+    #ratingForm * {
         pointer-events: auto;
     }
 
-    .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; pointer-events: auto; }
+    .satisfaction-rating { margin-top: 15px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     .satisfaction-rating:hover .star.selected ~ .star:not(:hover) { color: #bbb; }
