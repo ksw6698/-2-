@@ -15,7 +15,6 @@
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
 
-    /* 하단 버튼 (이전/다음) */
     .button-wrapper { position: absolute; bottom: 10px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
@@ -23,25 +22,21 @@
     .slider-btn:hover { background-color: white; color: black; }
     .restart-btn { background-color: #007bff; border-color: #007bff; }
     
-    /* ✨ 영상 위 오버레이 (구조 단순화) */
     .overlay-wrapper {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        display: none; /* JS로 제어 */
+        display: none;
         flex-direction: column; align-items: center; justify-content: center;
         background-color: rgba(0, 0, 0, 0.6);
         z-index: 20;
     }
     .overlay-wrapper.show { display: flex; }
 
-    /* 다시보기 영역 */
     .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
     .replay-action .replay-btn { border: 2px solid white; width: 45px; height: 45px; border-radius: 50%; font-size: 16px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
     .replay-action .replay-text { color: #e0e0e0; font-size: 0.9em; }
     
-    /* 구분선 */
     .rating-divider { width: 80%; max-width: 200px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px 0; }
 
-    /* 만족도 평가 */
     #ratingForm { width: 100%; text-align: center; }
     .rating-content { display: flex; flex-direction: column; align-items: center; }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
@@ -49,12 +44,10 @@
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
-    /* 사유 입력창 */
     .reason-input-wrapper { margin-top: 15px; width: 90%; max-width: 300px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
-    /* 하단 텍스트 영역 */
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
@@ -93,7 +86,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ✨ JavaScript 로직을 완전히 새로 작성했습니다.
     const stepLabels = ["1단계", "2단계", "3단계", "4단계", "5단계", "6단계", "7단계"];
     const textData = [
         { primary: "추출구 아래 큰 컵 놓기(3L이상)", secondary: "필터 교체 과정에서 제품 내부의 물이 추출됩니다." },
@@ -106,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     const additionalDescription = document.getElementById('additional-description');
+    const stepNavigation = document.querySelector('.step-navigation');
     const slides = document.querySelectorAll('.slide');
     const videos = document.querySelectorAll('.slide video');
     const prevBtn = document.querySelector('.prev-btn');
@@ -113,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const restartBtn = document.querySelector('.restart-btn');
     let currentIndex = 0;
 
-    // ✨ 오버레이 내용을 동적으로 생성하기 위한 HTML 템플릿
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     const ratingFormHTML = `
         <div class="rating-divider"></div>
@@ -141,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(() => {
             alert('소중한 의견 감사합니다!');
             overlay.classList.remove('show');
-            showBottomButtons(); // 하단 버튼 다시 표시
+            showBottomButtons();
         }).catch(error => { console.error('제출 실패:', error); alert('제출에 실패했습니다.'); });
     }
 
@@ -194,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showOverlay() {
         const overlay = slides[currentIndex].querySelector('.overlay-wrapper');
         let overlayContent = replayHTML;
-        if (currentIndex === videos.length - 1) { // 마지막 슬라이드
+        if (currentIndex === videos.length - 1) {
             overlayContent += ratingFormHTML;
         }
         overlay.innerHTML = overlayContent;
@@ -219,17 +211,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.slider-wrapper').style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
         
-        // 텍스트 업데이트
         const item = textData[index];
         let htmlContent = `<span class="primary-text">${item.primary}</span>`;
         if (item.secondary) htmlContent += `<span class="secondary-text">${item.secondary}</span>`;
         if (item.tertiary) htmlContent += `<span class="tertiary-text">${item.tertiary}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
-        // 스텝 버튼 활성화
-        document.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
+        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
         
-        // 비디오 정지 및 오버레이 숨기기
         videos.forEach((video, vidIndex) => { 
             if (vidIndex !== index) video.pause(); 
             slides[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
@@ -238,6 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
         hideBottomButtons();
         if (videos[currentIndex]) videos[currentIndex].play().catch(e => console.log("Autoplay prevented"));
     }
+
+    // ✨ 하단 단계 버튼을 생성하는 코드가 여기 추가되었습니다.
+    stepLabels.forEach((label, index) => {
+        const button = document.createElement('button');
+        button.className = 'step-btn';
+        button.textContent = label;
+        button.addEventListener('click', () => goToSlide(index));
+        stepNavigation.appendChild(button);
+    });
 
     videos.forEach((video, index) => {
         video.addEventListener('ended', () => {
@@ -248,13 +246,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.querySelectorAll('.step-btn').forEach((button, index) => button.addEventListener('click', () => goToSlide(index)));
     nextBtn.addEventListener('click', () => { if (currentIndex < videos.length - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
     
-    // 초기화
-    document.querySelectorAll('.step-navigation').innerHTML = stepLabels.map(label => `<button class="step-btn">${label}</button>`).join('');
     goToSlide(0);
 });
 </script>
