@@ -15,7 +15,8 @@
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
 
-    .button-wrapper { position: absolute; bottom: 10px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
+    /* ✨ 버튼 위치 및 스타일 수정 */
+    .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
     .slider-btn.show { opacity: 1; transform: translateY(0); display: block; }
@@ -51,10 +52,10 @@
 <div class="main-container" style="display:none;">
     <div class="slider-container">
         <div class="slider-wrapper"></div>
-    </div>
-    <div class="button-wrapper">
-        <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
-        <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터↻</button></div>
+        <div class="button-wrapper">
+            <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
+            <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터↻</button></div>
+        </div>
     </div>
     <div class="step-navigation"></div>
 </div>
@@ -66,7 +67,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     
     // ✨ 1단계에서 복사한 '웹에 게시'된 .csv 주소를 여기에 붙여넣으세요.
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
+    const sheetURL = '여기에_게시된_시트_주소_붙여넣기';
 
     const loadingMessage = document.getElementById('loading-message');
     const errorMessage = document.getElementById('error-message');
@@ -120,7 +121,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     function initializeGuide(guideData) {
         currentGuideData = guideData;
         
-        // 슬라이드와 스텝 버튼 동적 생성
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
 
@@ -176,45 +176,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (videos.length > 0) videos[currentIndex].play().catch(e => {});
     }
     
-    // --- 나머지 헬퍼 함수들은 이전과 거의 동일 ---
-    function setupOverlayEventListeners(overlay) { /* ... */ }
-    function submitForm(overlay) { /* ... */ }
-    function showOverlay() { /* ... */ }
-    function hideBottomButtons() { /* ... */ }
-    function showBottomButtons() { /* ... */ }
-    
-    // --- 위 함수들의 상세 구현 ---
-    function hideBottomButtons() {
-        prevBtn.classList.remove('show');
-        nextBtn.classList.remove('show');
-        restartBtn.classList.remove('show');
-    }
-
-    function showBottomButtons() {
-        hideBottomButtons();
-        if (currentIndex === 0) {
-            if (currentGuideData.length > 1) nextBtn.classList.add('show');
-        } else if (currentIndex > 0 && currentIndex < currentGuideData.length - 1) {
-            prevBtn.classList.add('show');
-            nextBtn.classList.add('show');
-        } else if (currentIndex === currentGuideData.length - 1) {
-            if (currentGuideData.length > 1) prevBtn.classList.add('show');
-            restartBtn.classList.add('show');
-        }
-    }
-
-    function showOverlay() {
-        const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
-        let overlayContent = replayHTML;
-        if (currentIndex === currentGuideData.length - 1) {
-            overlayContent += ratingFormHTML;
-        }
-        overlay.innerHTML = overlayContent;
-        setupOverlayEventListeners(overlay);
-        overlay.classList.add('show');
-    }
-
-    function setupOverlayEventListeners(overlay) {
+    function setupOverlayEventListeners(overlay) { 
         const replayAction = overlay.querySelector('.replay-action');
         if (replayAction) {
             replayAction.addEventListener('click', () => {
@@ -257,9 +219,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 });
             }
         }
-    }
-
-    function submitForm(overlay) {
+     }
+    function submitForm(overlay) { 
         const ratingForm = overlay.querySelector('#ratingForm');
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
@@ -271,14 +232,39 @@ document.addEventListener('DOMContentLoaded', async function() {
             overlay.classList.remove('show');
             showBottomButtons();
         }).catch(error => { console.error('제출 실패:', error); alert('제출에 실패했습니다.'); });
-    }
+     }
+    function showOverlay() { 
+        const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
+        let overlayContent = replayHTML;
+        if (currentIndex === currentGuideData.length - 1) {
+            overlayContent += ratingFormHTML;
+        }
+        overlay.innerHTML = overlayContent;
+        setupOverlayEventListeners(overlay);
+        overlay.classList.add('show');
+     }
+    function hideBottomButtons() { 
+        prevBtn.classList.remove('show');
+        nextBtn.classList.remove('show');
+        restartBtn.classList.remove('show');
+     }
+    function showBottomButtons() { 
+        hideBottomButtons();
+        if (currentIndex === 0) {
+            if (currentGuideData.length > 1) nextBtn.classList.add('show');
+        } else if (currentIndex > 0 && currentIndex < currentGuideData.length - 1) {
+            prevBtn.classList.add('show');
+            nextBtn.classList.add('show');
+        } else if (currentIndex === currentGuideData.length - 1) {
+            if (currentGuideData.length > 1) prevBtn.classList.add('show');
+            restartBtn.classList.add('show');
+        }
+     }
 
-    // --- 이벤트 리스너 연결 ---
     nextBtn.addEventListener('click', () => { if (currentIndex < currentGuideData.length - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
     
-    // --- 페이지 초기 실행 ---
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
