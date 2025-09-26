@@ -46,7 +46,7 @@
 <body>
 
 <div id="loading-message">데이터를 불러오는 중입니다...</div>
-<div id="error-message" style="display:none;">가이드를 찾을 수 없습니다.<br>ID를 확인해주세요.</div>
+<div id="error-message" style="display:none;">가이드를 찾을 수 없습니다.<br>ID 또는 Type을 확인해주세요.</div>
 
 <div class="main-container" style="display:none;">
     <div class="slider-container">
@@ -83,11 +83,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
-    // ✨ ratingFormHTML 템플릿 수정
+    // ✨❗️❗️❗️ 1단계에서 복사한 3개의 name 값으로 아래 entry.xxx 부분을 교체하세요. ❗️❗️❗️
     const ratingFormHTML = `
         <div class="rating-divider"></div>
         <form id="ratingForm">
-            <input type="hidden" id="guideIdValue" name="entry.1788348152" value=""> <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
+            <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
+            <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
+            <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
             
             <div class="rating-content">
                 <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
@@ -96,35 +98,26 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </div>
             </div>
             <div class="reason-input-wrapper" style="display: none;">
-                <textarea id="satisfactionReason" name="entry.1948163701" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
+                <textarea id="satisfactionReason" name="entry.276276859" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
                 <button type="button" class="submit-reason-btn">제출</button>
             </div>
         </form>`;
 
     async function loadData() {
-        if (!sheetURL || sheetURL === '여기에_게시된_시트_주소_붙여넣기') {
-            console.error('sheetURL이 설정되지 않았습니다.');
-            return null;
-        }
+        if (!sheetURL || sheetURL.includes('여기에')) { return null; }
         try {
             const response = await fetch(sheetURL);
             if (!response.ok) return null;
             const csvText = await response.text();
             const rows = csvText.split(/\r?\n/).map(row => {
-                const result = [];
-                let current = '';
-                let inQuotes = false;
+                const result = []; let current = ''; let inQuotes = false;
                 for (const char of row) {
                     if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) {
-                        result.push(current);
-                        current = '';
-                    } else current += char;
+                    else if (char === ',' && !inQuotes) { result.push(current); current = ''; } 
+                    else current += char;
                 }
-                result.push(current);
-                return result;
+                result.push(current); return result;
             });
-
             const headers = rows.shift().map(h => h.trim());
             const allData = rows.filter(row => row.length === headers.length).map(row => {
                 const obj = {};
@@ -132,26 +125,19 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return obj;
             });
             return allData;
-        } catch (error) {
-            console.error('데이터 로딩 실패:', error);
-            return null;
-        }
+        } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    // ✨ submitForm 함수 수정
     function submitForm(overlay) {
         const ratingForm = overlay.querySelector('#ratingForm');
-        
-        // ✨ 제출 직전에 현재 guide_id 값을 form에 채워넣습니다.
         const urlParams = new URLSearchParams(window.location.search);
-        const guideId = urlParams.get('id');
-        const guideIdInput = ratingForm.querySelector('#guideIdValue');
-        if (guideIdInput) {
-            guideIdInput.value = guideId;
-        }
+        
+        // ✨ 제출 직전에 guide_id와 guide_type 값을 form에 채워넣습니다.
+        ratingForm.querySelector('#guideIdValue').value = urlParams.get('id');
+        ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
 
         const formData = new FormData(ratingForm);
-        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
+        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse'; // ❗️❗️❗️ 새로운 구글폼 응답 링크로 교체하세요.
         
         fetch(actionURL, {
             method: 'POST', body: formData, mode: 'no-cors'
@@ -159,10 +145,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('소중한 의견 감사합니다!');
             overlay.classList.remove('show');
             showBottomButtons();
-        }).catch(error => { console.error('제출 실패:', error); alert('제출에 실패했습니다.'); });
+        }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    // --- 이하 함수들은 수정사항 없습니다 ---
+    // --- 이하 함수들은 내부 로직이 조금씩 변경되었습니다 ---
     function initializeGuide(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
@@ -180,9 +166,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         videos = document.querySelectorAll('.slide video');
         videos.forEach((video, index) => {
-            video.addEventListener('ended', () => {
-                if (index === currentIndex) { showOverlay(); showBottomButtons(); }
-            });
+            video.addEventListener('ended', () => { if (index === currentIndex) { showOverlay(); showBottomButtons(); } });
         });
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
@@ -277,14 +261,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
-        if (!guideId) {
+        const guideType = urlParams.get('type'); // ✨ type 파라미터 읽기
+        
+        if (!guideId || !guideType) { // ✨ id 또는 type이 없으면 오류 표시
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
             return;
         }
         const allData = await loadData();
         if (allData) {
-            const guideData = allData.filter(row => row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase());
+            // ✨ id와 type 두 가지 조건으로 데이터 필터링
+            const guideData = allData.filter(row => 
+                row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase() &&
+                row.guide_type && row.guide_type.toLowerCase() === guideType.toLowerCase()
+            );
             if (guideData.length > 0) {
                 initializeGuide(guideData);
             } else {
