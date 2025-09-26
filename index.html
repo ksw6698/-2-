@@ -15,7 +15,6 @@
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide video { width: 100%; display: block; }
 
-    /* ✨ 버튼 위치 및 스타일 수정 */
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
@@ -66,7 +65,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
     
-    // ✨ 1단계에서 복사한 '웹에 게시'된 .csv 주소를 여기에 붙여넣으세요.
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
 
     const loadingMessage = document.getElementById('loading-message');
@@ -84,10 +82,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     let videos = [];
 
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
+    
+    // ✨ ratingFormHTML 템플릿 수정
     const ratingFormHTML = `
         <div class="rating-divider"></div>
         <form id="ratingForm">
-            <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
+            <input type="hidden" id="guideIdValue" name="entry.1788348152" value=""> <input type="hidden" id="ratingValue" name="entry.1318776978" value="">
+            
             <div class="rating-content">
                 <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
                 <div class="satisfaction-rating">
@@ -101,14 +102,33 @@ document.addEventListener('DOMContentLoaded', async function() {
         </form>`;
 
     async function loadData() {
+        if (!sheetURL || sheetURL === '여기에_게시된_시트_주소_붙여넣기') {
+            console.error('sheetURL이 설정되지 않았습니다.');
+            return null;
+        }
         try {
             const response = await fetch(sheetURL);
+            if (!response.ok) return null;
             const csvText = await response.text();
-            const rows = csvText.split(/\r?\n/).map(row => row.split(','));
-            const headers = rows.shift();
-            const allData = rows.map(row => {
+            const rows = csvText.split(/\r?\n/).map(row => {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (const char of row) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else current += char;
+                }
+                result.push(current);
+                return result;
+            });
+
+            const headers = rows.shift().map(h => h.trim());
+            const allData = rows.filter(row => row.length === headers.length).map(row => {
                 const obj = {};
-                headers.forEach((header, i) => obj[header.trim()] = row[i] ? row[i].trim() : '');
+                headers.forEach((header, i) => obj[header] = row[i] ? row[i].replace(/^"|"$/g, '').trim() : '');
                 return obj;
             });
             return allData;
@@ -117,111 +137,19 @@ document.addEventListener('DOMContentLoaded', async function() {
             return null;
         }
     }
-
-    function initializeGuide(guideData) {
-        currentGuideData = guideData;
-        
-        sliderWrapper.innerHTML = '';
-        stepNavigation.innerHTML = '';
-
-        guideData.forEach((step, index) => {
-            const slide = document.createElement('div');
-            slide.className = 'slide';
-            slide.innerHTML = `<video src="${step.video_url}" muted playsinline></video><div class="overlay-wrapper"></div>`;
-            sliderWrapper.appendChild(slide);
-
-            const stepBtn = document.createElement('button');
-            stepBtn.className = 'step-btn';
-            stepBtn.textContent = `${index + 1}단계`;
-            stepBtn.addEventListener('click', () => goToSlide(index));
-            stepNavigation.appendChild(stepBtn);
-        });
-
-        videos = document.querySelectorAll('.slide video');
-        videos.forEach((video, index) => {
-            video.addEventListener('ended', () => {
-                if (index === currentIndex) {
-                    showOverlay();
-                    showBottomButtons();
-                }
-            });
-        });
-
-        loadingMessage.style.display = 'none';
-        mainContainer.style.display = 'block';
-        additionalTextArea.style.display = 'block';
-
-        goToSlide(0);
-    }
-
-    function goToSlide(index) {
-        sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
-        currentIndex = index;
-        
-        const item = currentGuideData[index];
-        const additionalDescription = document.getElementById('additional-description');
-        let htmlContent = `<span class="primary-text">${item.primary_text}</span>`;
-        if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
-        if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
-        additionalDescription.innerHTML = htmlContent;
-
-        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
-        
-        videos.forEach((video, vidIndex) => { 
-            if (vidIndex !== index) video.pause();
-            sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
-        });
-
-        hideBottomButtons();
-        if (videos.length > 0) videos[currentIndex].play().catch(e => {});
-    }
     
-    function setupOverlayEventListeners(overlay) { 
-        const replayAction = overlay.querySelector('.replay-action');
-        if (replayAction) {
-            replayAction.addEventListener('click', () => {
-                overlay.classList.remove('show');
-                videos[currentIndex].play();
-            });
+    // ✨ submitForm 함수 수정
+    function submitForm(overlay) {
+        const ratingForm = overlay.querySelector('#ratingForm');
+        
+        // ✨ 제출 직전에 현재 guide_id 값을 form에 채워넣습니다.
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get('id');
+        const guideIdInput = ratingForm.querySelector('#guideIdValue');
+        if (guideIdInput) {
+            guideIdInput.value = guideId;
         }
 
-        const ratingForm = overlay.querySelector('#ratingForm');
-        if (ratingForm) {
-            const stars = ratingForm.querySelectorAll('.star');
-            const ratingContent = ratingForm.querySelector('.rating-content');
-            const reasonWrapper = ratingForm.querySelector('.reason-input-wrapper');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', () => {
-                    const selectedRating = parseInt(star.dataset.rating, 10);
-                    ratingForm.querySelector('#ratingValue').value = selectedRating;
-                    stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
-
-                    if (selectedRating <= 3) {
-                        if(replayAction) replayAction.style.display = 'none';
-                        if(overlay.querySelector('.rating-divider')) overlay.querySelector('.rating-divider').style.display = 'none';
-                        if(ratingContent) ratingContent.style.display = 'none';
-                        if(reasonWrapper) reasonWrapper.style.display = 'block';
-                        hideBottomButtons();
-                    } else {
-                        submitForm(overlay);
-                    }
-                });
-            });
-
-            const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
-            if (submitReasonBtn) {
-                submitReasonBtn.addEventListener('click', () => {
-                    if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
-                        alert("사유를 입력해주세요."); return;
-                    }
-                    submitForm(overlay);
-                });
-            }
-        }
-     }
-    function submitForm(overlay) { 
-        const ratingForm = overlay.querySelector('#ratingForm');
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_l2sGYM5SI9Lp8qY2b_BFJdWHZTymMu29nBK5rJfMbopa4w/formResponse';
         
@@ -232,6 +160,89 @@ document.addEventListener('DOMContentLoaded', async function() {
             overlay.classList.remove('show');
             showBottomButtons();
         }).catch(error => { console.error('제출 실패:', error); alert('제출에 실패했습니다.'); });
+    }
+
+    // --- 이하 함수들은 수정사항 없습니다 ---
+    function initializeGuide(guideData) {
+        currentGuideData = guideData;
+        sliderWrapper.innerHTML = '';
+        stepNavigation.innerHTML = '';
+        guideData.forEach((step, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'slide';
+            slide.innerHTML = `<video src="${step.video_url}" muted playsinline></video><div class="overlay-wrapper"></div>`;
+            sliderWrapper.appendChild(slide);
+            const stepBtn = document.createElement('button');
+            stepBtn.className = 'step-btn';
+            stepBtn.textContent = `${index + 1}단계`;
+            stepBtn.addEventListener('click', () => goToSlide(index));
+            stepNavigation.appendChild(stepBtn);
+        });
+        videos = document.querySelectorAll('.slide video');
+        videos.forEach((video, index) => {
+            video.addEventListener('ended', () => {
+                if (index === currentIndex) { showOverlay(); showBottomButtons(); }
+            });
+        });
+        loadingMessage.style.display = 'none';
+        mainContainer.style.display = 'block';
+        additionalTextArea.style.display = 'block';
+        goToSlide(0);
+    }
+    function goToSlide(index) {
+        sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
+        currentIndex = index;
+        const item = currentGuideData[index];
+        const additionalDescription = document.getElementById('additional-description');
+        let htmlContent = `<span class="primary-text">${item.primary_text}</span>`;
+        if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
+        if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
+        additionalDescription.innerHTML = htmlContent;
+        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
+        videos.forEach((video, vidIndex) => { 
+            if (vidIndex !== index) video.pause();
+            sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
+        });
+        hideBottomButtons();
+        if (videos.length > 0) videos[currentIndex].play().catch(e => {});
+    }
+    function setupOverlayEventListeners(overlay) { 
+        const replayAction = overlay.querySelector('.replay-action');
+        if (replayAction) {
+            replayAction.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                videos[currentIndex].play();
+            });
+        }
+        const ratingForm = overlay.querySelector('#ratingForm');
+        if (ratingForm) {
+            const stars = ratingForm.querySelectorAll('.star');
+            const ratingContent = ratingForm.querySelector('.rating-content');
+            const reasonWrapper = ratingForm.querySelector('.reason-input-wrapper');
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const selectedRating = parseInt(star.dataset.rating, 10);
+                    ratingForm.querySelector('#ratingValue').value = selectedRating;
+                    stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
+                    if (selectedRating <= 3) {
+                        if(replayAction) replayAction.style.display = 'none';
+                        if(overlay.querySelector('.rating-divider')) overlay.querySelector('.rating-divider').style.display = 'none';
+                        if(ratingContent) ratingContent.style.display = 'none';
+                        if(reasonWrapper) reasonWrapper.style.display = 'block';
+                        hideBottomButtons();
+                    } else { submitForm(overlay); }
+                });
+            });
+            const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
+            if (submitReasonBtn) {
+                submitReasonBtn.addEventListener('click', () => {
+                    if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
+                        alert("사유를 입력해주세요."); return;
+                    }
+                    submitForm(overlay);
+                });
+            }
+        }
      }
     function showOverlay() { 
         const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
@@ -260,24 +271,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             restartBtn.classList.add('show');
         }
      }
-
     nextBtn.addEventListener('click', () => { if (currentIndex < currentGuideData.length - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
-    
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
-
         if (!guideId) {
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
             return;
         }
-
         const allData = await loadData();
         if (allData) {
-            const guideData = allData.filter(row => row.guide_id === guideId);
+            const guideData = allData.filter(row => row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase());
             if (guideData.length > 0) {
                 initializeGuide(guideData);
             } else {
@@ -286,12 +293,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         } else {
             loadingMessage.style.display = 'none';
-            errorMessage.innerHTML = '데이터를 불러오는 데 실패했습니다.';
+            errorMessage.innerHTML = '데이터를 불러오는 데 실패했습니다.<br>sheetURL 설정을 확인해주세요.';
             errorMessage.style.display = 'block';
         }
     })();
 });
 </script>
-
 </body>
 </html>
