@@ -10,10 +10,11 @@
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
-    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
-    .slider-wrapper { display: flex; transition: transform 0.3s ease; }
+    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; /* 16:9 비율 유지 */ }
+    .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
-    .slide video { width: 100%; display: block; }
+    /* iframe을 슬라이더 영역에 꽉 채우기 위한 CSS 추가 */
+    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
 
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
@@ -65,6 +66,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
     
+    // ⚠️ 1. 구글 스프레드시트 URL을 그대로 사용합니다.
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
 
     const loadingMessage = document.getElementById('loading-message');
@@ -79,11 +81,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     let currentIndex = 0;
     let currentGuideData = [];
-    let videos = [];
-
+    
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
-    // ✨❗️❗️❗️ 1단계에서 복사한 3개의 name 값으로 아래 entry.xxx 부분을 교체하세요. ❗️❗️❗️
+    // ⚠️ 2. 구글 폼의 응답 필드 (name 속성)을 사용자의 폼에 맞게 확인해주세요.
+    // 기존 코드의 name 값을 그대로 사용했습니다.
     const ratingFormHTML = `
         <div class="rating-divider"></div>
         <form id="ratingForm">
@@ -137,7 +139,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
 
         const formData = new FormData(ratingForm);
-        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse'; // ❗️❗️❗️ 새로운 구글폼 응답 링크로 교체하세요.
+        // ⚠️ 3. 구글 폼의 응답 링크를 사용자의 폼 응답 링크로 확인해주세요.
+        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse'; 
         
         fetch(actionURL, {
             method: 'POST', body: formData, mode: 'no-cors'
@@ -148,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    // --- 이하 함수들은 내부 로직이 조금씩 변경되었습니다 ---
+    // 🌟 핵심 변경: video_url을 YouTube Embed iframe으로 변경
     function initializeGuide(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
@@ -156,23 +159,81 @@ document.addEventListener('DOMContentLoaded', async function() {
         guideData.forEach((step, index) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
-            slide.innerHTML = `<video src="${step.video_url}" muted playsinline></video><div class="overlay-wrapper"></div>`;
+
+            // ⚠️ 4. YouTube Embed 코드 생성 (자동 재생, 음소거, 반복 재생 방지)
+            const youtubeID = getYouTubeID(step.video_url); 
+            const embedHTML = `<iframe 
+                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=0&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>`;
+            
+            slide.innerHTML = `${embedHTML}<div class="overlay-wrapper"></div>`;
             sliderWrapper.appendChild(slide);
+
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepNavigation.appendChild(stepBtn);
         });
-        videos = document.querySelectorAll('.slide video');
-        videos.forEach((video, index) => {
-            video.addEventListener('ended', () => { if (index === currentIndex) { showOverlay(); showBottomButtons(); } });
+
+        // 🌟 핵심 변경: video 요소 대신 iframe을 조작
+        videos = document.querySelectorAll('.slide iframe'); 
+        videos.forEach((iframe, index) => {
+            // iframe을 위한 YouTube Player API 리스너 설정 (아래 함수 참조)
+            setupYouTubeListener(iframe, index); 
         });
+
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
         goToSlide(0);
     }
+
+    // 🌟 YouTube URL에서 ID를 추출하는 함수 추가
+    function getYouTubeID(url) {
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : url; // 매칭된 ID를 반환하거나, 매칭되지 않으면 원본 URL을 반환 (ID라고 가정)
+    }
+
+    // 🌟 YouTube Player API를 사용하여 영상 종료를 감지하고 오버레이를 표시하는 함수
+    function setupYouTubeListener(iframe, index) {
+        // iframe이 로드되면 YouTube Player 객체를 생성합니다.
+        iframe.onload = function() {
+            // YouTube Player API가 로드되었는지 확인 (비동기 로딩을 위해 window.YT.Player를 사용)
+            if (typeof YT !== 'undefined' && YT.Player) {
+                new YT.Player(iframe, {
+                    events: {
+                        'onStateChange': (event) => {
+                            // 0은 영상 종료(ENDED) 상태를 의미합니다.
+                            if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
+                                showOverlay();
+                                showBottomButtons();
+                            }
+                        }
+                    }
+                });
+            } else {
+                // API가 아직 로드되지 않은 경우, 재시도 또는 오류 처리
+                console.warn('YouTube API not ready. Retrying setup...');
+                setTimeout(() => setupYouTubeListener(iframe, index), 500);
+            }
+        };
+    }
+
+    // 🌟 유튜브 API 로드를 위한 코드 추가 (스크립트 태그 삽입)
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // 전역 함수 onYouTubeIframeAPIReady: API 로드 완료 시 자동 호출됨
+    window.onYouTubeIframeAPIReady = function() {
+        console.log("YouTube API Ready");
+    };
+
     function goToSlide(index) {
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
@@ -183,21 +244,45 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
         stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
-        videos.forEach((video, vidIndex) => { 
-            if (vidIndex !== index) video.pause();
+        
+        // 🌟 핵심 변경: 현재 슬라이드 외 영상 정지 및 오버레이 제거
+        videos.forEach((iframe, vidIndex) => {
+            const player = iframe.contentWindow.postMessage ? new YT.Player(iframe) : null;
+            
+            if (vidIndex === index) {
+                // 현재 슬라이드 영상 재생 (첫 로드 시 자동 재생 방지를 위해 명시적으로 play)
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+            } else {
+                // 다른 슬라이드 영상 정지
+                if (player && typeof player.pauseVideo === 'function') {
+                    player.pauseVideo();
+                }
+            }
             sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
         });
+
         hideBottomButtons();
-        if (videos.length > 0) videos[currentIndex].play().catch(e => {});
     }
+    
     function setupOverlayEventListeners(overlay) { 
         const replayAction = overlay.querySelector('.replay-action');
+        const currentIframe = sliderWrapper.children[currentIndex].querySelector('iframe');
+        const player = currentIframe.contentWindow.postMessage ? new YT.Player(currentIframe) : null;
+        
         if (replayAction) {
             replayAction.addEventListener('click', () => {
                 overlay.classList.remove('show');
-                videos[currentIndex].play();
+                // 🌟 핵심 변경: YouTube Player API를 사용하여 영상 처음부터 재생
+                if (player && typeof player.seekTo === 'function') {
+                    player.seekTo(0);
+                    player.playVideo();
+                }
             });
         }
+
+        // 기존 평점 로직 유지
         const ratingForm = overlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
@@ -227,7 +312,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 });
             }
         }
-     }
+    }
+    
     function showOverlay() { 
         const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
         let overlayContent = replayHTML;
@@ -237,12 +323,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         overlay.innerHTML = overlayContent;
         setupOverlayEventListeners(overlay);
         overlay.classList.add('show');
-     }
+    }
+    
     function hideBottomButtons() { 
         prevBtn.classList.remove('show');
         nextBtn.classList.remove('show');
         restartBtn.classList.remove('show');
-     }
+    }
+    
     function showBottomButtons() { 
         hideBottomButtons();
         if (currentIndex === 0) {
@@ -254,23 +342,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (currentGuideData.length > 1) prevBtn.classList.add('show');
             restartBtn.classList.add('show');
         }
-     }
+    }
+    
     nextBtn.addEventListener('click', () => { if (currentIndex < currentGuideData.length - 1) goToSlide(currentIndex + 1); });
     prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
     restartBtn.addEventListener('click', () => goToSlide(0));
+    
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
-        const guideType = urlParams.get('type'); // ✨ type 파라미터 읽기
+        const guideType = urlParams.get('type'); 
         
-        if (!guideId || !guideType) { // ✨ id 또는 type이 없으면 오류 표시
+        if (!guideId || !guideType) { 
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
             return;
         }
         const allData = await loadData();
         if (allData) {
-            // ✨ id와 type 두 가지 조건으로 데이터 필터링
             const guideData = allData.filter(row => 
                 row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase() &&
                 row.guide_type && row.guide_type.toLowerCase() === guideType.toLowerCase()
