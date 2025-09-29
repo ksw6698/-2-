@@ -10,128 +10,60 @@
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
-    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; /* 16:9 비율 유지 */ }
-    .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
+    .slider-wrapper { display: flex; transition: transform 0.3s ease; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
-    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; } 
+    .slide video { width: 100%; display: block; }
 
-    .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
-    .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
-    
-    .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 1; transform: translateY(0); pointer-events: auto; display: block; }
-    
-    /* 🌟 오버레이: 동영상 종료 후 표시되는 화면 */
-    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.95); border-radius: 0; padding: 0; z-index: 20; box-sizing: border-box; }
+    /* ✨ 오버레이: 동영상 종료 후 표시되는 전체 화면 */
+    .overlay-wrapper {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        display: none; /* JS로 제어 */
+        flex-direction: column; align-items: center; justify-content: space-between; /* ✨ 상/중/하 분리 배치 */
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: 20; padding: 20px; box-sizing: border-box;
+    }
     .overlay-wrapper.show { display: flex; }
 
-    /* 🌟 시작 화면 오버레이 스타일 */
-    #startOverlay { 
-        display: flex; 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        background-color: rgba(0, 0, 0, 0.95); 
-        z-index: 25; 
-        flex-direction: column; 
-        align-items: center; 
-        justify-content: center; 
-        color: white; 
-    }
-    #startOverlay.hidden { display: none; }
-    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
-    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 10px; }
-    #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
+    /* ✨ 다시보기 영역 (상단) */
+    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .replay-action .replay-btn { border: 1px solid white; width: 35px; height: 35px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
+    .replay-action .replay-text { color: #e0e0e0; font-size: 0.8em; }
     
-    /* 🌟 오버레이 메인 컨텐츠 영역 - 이미지 1, 2 반영 */
-    .overlay-content-area { 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: space-between; /* 🌟 상단, 중앙, 하단 요소가 공간을 나눠갖도록 */
-        align-items: center; 
-        padding: 20px;
-        width: 100%;
-        max-width: 400px;
-        height: 100%; /* 부모(overlay-wrapper)의 꽉 채우도록 */
-        box-sizing: border-box;
-    }
+    /* ✨ 만족도 평가 영역 (중앙) */
+    .rating-section { width: 100%; text-align: center; }
+    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; }
+    .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
+    .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
-    /* 🌟 다시보기 버튼 그룹 - 이미지 1, 2 반영 (원 크기 대폭 축소) */
-    .replay-action { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        cursor: pointer; 
-        margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */
-    }
-    .replay-action .replay-btn { 
-        border: 1px solid white; /* 🌟 원 테두리 얇게 */
-        width: 30px; /* 🌟 원 크기 대폭 축소 */
-        height: 30px; /* 🌟 원 크기 대폭 축소 */
-        border-radius: 50%; 
-        font-size: 14px; /* 🌟 아이콘 폰트 크기 조정 */
-        place-content: center; 
-        display: grid; 
-        margin-bottom: 3px; /* 🌟 텍스트와의 간격 줄임 */
-        color: white; 
-    }
-    .replay-action .replay-text { 
-        color: white; 
-        font-size: 14px; /* 🌟 텍스트 폰트 크기 조정 */
-        font-weight: bold; 
-    }
-
-    /* 🌟 버튼 그룹 (이전/다음/처음부터) - 이미지 1, 2 반영 */
-    .overlay-buttons { 
-        display: flex; 
-        gap: 15px; 
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */
-    }
-    .overlay-step-btn { 
-        background-color: #007bff; 
-        color: white; 
-        border: none; 
-        padding: 12px 20px; 
-        font-size: 16px; 
-        font-weight: bold; 
-        cursor: pointer; 
-        border-radius: 30px; 
-        flex-shrink: 1; 
-        flex-basis: auto; 
-    }
-    
-    /* 🌟 만족도 폼 관련 스타일 - 이미지 1, 2 반영 */
-    .rating-divider { 
-        width: 100%; 
-        max-width: 250px; 
-        height: 1px; 
-        background-color: rgba(255, 255, 255, 0.4); 
-        margin: 15px auto 15px; 
-    }
-    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; } /* 🌟 폼이 중앙에 올 수 있도록 flex 속성 추가 */
-    .rating-content { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        margin-top: 0px; /* 🌟 중앙 정렬에 맞춰 마진 제거 */
-        margin-bottom: 5px; 
-    }
-    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
-    .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
-    .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
-    
-    .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
+    /* ✨ 사유 입력창 */
+    .reason-input-wrapper { margin: 0 auto; width: 100%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
+    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 30px; cursor: pointer; }
 
+    /* ✨ 오버레이 내부 버튼 (하단) */
+    .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; }
+    .overlay-step-btn {
+        background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white;
+        padding: 12px 24px; font-size: 16px; font-weight: bold;
+        cursor: pointer; border-radius: 30px; flex-grow: 1; max-width: 180px;
+    }
+    .overlay-step-btn.restart { background-color: #007bff; border-color: #007bff; }
+
+
+    /* 하단 텍스트 영역 */
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
     .secondary-text { color: #555; margin-top: 5px; display: block; font-size: 0.9em; }
     .tertiary-text { color: #D32F2F; margin-top: 8px; display: block; font-size: 0.9em; font-style: normal; font-weight: bold; }
     #loading-message, #error-message { font-size: 1.2em; color: #888; text-align: center; padding: 50px; }
+    
+    @media (max-width: 768px) {
+        .rating-prompt { font-size: 1em; }
+        .satisfaction-rating .star { font-size: 28px; }
+        .overlay-step-btn { font-size: 14px; padding: 10px 15px;}
+    }
 </style>
 </head>
 <body>
@@ -142,20 +74,7 @@
 <div class="main-container" style="display:none;">
     <div class="slider-container">
         <div class="slider-wrapper"></div>
-        <div class="button-wrapper">
-            <div class="button-group-left"></div>
-            <div class="button-group-right"></div>
         </div>
-        <div id="globalOverlay" class="overlay-wrapper"></div>
-        
-        <div id="startOverlay">
-            <div class="start-title">관리 가이드 시작하기</div>
-            <button id="startButton" class="start-button">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                시작
-            </button>
-        </div>
-    </div>
     <div class="step-navigation"></div>
 </div>
 <div class="additional-text-area" style="display:none;">
@@ -163,22 +82,6 @@
 </div>
 
 <script>
-// 🌟 YouTube Iframe Player API 로드를 위한 코드 추가
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-const firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-let playerObjects = []; 
-let isDataLoaded = false;
-let startInitialization = null; 
-
-window.onYouTubeIframeAPIReady = function() {
-    if (isDataLoaded) {
-        startInitialization();
-    }
-};
-
 document.addEventListener('DOMContentLoaded', async function() {
     
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
@@ -189,41 +92,55 @@ document.addEventListener('DOMContentLoaded', async function() {
     const additionalTextArea = document.querySelector('.additional-text-area');
     const sliderWrapper = document.querySelector('.slider-wrapper');
     const stepNavigation = document.querySelector('.step-navigation');
-    const globalOverlay = document.getElementById('globalOverlay'); 
-    const startOverlay = document.getElementById('startOverlay'); 
-    const startButton = document.getElementById('startButton'); 
-
+    
     let currentIndex = 0;
     let currentGuideData = [];
-    
+    let videos = [];
+
+    // ✨ 오버레이에 들어갈 HTML 템플릿 재구성
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
     const ratingFormHTML = `
-        <div class="rating-divider"></div>
-        <form id="ratingForm">
-            <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
-            <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
-            <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
-            
-            <div class="rating-content">
-                <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
-                <div class="satisfaction-rating">
-                    <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+        <div class="rating-section">
+            <form id="ratingForm">
+                <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
+                <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
+                <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
+                
+                <div class="rating-content">
+                    <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
+                    <div class="satisfaction-rating">
+                        <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+                    </div>
                 </div>
-            </div>
-            <div class="reason-input-wrapper" style="display: none;">
-                <textarea id="satisfactionReason" name="entry.276276859" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
-                <button type="button" class="submit-reason-btn">제출</button>
-            </div>
-        </form>`;
+                <div class="reason-input-wrapper" style="display: none;">
+                    <textarea id="satisfactionReason" name="entry.276276859" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
+                    <button type="button" class="submit-reason-btn">제출</button>
+                </div>
+            </form>
+        </div>`;
 
-    // --- 데이터 로드 함수 (변경 없음) ---
+    function getOverlayButtonsHTML() {
+        if (currentIndex === currentGuideData.length - 1) { // 마지막 단계
+            return `<div class="overlay-buttons">
+                        <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
+                        <button class="overlay-step-btn restart-btn restart">처음부터↻</button>
+                    </div>`;
+        } else { // 중간 단계
+            const prevButtonVisibility = currentIndex > 0 ? '' : 'style="visibility:hidden;"';
+            return `<div class="overlay-buttons">
+                        <button class="overlay-step-btn prev-btn" ${prevButtonVisibility}>❮ 이전단계</button>
+                        <button class="overlay-step-btn next-btn">다음단계 ❯</button>
+                    </div>`;
+        }
+    }
+
     async function loadData() {
-        if (!sheetURL || sheetURL.includes('여기에')) { return null; }
         try {
             const response = await fetch(sheetURL);
             if (!response.ok) return null;
             const csvText = await response.text();
+            // ... (CSV 파싱 로직은 이전과 동일)
             const rows = csvText.split(/\r?\n/).map(row => {
                 const result = []; let current = ''; let inQuotes = false;
                 for (const char of row) {
@@ -234,22 +151,21 @@ document.addEventListener('DOMContentLoaded', async function() {
                 result.push(current); return result;
             });
             const headers = rows.shift().map(h => h.trim());
-            const allData = rows.filter(row => row.length === headers.length).map(row => {
+            return rows.filter(row => row.length === headers.length).map(row => {
                 const obj = {};
                 headers.forEach((header, i) => obj[header] = row[i] ? row[i].replace(/^"|"$/g, '').trim() : '');
                 return obj;
             });
-            return allData;
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    // --- 폼 제출 함수 (변경 없음) ---
-    function submitForm() { 
-        const ratingForm = document.getElementById('ratingForm');
-        if (!ratingForm) return;
+    function submitForm(overlay) {
+        const ratingForm = overlay.querySelector('#ratingForm');
         const urlParams = new URLSearchParams(window.location.search);
+        
         ratingForm.querySelector('#guideIdValue').value = urlParams.get('id');
         ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
+
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse';
         
@@ -257,62 +173,19 @@ document.addEventListener('DOMContentLoaded', async function() {
             method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
-            
-            const finalContent = `<div class="overlay-action-group">
-                                    <button class="overlay-step-btn restart-only-btn">처음부터↻</button>
-                                  </div>`;
-            globalOverlay.innerHTML = finalContent;
-            globalOverlay.querySelector('.restart-only-btn').addEventListener('click', () => goToSlide(0));
-            
+            overlay.classList.remove('show');
+            showOverlay(); // 제출 후 다시 기본 오버레이 표시
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    function getYouTubeID(url) {
-        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
-        const match = url.match(regex);
-        return match ? match[1] : url;
-    }
-
-    function createVideoPlayers(guideData) {
-        playerObjects = []; 
-        document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
-            playerObjects[index] = new YT.Player(iframe.id, {
-                events: {
-                    'onStateChange': (event) => {
-                        if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
-                            showOverlay(index === currentGuideData.length - 1); 
-                        }
-                    },
-                    'onReady': (event) => {
-                        // 첫 슬라이드에서만 playVideo를 호출하도록 함. (startButton에서 처리)
-                    }
-                }
-            });
-        });
-    }
-
-    function prepareDOM(guideData) {
+    function initializeGuide(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
-        
         guideData.forEach((step, index) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
-
-            const youtubeID = getYouTubeID(step.video_url); 
-            const autoplay = 0; 
-            
-            // 🌟 YouTube API 매개변수를 통해 관련 동영상 및 정보 최대한 숨기기
-            const embedHTML = `<iframe 
-                                data-step-index="${index}"
-                                id="youtube-player-${index}"
-                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=${autoplay}&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1&amp;iv_load_policy=3&amp;disablekb=1&amp;cc_load_policy=3" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen></iframe>`;
-            
-            slide.innerHTML = embedHTML;
+            slide.innerHTML = `<video src="${step.video_url}" muted playsinline></video><div class="overlay-wrapper"></div>`;
             sliderWrapper.appendChild(slide);
 
             const stepBtn = document.createElement('button');
@@ -321,40 +194,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepNavigation.appendChild(stepBtn);
         });
-    }
-
-    startInitialization = function() {
-        prepareDOM(currentGuideData); 
-        createVideoPlayers(currentGuideData);
-        
+        videos = document.querySelectorAll('.slide video');
+        videos.forEach((video, index) => {
+            video.addEventListener('ended', () => { if (index === currentIndex) showOverlay(); });
+        });
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
-        
-        currentIndex = 0;
-        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === 0));
-        const item = currentGuideData[0];
-        const additionalDescription = document.getElementById('additional-description');
-        let htmlContent = `<span class="primary-text">${item.primary_text}</span>`;
-        if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
-        if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
-        additionalDescription.innerHTML = htmlContent;
-
-        startOverlay.classList.remove('hidden'); 
+        goToSlide(0);
     }
-    
-    startButton.addEventListener('click', () => {
-        startOverlay.classList.add('hidden'); 
-        if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
-            playerObjects[0].playVideo(); 
-        }
-    });
 
     function goToSlide(index) {
-        if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
-             playerObjects[currentIndex].stopVideo();
-        }
-
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
         
@@ -364,66 +214,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
+
         stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
         
-        if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
-            playerObjects[currentIndex].seekTo(0); 
-            playerObjects[currentIndex].playVideo(); 
-        }
+        videos.forEach((video, vidIndex) => { 
+            if (vidIndex !== index) { video.pause(); video.currentTime = 0; }
+            sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
+        });
 
-        globalOverlay.classList.remove('show');
+        if (videos.length > 0) videos[currentIndex].play().catch(e => {});
     }
     
-    function setupOverlayEventListeners(isFinalStep) { 
-        let content = `<div class="overlay-content-area">`; 
-
-        content += replayHTML; // 다시보기는 항상 상단에 위치
-
-        if (isFinalStep) {
-             content += `<div id="ratingSection">
-                            ${ratingFormHTML}
-                         </div>`;
-                         
-             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
-                            <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                            <button class="overlay-step-btn restart-btn">처음부터↻</button>
-                        </div>`;
-        } else {
-             content += `<div class="overlay-buttons">
-                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
-                            <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
-                        </div>`;
-        }
-        
-        content += `</div>`; // 🌟 오버레이 콘텐츠 영역 끝
-
-        globalOverlay.innerHTML = content;
-
-        // --- 이벤트 리스너 설정 ---
-        globalOverlay.querySelector('.replay-action').addEventListener('click', () => {
-            globalOverlay.classList.remove('show');
-            if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].seekTo === 'function') {
-                playerObjects[currentIndex].seekTo(0);
-                playerObjects[currentIndex].playVideo();
-            }
+    function setupOverlayEventListeners(overlay) { 
+        overlay.querySelector('.replay-action')?.addEventListener('click', () => {
+            overlay.classList.remove('show');
+            videos[currentIndex].play();
         });
-        
-        const prevBtn = globalOverlay.querySelector('.prev-btn');
-        if (prevBtn) prevBtn.addEventListener('click', () => { goToSlide(currentIndex - 1); });
 
-        const nextStepBtn = globalOverlay.querySelector('.next-step-btn');
-        if (nextStepBtn) nextStepBtn.addEventListener('click', () => { goToSlide(currentIndex + 1); });
-
-        const restartBtn = globalOverlay.querySelector('.restart-btn');
-        if (restartBtn) restartBtn.addEventListener('click', () => { goToSlide(0); });
+        overlay.querySelector('.prev-btn')?.addEventListener('click', () => goToSlide(currentIndex - 1));
+        overlay.querySelector('.next-btn')?.addEventListener('click', () => goToSlide(currentIndex + 1));
+        overlay.querySelector('.restart-btn')?.addEventListener('click', () => goToSlide(0));
         
-        const ratingForm = globalOverlay.querySelector('#ratingForm');
+        const ratingForm = overlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
             const ratingContent = ratingForm.querySelector('.rating-content');
             const reasonWrapper = ratingForm.querySelector('.reason-input-wrapper');
-            const navigationButtonsGroup = globalOverlay.querySelector('#navigationButtonsGroup'); 
-            
+            const replayAction = overlay.querySelector('.replay-action');
+            const divider = overlay.querySelector('.rating-divider');
+            const overlayButtons = overlay.querySelector('.overlay-buttons');
+
             stars.forEach(star => {
                 star.addEventListener('click', () => {
                     const selectedRating = parseInt(star.dataset.rating, 10);
@@ -431,69 +251,64 @@ document.addEventListener('DOMContentLoaded', async function() {
                     stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
                     
                     if (selectedRating <= 3) {
+                        if(replayAction) replayAction.style.display = 'none';
+                        if(divider) divider.style.display = 'none';
                         if(ratingContent) ratingContent.style.display = 'none';
+                        if(overlayButtons) overlayButtons.style.display = 'none';
                         if(reasonWrapper) reasonWrapper.style.display = 'block';
-                        if(navigationButtonsGroup) navigationButtonsGroup.style.display = 'none'; 
-                    } else { submitForm(); } 
+                    } else { submitForm(overlay); }
                 });
             });
-            
+
             const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
-            if (submitReasonBtn) {
-                submitReasonBtn.addEventListener('click', () => {
-                    if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
-                        alert("사유를 입력해주세요."); return;
-                    }
-                    submitForm(); 
-                });
-            }
+            submitReasonBtn?.addEventListener('click', () => {
+                if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
+                    alert("사유를 입력해주세요."); return;
+                }
+                submitForm(overlay);
+            });
         }
     }
-    
-    function showOverlay(isFinalStep) { 
-        setupOverlayEventListeners(isFinalStep);
-        globalOverlay.classList.add('show');
-    }
-    
-    function showBottomButtons() {} 
-    
+
+    function showOverlay() { 
+        const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
+        let overlayContent = '';
+        if (currentIndex === currentGuideData.length - 1) { // 마지막 단계
+             overlayContent = `${replayHTML}${ratingFormHTML}${getOverlayButtonsHTML()}`;
+        } else { // 중간 단계
+             overlayContent = `${replayHTML}${getOverlayButtonsHTML()}`;
+        }
+        overlay.innerHTML = overlayContent;
+        setupOverlayEventListeners(overlay);
+        overlay.classList.add('show');
+     }
+     
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
-        const guideType = urlParams.get('type'); 
+        const guideType = urlParams.get('type');
         
-        if (!guideId || !guideType) { 
+        if (!guideId || !guideType) {
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
-            startOverlay.classList.add('hidden'); 
             return;
         }
-        
         const allData = await loadData();
-        
         if (allData) {
             const guideData = allData.filter(row => 
                 row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase() &&
                 row.guide_type && row.guide_type.toLowerCase() === guideType.toLowerCase()
             );
-            
             if (guideData.length > 0) {
-                prepareDOM(guideData); 
-                isDataLoaded = true;
-                
-                if (typeof YT !== 'undefined' && YT.Player) {
-                    startInitialization();
-                } 
+                initializeGuide(guideData);
             } else {
                 loadingMessage.style.display = 'none';
                 errorMessage.style.display = 'block';
-                startOverlay.classList.add('hidden');
             }
         } else {
             loadingMessage.style.display = 'none';
             errorMessage.innerHTML = '데이터를 불러오는 데 실패했습니다.<br>sheetURL 설정을 확인해주세요.';
             errorMessage.style.display = 'block';
-            startOverlay.classList.add('hidden');
         }
     })();
 });
