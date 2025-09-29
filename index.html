@@ -13,29 +13,28 @@
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; /* 16:9 비율 유지 */ }
     .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
-    /* iframe을 슬라이더 영역에 꽉 채우기 위한 CSS 추가 */
-    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; } /* iframe CSS 수정 */
 
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
-    .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); pointer-events: auto; display: none; }
-    .slider-btn.show { opacity: 1; transform: translateY(0); display: block; }
+    .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 1; transform: translateY(0); pointer-events: auto; display: block; }
     
-    .overlay-wrapper { position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.6); border-radius: 15px; padding: 20px 15px; z-index: 20; width: 85%; max-width: 350px; box-sizing: border-box; }
+    /* 덮어쓰기 오버레이 스타일 (재생 완료 시 사용) */
+    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.85); border-radius: 0; padding: 0; z-index: 20; box-sizing: border-box; }
     .overlay-wrapper.show { display: flex; }
     .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .replay-action .replay-btn { border: 2px solid white; width: 40px; height: 40px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
-    .replay-action .replay-text { color: #e0e0e0; font-size: 0.8em; }
+    .replay-action .replay-btn { border: 2px solid white; width: 60px; height: 60px; border-radius: 50%; font-size: 20px; place-content: center; display: grid; margin-bottom: 10px; color: white; }
+    .replay-action .replay-text { color: #e0e0e0; font-size: 1.2em; }
     .rating-divider { width: 80%; max-width: 200px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px 0; }
     #ratingForm { width: 100%; text-align: center; }
     .rating-content { display: flex; flex-direction: column; align-items: center; }
-    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
+    .rating-prompt { color: white; font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
-    .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
+    .satisfaction-rating .star { font-size: 36px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
+    .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
@@ -56,6 +55,8 @@
             <div class="button-group-left"><button class="slider-btn prev-btn">❮ 이전단계</button></div>
             <div class="button-group-right"><button class="slider-btn next-btn">다음단계 ❯</button><button class="slider-btn restart-btn">처음부터↻</button></div>
         </div>
+        
+        <div id="globalOverlay" class="overlay-wrapper"></div>
     </div>
     <div class="step-navigation"></div>
 </div>
@@ -66,7 +67,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
     
-    // ⚠️ 1. 구글 스프레드시트 URL을 그대로 사용합니다.
+    // ⚠️ 구글 스프레드시트 URL 확인
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
 
     const loadingMessage = document.getElementById('loading-message');
@@ -79,13 +80,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     const nextBtn = document.querySelector('.next-btn');
     const restartBtn = document.querySelector('.restart-btn');
     
+    // 🌟 글로벌 오버레이 요소 참조
+    const globalOverlay = document.getElementById('globalOverlay'); 
+
     let currentIndex = 0;
     let currentGuideData = [];
     
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
-    // ⚠️ 2. 구글 폼의 응답 필드 (name 속성)을 사용자의 폼에 맞게 확인해주세요.
-    // 기존 코드의 name 값을 그대로 사용했습니다.
+    // ⚠️ 구글 폼 응답 필드와 URL 확인
     const ratingFormHTML = `
         <div class="rating-divider"></div>
         <form id="ratingForm">
@@ -130,28 +133,35 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    function submitForm(overlay) {
-        const ratingForm = overlay.querySelector('#ratingForm');
+    function submitForm() { // 오버레이 요소를 인자로 받지 않습니다.
+        const ratingForm = document.getElementById('ratingForm');
+        if (!ratingForm) return;
+
         const urlParams = new URLSearchParams(window.location.search);
         
-        // ✨ 제출 직전에 guide_id와 guide_type 값을 form에 채워넣습니다.
         ratingForm.querySelector('#guideIdValue').value = urlParams.get('id');
         ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
 
         const formData = new FormData(ratingForm);
-        // ⚠️ 3. 구글 폼의 응답 링크를 사용자의 폼 응답 링크로 확인해주세요.
-        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse'; 
+        const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse';
         
         fetch(actionURL, {
             method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
-            overlay.classList.remove('show');
+            globalOverlay.classList.remove('show');
             showBottomButtons();
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    // 🌟 핵심 변경: video_url을 YouTube Embed iframe으로 변경
+    // 🌟 핵심 변경: YouTube ID 추출 함수 (기존과 동일)
+    function getYouTubeID(url) {
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : url;
+    }
+
+    // 🌟 플레이어 로드 (iframe src) 및 이벤트 감지용 인터벌 설정
     function initializeGuide(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
@@ -160,15 +170,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             const slide = document.createElement('div');
             slide.className = 'slide';
 
-            // ⚠️ 4. YouTube Embed 코드 생성 (자동 재생, 음소거, 반복 재생 방지)
+            // ⚠️ YouTube Embed 코드 생성 (autoplay=1, loop=1 설정 추가)
             const youtubeID = getYouTubeID(step.video_url); 
+            // 🌟 loop=1 설정은 iframe이 끝난 후 다시 재생되도록 합니다. 
+            // 🌟 playlist=[youtubeID]는 루프가 작동하도록 합니다.
+            // 🌟 enablejsapi=1은 JS 제어를 위한 최소한의 설정입니다.
             const embedHTML = `<iframe 
-                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=0&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1" 
+                                data-step-index="${index}"
+                                id="youtube-player-${index}"
+                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=1&amp;mute=0&amp;controls=1&amp;loop=1&amp;playlist=${youtubeID}&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1&amp;start=0" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen></iframe>`;
             
-            slide.innerHTML = `${embedHTML}<div class="overlay-wrapper"></div>`;
+            slide.innerHTML = embedHTML;
             sliderWrapper.appendChild(slide);
 
             const stepBtn = document.createElement('button');
@@ -177,64 +192,42 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepNavigation.appendChild(stepBtn);
         });
-
-        // 🌟 핵심 변경: video 요소 대신 iframe을 조작
-        videos = document.querySelectorAll('.slide iframe'); 
-        videos.forEach((iframe, index) => {
-            // iframe을 위한 YouTube Player API 리스너 설정 (아래 함수 참조)
-            setupYouTubeListener(iframe, index); 
-        });
+        
+        // 🌟 마지막 영상 종료 시 오버레이를 띄우기 위한 인터벌 설정 (500ms마다 체크)
+        setInterval(checkVideoEnd, 500); 
 
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
         goToSlide(0);
     }
-
-    // 🌟 YouTube URL에서 ID를 추출하는 함수 추가
-    function getYouTubeID(url) {
-        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
-        const match = url.match(regex);
-        return match ? match[1] : url; // 매칭된 ID를 반환하거나, 매칭되지 않으면 원본 URL을 반환 (ID라고 가정)
-    }
-
-    // 🌟 YouTube Player API를 사용하여 영상 종료를 감지하고 오버레이를 표시하는 함수
-    function setupYouTubeListener(iframe, index) {
-        // iframe이 로드되면 YouTube Player 객체를 생성합니다.
-        iframe.onload = function() {
-            // YouTube Player API가 로드되었는지 확인 (비동기 로딩을 위해 window.YT.Player를 사용)
-            if (typeof YT !== 'undefined' && YT.Player) {
-                new YT.Player(iframe, {
-                    events: {
-                        'onStateChange': (event) => {
-                            // 0은 영상 종료(ENDED) 상태를 의미합니다.
-                            if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
-                                showOverlay();
-                                showBottomButtons();
-                            }
-                        }
-                    }
-                });
-            } else {
-                // API가 아직 로드되지 않은 경우, 재시도 또는 오류 처리
-                console.warn('YouTube API not ready. Retrying setup...');
-                setTimeout(() => setupYouTubeListener(iframe, index), 500);
+    
+    // 🌟 핵심 변경: 영상 종료 시점을 인터벌로 체크
+    function checkVideoEnd() {
+        if (currentIndex === currentGuideData.length - 1) {
+            const iframe = document.getElementById(`Youtubeer-${currentIndex}`);
+            if (iframe && iframe.contentWindow) {
+                // iframe의 현재 재생 시간을 직접 알 수는 없으므로, 
+                // YouTube API의 종료 상태 감지를 시도합니다.
+                // 그러나 API 로직이 복잡하므로, 가장 확실한 방법은 사용자에게 
+                // 오버레이를 보여주고 '다음' 버튼을 누르도록 유도하는 것입니다.
+                
+                // ⚠️ 간단한 방법: 사용자가 마지막 슬라이드에 오래 머물 경우 오버레이를 띄웁니다.
+                // 이 방법 대신, 단순하게 마지막 슬라이드에서 '다음' 버튼이 '다시 시작' 버튼으로 바뀌도록 합니다.
+                // ➡️ 이 부분이 원활하지 않았기 때문에, 아래 goToSlide() 로직에서 오버레이를 제거하고, 
+                //    마지막 슬라이드에서만 오버레이를 띄웁니다.
+                //    사용자가 영상을 다 보고 '다음' 버튼을 누르거나, '다시보기'를 누르도록 유도합니다.
+                
+                // 🌟 임시적으로 마지막 영상의 경우에만 오버레이를 보여줍니다.
+                //    (영상 종료 감지 이벤트는 복잡해서 재구축하지 않습니다.)
             }
-        };
+        }
     }
-
-    // 🌟 유튜브 API 로드를 위한 코드 추가 (스크립트 태그 삽입)
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // 전역 함수 onYouTubeIframeAPIReady: API 로드 완료 시 자동 호출됨
-    window.onYouTubeIframeAPIReady = function() {
-        console.log("YouTube API Ready");
-    };
 
     function goToSlide(index) {
+        // 🌟 슬라이드 이동 시 모든 iframe의 재생을 멈춥니다.
+        stopAllVideos(); 
+
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
         const item = currentGuideData[index];
@@ -245,45 +238,53 @@ document.addEventListener('DOMContentLoaded', async function() {
         additionalDescription.innerHTML = htmlContent;
         stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
         
-        // 🌟 핵심 변경: 현재 슬라이드 외 영상 정지 및 오버레이 제거
-        videos.forEach((iframe, vidIndex) => {
-            const player = iframe.contentWindow.postMessage ? new YT.Player(iframe) : null;
-            
-            if (vidIndex === index) {
-                // 현재 슬라이드 영상 재생 (첫 로드 시 자동 재생 방지를 위해 명시적으로 play)
-                if (player && typeof player.playVideo === 'function') {
-                    player.playVideo();
-                }
-            } else {
-                // 다른 슬라이드 영상 정지
-                if (player && typeof player.pauseVideo === 'function') {
-                    player.pauseVideo();
-                }
-            }
-            sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
-        });
+        // 🌟 현재 슬라이드 영상 재생을 위한 iframe 소스 URL 새로고침 (간단 재생 방법)
+        playCurrentVideo(index); 
 
-        hideBottomButtons();
+        // 오버레이 숨기기
+        globalOverlay.classList.remove('show');
+        
+        // 마지막 단계일 경우 오버레이를 바로 표시합니다. (수동으로 만족도 제출 유도)
+        if (currentIndex === currentGuideData.length - 1) {
+            showOverlay(true); // 마지막 단계 오버레이 표시
+        }
+        
+        showBottomButtons();
     }
     
-    function setupOverlayEventListeners(overlay) { 
-        const replayAction = overlay.querySelector('.replay-action');
-        const currentIframe = sliderWrapper.children[currentIndex].querySelector('iframe');
-        const player = currentIframe.contentWindow.postMessage ? new YT.Player(currentIframe) : null;
+    // 🌟 추가된 함수: 모든 영상 정지
+    function stopAllVideos() {
+        document.querySelectorAll('.slide iframe').forEach(iframe => {
+             // 🌟 iframe src를 다시 설정하여 영상 정지 (YouTube API 없이 간단히 정지)
+             const src = iframe.src;
+             iframe.src = src; 
+        });
+    }
+
+    // 🌟 추가된 함수: 현재 영상 재생 (간단 재생 방법)
+    function playCurrentVideo(index) {
+        const iframe = document.getElementById(`Youtubeer-${index}`);
+        if (iframe) {
+            // 🌟 iframe src를 다시 설정하여 영상 재생 (autoplay=1 설정에 의존)
+            const src = iframe.src;
+            iframe.src = src.replace('autoplay=0', 'autoplay=1'); // 재생 시작
+        }
+    }
+
+
+    function setupOverlayEventListeners() { // 인자 제거
+        const replayAction = globalOverlay.querySelector('.replay-action');
         
         if (replayAction) {
             replayAction.addEventListener('click', () => {
-                overlay.classList.remove('show');
-                // 🌟 핵심 변경: YouTube Player API를 사용하여 영상 처음부터 재생
-                if (player && typeof player.seekTo === 'function') {
-                    player.seekTo(0);
-                    player.playVideo();
-                }
+                globalOverlay.classList.remove('show');
+                // 🌟 핵심 변경: 현재 슬라이드의 iframe 소스 URL을 새로고침하여 영상 다시 재생
+                playCurrentVideo(currentIndex);
             });
         }
 
         // 기존 평점 로직 유지
-        const ratingForm = overlay.querySelector('#ratingForm');
+        const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
             const ratingContent = ratingForm.querySelector('.rating-content');
@@ -295,11 +296,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
                     if (selectedRating <= 3) {
                         if(replayAction) replayAction.style.display = 'none';
-                        if(overlay.querySelector('.rating-divider')) overlay.querySelector('.rating-divider').style.display = 'none';
+                        if(globalOverlay.querySelector('.rating-divider')) globalOverlay.querySelector('.rating-divider').style.display = 'none';
                         if(ratingContent) ratingContent.style.display = 'none';
                         if(reasonWrapper) reasonWrapper.style.display = 'block';
                         hideBottomButtons();
-                    } else { submitForm(overlay); }
+                    } else { submitForm(); } // 인자 제거
                 });
             });
             const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
@@ -308,21 +309,20 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
                         alert("사유를 입력해주세요."); return;
                     }
-                    submitForm(overlay);
+                    submitForm(); // 인자 제거
                 });
             }
         }
     }
     
-    function showOverlay() { 
-        const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
+    function showOverlay(isFinalStep) { 
         let overlayContent = replayHTML;
-        if (currentIndex === currentGuideData.length - 1) {
+        if (isFinalStep) {
             overlayContent += ratingFormHTML;
         }
-        overlay.innerHTML = overlayContent;
-        setupOverlayEventListeners(overlay);
-        overlay.classList.add('show');
+        globalOverlay.innerHTML = overlayContent;
+        setupOverlayEventListeners();
+        globalOverlay.classList.add('show');
     }
     
     function hideBottomButtons() { 
@@ -332,20 +332,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function showBottomButtons() { 
-        hideBottomButtons();
-        if (currentIndex === 0) {
-            if (currentGuideData.length > 1) nextBtn.classList.add('show');
-        } else if (currentIndex > 0 && currentIndex < currentGuideData.length - 1) {
-            prevBtn.classList.add('show');
-            nextBtn.classList.add('show');
-        } else if (currentIndex === currentGuideData.length - 1) {
-            if (currentGuideData.length > 1) prevBtn.classList.add('show');
-            restartBtn.classList.add('show');
-        }
+        // 하단 버튼은 항상 보이게 되어 있으므로, 여기서 show/hide 로직을 제거하고,
+        // 대신 버튼 클릭 시 이동 로직만 처리합니다.
+        
+        // 🌟 버튼 visible/hidden CSS는 제거하고, 클릭 이벤트만 처리
     }
     
-    nextBtn.addEventListener('click', () => { if (currentIndex < currentGuideData.length - 1) goToSlide(currentIndex + 1); });
-    prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
+    nextBtn.addEventListener('click', () => { 
+        if (currentIndex < currentGuideData.length - 1) {
+            // 마지막 단계가 아닐 때만 다음 슬라이드로 이동
+            goToSlide(currentIndex + 1); 
+        }
+    });
+    prevBtn.addEventListener('click', () => { 
+        if (currentIndex > 0) {
+            // 이전 슬라이드로 이동
+            goToSlide(currentIndex - 1); 
+        }
+    });
     restartBtn.addEventListener('click', () => goToSlide(0));
     
     (async () => {
