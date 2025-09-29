@@ -13,7 +13,7 @@
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; /* 16:9 비율 유지 */ }
     .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
-    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; } 
 
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
@@ -74,39 +74,28 @@
 </div>
 
 <script>
-// 🌟 YouTube Iframe Player API 로드를 위한 코드 추가
+// 🌟 YouTube Iframe Player API 로드를 위한 코드 추가 (비동기)
 const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-let playerObjects = []; // YouTube Player 객체를 저장할 배열
+let playerObjects = []; 
+let isDataLoaded = false; // 데이터 로드 완료 플래그
 
-// 🌟 YouTube API 로드 완료 시 자동 호출되는 함수
+// 🌟 데이터 로딩 및 초기화 함수를 저장할 변수
+let startInitialization = null; 
+
+// 🌟 YouTube API 로드 완료 시 자동 호출되는 전역 함수
 window.onYouTubeIframeAPIReady = function() {
-    // API 로드 후 플레이어 객체들을 생성합니다.
-    document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
-        playerObjects[index] = new YT.Player(iframe.id, {
-            events: {
-                // 영상 상태 변화 이벤트 감지
-                'onStateChange': (event) => {
-                    // 0은 영상 종료(ENDED) 상태를 의미합니다.
-                    if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
-                        showOverlay(index === currentGuideData.length - 1); // 마지막 단계 확인
-                    }
-                }
-            }
-        });
-    });
-    // API 로드 후 첫 영상 재생 시도
-    if (playerObjects.length > 0) {
-        playerObjects[0].playVideo();
+    // ⚠️ API가 로드되면, 데이터가 로드되기를 기다리거나 즉시 초기화 함수 실행
+    if (isDataLoaded) {
+        startInitialization();
     }
 };
 
 document.addEventListener('DOMContentLoaded', async function() {
     
-    // ⚠️ 구글 스프레드시트 URL 확인
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
 
     const loadingMessage = document.getElementById('loading-message');
@@ -118,17 +107,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
     const restartBtn = document.querySelector('.restart-btn');
-    
-    // 🌟 글로벌 오버레이 요소 참조
     const globalOverlay = document.getElementById('globalOverlay'); 
 
     let currentIndex = 0;
     let currentGuideData = [];
     
-    // 🌟 다시보기 버튼 HTML (오버레이 내부에 사용)
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
-    // ⚠️ 구글 폼 응답 필드와 URL 확인
     const ratingFormHTML = `
         <div class="rating-divider"></div>
         <form id="ratingForm">
@@ -148,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             </div>
         </form>`;
 
-    // --- 데이터 로드 및 폼 제출 함수 (변경 없음) ---
+    // --- 데이터 로드 함수 (이전과 동일) ---
     async function loadData() {
         if (!sheetURL || sheetURL.includes('여기에')) { return null; }
         try {
@@ -174,15 +159,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
+    // --- 폼 제출 함수 (이전과 동일) ---
     function submitForm() { 
         const ratingForm = document.getElementById('ratingForm');
         if (!ratingForm) return;
-
         const urlParams = new URLSearchParams(window.location.search);
-        
         ratingForm.querySelector('#guideIdValue').value = urlParams.get('id');
         ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
-
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse';
         
@@ -194,18 +177,39 @@ document.addEventListener('DOMContentLoaded', async function() {
             showBottomButtons();
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
-    // --- 데이터 로드 및 폼 제출 함수 끝 ---
 
-
-    // 🌟 YouTube ID 추출 함수 (기존과 동일)
+    // --- 영상 ID 추출 함수 (이전과 동일) ---
     function getYouTubeID(url) {
         const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
         const match = url.match(regex);
         return match ? match[1] : url;
     }
 
-    // 🌟 핵심 변경: YouTube Player API를 사용하여 영상 종료를 정확히 감지
-    function initializeGuide(guideData) {
+    // 🌟 핵심 변경: 비디오 플레이어 생성 로직과 이벤트 리스너 분리
+    function createVideoPlayers(guideData) {
+        playerObjects = []; // 플레이어 객체 배열 초기화
+        document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
+            playerObjects[index] = new YT.Player(iframe.id, {
+                events: {
+                    'onStateChange': (event) => {
+                        // 0은 영상 종료(ENDED) 상태를 의미합니다.
+                        if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
+                            showOverlay(index === currentGuideData.length - 1); // 마지막 단계 확인
+                        }
+                    },
+                    // 플레이어 준비 완료 시 바로 재생 시작 (goToSlide에서 처리)
+                    'onReady': (event) => {
+                        if (index === currentIndex) {
+                             event.target.playVideo(); 
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    // 🌟 1. DOM 생성 및 데이터 초기화 (API 로드와 관계 없음)
+    function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
@@ -214,12 +218,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             const slide = document.createElement('div');
             slide.className = 'slide';
 
-            // ⚠️ YouTube Embed 코드 생성: autoplay=1 (첫 슬라이드용), loop=0 (무한 재생 방지), enablejsapi=1 (API 제어 필수)
+            // ⚠️ YouTube Embed 코드 생성: loop=0 (무한 재생 방지), enablejsapi=1 (API 제어 필수)
             const youtubeID = getYouTubeID(step.video_url); 
             const embedHTML = `<iframe 
                                 data-step-index="${index}"
                                 id="youtube-player-${index}"
-                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=1&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1" 
+                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=0&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen></iframe>`;
@@ -233,20 +237,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepNavigation.appendChild(stepBtn);
         });
+    }
 
-        // 🌟 YouTube API가 이미 로드되었으면 플레이어 객체 생성 시작
-        if (typeof YT !== 'undefined' && YT.Player) {
-             window.onYouTubeIframeAPIReady(); // onYouTubeIframeAPIReady 함수를 수동으로 호출하여 플레이어 생성
-        }
+    // 🌟 2. 전체 초기화 함수 (데이터 로딩 완료 및 DOM 생성 후 호출)
+    startInitialization = function() {
+        // 1. 플레이어 DOM을 먼저 생성 (prepareDOM에서 호출됨)
+        // 2. YouTube Player 객체 생성
+        createVideoPlayers(currentGuideData);
         
+        // 3. 페이지 표시 및 첫 슬라이드로 이동
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
         goToSlide(0);
     }
-
+    
     function goToSlide(index) {
-        // 🌟 슬라이드 이동 시 현재 재생 중이던 영상 정지 및 오버레이 제거
+        // 🌟 슬라이드 이동 시 현재 재생 중이던 영상 정지
         if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
              playerObjects[currentIndex].stopVideo();
         }
@@ -274,22 +281,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         showBottomButtons();
     }
     
-    // 🌟 오버레이 내용 및 이벤트 리스너 설정
+    // --- 오버레이 이벤트 리스너 설정 (이전과 동일) ---
     function setupOverlayEventListeners() { 
-        // 마지막 단계일 경우 만족도 폼을 추가합니다.
         const isFinalStep = currentIndex === currentGuideData.length - 1;
-
         let content = replayHTML;
         if (isFinalStep) {
             content += ratingFormHTML;
         } else {
-            // 마지막 단계가 아닐 경우, 다음 단계 버튼을 추가합니다.
             content += `<div class="overlay-buttons"><button class="overlay-step-btn next-step-btn">다음 단계 ❯</button></div>`;
         }
-
         globalOverlay.innerHTML = content;
 
-        // --- 이벤트 리스너 설정 ---
         const replayAction = globalOverlay.querySelector('.replay-action');
         if (replayAction) {
             replayAction.addEventListener('click', () => {
@@ -301,7 +303,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // '다음 단계' 버튼 이벤트
         const nextStepBtn = globalOverlay.querySelector('.next-step-btn');
         if (nextStepBtn) {
             nextStepBtn.addEventListener('click', () => {
@@ -310,7 +311,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // --- 만족도 폼 이벤트 리스너 (마지막 단계에만 존재) ---
         const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
@@ -322,10 +322,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     ratingForm.querySelector('#ratingValue').value = selectedRating;
                     stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= selectedRating));
                     if (selectedRating <= 3) {
-                        // 불만족 시 사유 입력창 표시
                         if(ratingContent) ratingContent.style.display = 'none';
                         if(reasonWrapper) reasonWrapper.style.display = 'block';
-                    } else { submitForm(); } // 만족 시 즉시 제출
+                    } else { submitForm(); } 
                 });
             });
             const submitReasonBtn = ratingForm.querySelector('.submit-reason-btn');
@@ -340,19 +339,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
     
-    // 🌟 영상 종료 시 호출 (onStateChange 이벤트에서 호출됨)
     function showOverlay(isFinalStep) { 
         setupOverlayEventListeners();
         globalOverlay.classList.add('show');
     }
     
-    // 🌟 하단 버튼 표시 로직 복구
     function showBottomButtons() { 
         prevBtn.classList.remove('show');
         nextBtn.classList.remove('show');
         restartBtn.classList.remove('show');
         
-        if (currentGuideData.length <= 1) return; // 단계가 하나뿐일 경우 아무것도 표시 안함
+        if (currentGuideData.length <= 1) return; 
 
         if (currentIndex === 0) {
             nextBtn.classList.add('show');
@@ -361,11 +358,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             nextBtn.classList.add('show');
         } else if (currentIndex === currentGuideData.length - 1) {
             prevBtn.classList.add('show');
-            restartBtn.classList.add('show'); // 마지막 단계에서는 처음부터 버튼만 노출
+            restartBtn.classList.add('show'); 
         }
     }
     
-    // --- 버튼 클릭 이벤트 리스너 (하단 버튼) ---
     nextBtn.addEventListener('click', () => { 
         if (currentIndex < currentGuideData.length - 1) {
             globalOverlay.classList.remove('show');
@@ -380,7 +376,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     restartBtn.addEventListener('click', () => goToSlide(0));
     
-    // --- 초기 실행 함수 (변경 없음) ---
+    // --- 비동기 데이터 로딩 및 API 대기 로직 (초기 진입점) ---
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
@@ -391,14 +387,25 @@ document.addEventListener('DOMContentLoaded', async function() {
             errorMessage.style.display = 'block';
             return;
         }
+        
         const allData = await loadData();
+        
         if (allData) {
             const guideData = allData.filter(row => 
                 row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase() &&
                 row.guide_type && row.guide_type.toLowerCase() === guideType.toLowerCase()
             );
+            
             if (guideData.length > 0) {
-                initializeGuide(guideData);
+                // 🌟 데이터 로드 성공: DOM 생성 후 API 로드를 기다림
+                prepareDOM(guideData); 
+                isDataLoaded = true; // 데이터 로드 완료 플래그 설정
+                
+                // YouTube API가 이미 로드된 경우 즉시 시작
+                if (typeof YT !== 'undefined' && YT.Player) {
+                    startInitialization();
+                } 
+                // YouTube API가 로드되지 않은 경우, window.onYouTubeIframeAPIReady가 startInitialization 호출을 담당함
             } else {
                 loadingMessage.style.display = 'none';
                 errorMessage.style.display = 'block';
