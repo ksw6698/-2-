@@ -44,51 +44,51 @@
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 10px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
-    /* 🌟 오버레이 메인 컨텐츠 영역 */
+    /* 🌟 오버레이 메인 컨텐츠 영역 - 이미지 1, 2 반영 */
     .overlay-content-area { 
         display: flex; 
         flex-direction: column; 
+        justify-content: space-between; /* 🌟 상단, 중앙, 하단 요소가 공간을 나눠갖도록 */
         align-items: center; 
-        justify-content: center;
         padding: 20px;
         width: 100%;
         max-width: 400px;
-        /* 🌟 2번 이미지 해결: 컨텐츠를 영상 중앙으로 배치 */
-        transform: translateY(-20px); 
+        height: 100%; /* 부모(overlay-wrapper)의 꽉 채우도록 */
+        box-sizing: border-box;
     }
     
-    /* 🌟 다시보기 버튼 그룹 */
+    /* 🌟 다시보기 버튼 그룹 - 이미지 1, 2 반영 (원 크기 대폭 축소) */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
-        margin-bottom: 30px; /* 🌟 2번 이미지 해결: 아래로 간격 늘림 */
+        margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */
     }
     .replay-action .replay-btn { 
-        border: 2px solid white; 
-        width: 48px; 
-        height: 48px; 
+        border: 1px solid white; /* 🌟 원 테두리 얇게 */
+        width: 30px; /* 🌟 원 크기 대폭 축소 */
+        height: 30px; /* 🌟 원 크기 대폭 축소 */
         border-radius: 50%; 
-        font-size: 18px; 
+        font-size: 14px; /* 🌟 아이콘 폰트 크기 조정 */
         place-content: center; 
         display: grid; 
-        margin-bottom: 5px; 
+        margin-bottom: 3px; /* 🌟 텍스트와의 간격 줄임 */
         color: white; 
     }
     .replay-action .replay-text { 
         color: white; 
-        font-size: 16px; 
+        font-size: 14px; /* 🌟 텍스트 폰트 크기 조정 */
         font-weight: bold; 
     }
 
-    /* 🌟 버튼 그룹 (이전/다음/처음부터) */
+    /* 🌟 버튼 그룹 (이전/다음/처음부터) - 이미지 1, 2 반영 */
     .overlay-buttons { 
         display: flex; 
-        gap: 15px; /* 🌟 2번 이미지 해결: 버튼 간격 좁힘 */
+        gap: 15px; 
         width: 100%;
         justify-content: center;
-        margin-top: 20px; /* 🌟 2번 이미지 해결: 만족도 섹션과 버튼 간격 조정 */
+        margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */
     }
     .overlay-step-btn { 
         background-color: #007bff; 
@@ -103,20 +103,20 @@
         flex-basis: auto; 
     }
     
-    /* 🌟 만족도 폼 관련 스타일 */
+    /* 🌟 만족도 폼 관련 스타일 - 이미지 1, 2 반영 */
     .rating-divider { 
         width: 100%; 
         max-width: 250px; 
         height: 1px; 
         background-color: rgba(255, 255, 255, 0.4); 
-        margin: 15px auto 15px; /* 🌟 2번 이미지 해결: 위아래 간격 조정 */
+        margin: 15px auto 15px; 
     }
-    #ratingForm { width: 100%; text-align: center; }
+    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; } /* 🌟 폼이 중앙에 올 수 있도록 flex 속성 추가 */
     .rating-content { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
-        margin-top: 10px; /* 🌟 2번 이미지 해결: 별점 섹션 자체를 위로 올림 */
+        margin-top: 0px; /* 🌟 중앙 정렬에 맞춰 마진 제거 */
         margin-bottom: 5px; 
     }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
@@ -303,9 +303,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const youtubeID = getYouTubeID(step.video_url); 
             const autoplay = 0; 
             
-            // 🌟 3번 이미지 해결: showinfo=0 (제목 숨기기)와 rel=0 (관련 영상 숨기기)를 통해 추천 영상 숨김
-            // **추가 수정**: YouTube는 2021년 9월부터 rel=0을 사용해도 추천 영상을 완전히 제거할 수 없습니다. 
-            // 다만, showinfo=0, controls=1, modestbranding=1 등을 통해 최대한 간소화하는 것이 최선입니다.
+            // 🌟 YouTube API 매개변수를 통해 관련 동영상 및 정보 최대한 숨기기
             const embedHTML = `<iframe 
                                 data-step-index="${index}"
                                 id="youtube-player-${index}"
@@ -379,10 +377,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     function setupOverlayEventListeners(isFinalStep) { 
         let content = `<div class="overlay-content-area">`; 
 
-        content += `<div class="overlay-action-group">`;
-        content += replayHTML;
-        content += `</div>`; 
-        
+        content += replayHTML; // 다시보기는 항상 상단에 위치
+
         if (isFinalStep) {
              content += `<div id="ratingSection">
                             ${ratingFormHTML}
