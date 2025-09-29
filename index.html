@@ -23,6 +23,26 @@
     /* 🌟 오버레이: 동영상 종료 후 표시되는 화면 */
     .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.95); border-radius: 0; padding: 0; z-index: 20; box-sizing: border-box; }
     .overlay-wrapper.show { display: flex; }
+
+    /* 🌟 시작 화면 오버레이 스타일 */
+    #startOverlay { 
+        display: flex; 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background-color: rgba(0, 0, 0, 0.95); 
+        z-index: 25; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+    }
+    #startOverlay.hidden { display: none; }
+    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
+    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 10px; }
+    #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
     /* 🌟 오버레이 메인 컨텐츠 영역 */
     .overlay-content-area { 
@@ -32,7 +52,7 @@
         justify-content: center;
         padding: 20px;
         width: 100%;
-        max-width: 400px;
+        max-width: 400px; /* 모바일에서 너무 넓어지지 않도록 제어 */
     }
     
     /* 🌟 다시보기 버튼 그룹 (1, 2번 이미지 해결: 아이콘 크기 및 텍스트 조정) */
@@ -41,12 +61,12 @@
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
-        margin-bottom: 25px; 
+        margin-bottom: 25px; /* 🌟 3번 이미지 해결: 아래로 더 내림 (간격 조정) */
     }
     .replay-action .replay-btn { 
         border: 2px solid white; 
-        width: 48px; /* 크기 줄임 */
-        height: 48px; /* 크기 줄임 */
+        width: 48px; 
+        height: 48px; 
         border-radius: 50%; 
         font-size: 18px; 
         place-content: center; 
@@ -56,8 +76,8 @@
     }
     .replay-action .replay-text { 
         color: white; 
-        font-size: 16px; /* 버튼과 동일한 폰트 사이즈 */
-        font-weight: bold; /* 버튼과 동일한 폰트 스타일 */
+        font-size: 16px; 
+        font-weight: bold; 
     }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
@@ -66,19 +86,19 @@
         gap: 20px; 
         width: 100%;
         justify-content: center;
-        margin-top: 30px; /* 🌟 2번 이미지 해결: 만족도 섹션과 버튼 간격 */
+        margin-top: 25px; /* 🌟 3번 이미지 해결: 만족도 섹션과 버튼 간격 (위로 올림) */
     }
     .overlay-step-btn { 
         background-color: #007bff; 
         color: white; 
         border: none; 
-        padding: 12px 24px; 
-        font-size: 16px; /* 1번 이미지 해결: 통일된 버튼 폰트 사이즈 */
+        padding: 12px 20px; /* 🌟 2번 이미지 해결: 좌우 패딩 줄여서 버튼 크기 조정 */
+        font-size: 16px; 
         font-weight: bold; 
         cursor: pointer; 
-        border-radius: 30px; /* 1번 이미지 해결: 둥근 모양 유지 */
-        flex-grow: 1;
-        max-width: 150px;
+        border-radius: 30px; 
+        flex-shrink: 1; /* 🌟 2번 이미지 해결: 버튼이 너무 커지지 않도록 함 */
+        flex-basis: auto; /* 🌟 2번 이미지 해결: 내용물 크기에 따라 자동 조절 */
     }
     
     /* 🌟 만족도 폼 관련 스타일 */
@@ -87,13 +107,19 @@
         max-width: 250px; 
         height: 1px; 
         background-color: rgba(255, 255, 255, 0.4); 
-        margin: 20px auto 20px; /* 위아래 간격 조정 */
+        margin: 20px auto 20px; 
     }
     #ratingForm { width: 100%; text-align: center; }
-    .rating-content { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; /* 🌟 2번 이미지 해결: 별점 섹션 자체를 살짝 위로 올림 */ }
+    .rating-content { 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        margin-top: 20px; /* 🌟 3번 이미지 해결: 별점 섹션 자체를 위로 올림 */
+        margin-bottom: 5px; 
+    }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
-    .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } /* 별표 크기 조정 */
+    .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
     .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
     .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
@@ -121,8 +147,7 @@
         </div>
         <div id="globalOverlay" class="overlay-wrapper"></div>
         
-        <div id="startOverlay">
-            <div class="start-title">관리 가이드 시작하기</div>
+        <div id="startOverlay" class="hidden"> <div class="start-title">관리 가이드 시작하기</div>
             <button id="startButton" class="start-button">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 시작
@@ -216,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    // --- 폼 제출 함수 ---
+    // --- 폼 제출 함수 (변경 없음) ---
     function submitForm() { 
         const ratingForm = document.getElementById('ratingForm');
         if (!ratingForm) return;
@@ -296,6 +321,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // 🌟 1번 이미지 해결: 시작 오버레이 표시 로직 수정
     startInitialization = function() {
         prepareDOM(currentGuideData); 
         createVideoPlayers(currentGuideData);
@@ -313,13 +339,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
+        // 모든 로드 완료 후 시작 오버레이를 보이게 함
         startOverlay.classList.remove('hidden'); 
     }
     
+    // 🌟 1번 이미지 해결: 시작 버튼 클릭 이벤트
     startButton.addEventListener('click', () => {
-        startOverlay.classList.add('hidden'); 
+        startOverlay.classList.add('hidden'); // 시작 오버레이 숨김
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
-            playerObjects[0].playVideo(); 
+            playerObjects[0].playVideo(); // 1단계 영상 재생
         }
     });
 
@@ -350,9 +378,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     function setupOverlayEventListeners(isFinalStep) { 
         let content = `<div class="overlay-content-area">`; // 🌟 오버레이 콘텐츠 영역 시작
 
-        content += `<div class="overlay-action-group">`;
-        content += replayHTML;
-        content += `</div>`; // overlay-action-group (다시보기) 종료
+        content += replayHTML; // 다시보기는 항상 상단
         
         if (isFinalStep) {
              content += `<div id="ratingSection">
