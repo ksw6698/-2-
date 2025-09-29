@@ -52,16 +52,18 @@
         justify-content: center;
         padding: 20px;
         width: 100%;
-        max-width: 400px; /* 모바일에서 너무 넓어지지 않도록 제어 */
+        max-width: 400px;
+        /* 🌟 2번 이미지 해결: 컨텐츠를 영상 중앙으로 배치 */
+        transform: translateY(-20px); 
     }
     
-    /* 🌟 다시보기 버튼 그룹 (1, 2번 이미지 해결: 아이콘 크기 및 텍스트 조정) */
+    /* 🌟 다시보기 버튼 그룹 */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
-        margin-bottom: 25px; /* 🌟 3번 이미지 해결: 아래로 더 내림 (간격 조정) */
+        margin-bottom: 30px; /* 🌟 2번 이미지 해결: 아래로 간격 늘림 */
     }
     .replay-action .replay-btn { 
         border: 2px solid white; 
@@ -83,22 +85,22 @@
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
     .overlay-buttons { 
         display: flex; 
-        gap: 20px; 
+        gap: 15px; /* 🌟 2번 이미지 해결: 버튼 간격 좁힘 */
         width: 100%;
         justify-content: center;
-        margin-top: 25px; /* 🌟 3번 이미지 해결: 만족도 섹션과 버튼 간격 (위로 올림) */
+        margin-top: 20px; /* 🌟 2번 이미지 해결: 만족도 섹션과 버튼 간격 조정 */
     }
     .overlay-step-btn { 
         background-color: #007bff; 
         color: white; 
         border: none; 
-        padding: 12px 20px; /* 🌟 2번 이미지 해결: 좌우 패딩 줄여서 버튼 크기 조정 */
+        padding: 12px 20px; 
         font-size: 16px; 
         font-weight: bold; 
         cursor: pointer; 
         border-radius: 30px; 
-        flex-shrink: 1; /* 🌟 2번 이미지 해결: 버튼이 너무 커지지 않도록 함 */
-        flex-basis: auto; /* 🌟 2번 이미지 해결: 내용물 크기에 따라 자동 조절 */
+        flex-shrink: 1; 
+        flex-basis: auto; 
     }
     
     /* 🌟 만족도 폼 관련 스타일 */
@@ -107,20 +109,19 @@
         max-width: 250px; 
         height: 1px; 
         background-color: rgba(255, 255, 255, 0.4); 
-        margin: 20px auto 20px; 
+        margin: 15px auto 15px; /* 🌟 2번 이미지 해결: 위아래 간격 조정 */
     }
     #ratingForm { width: 100%; text-align: center; }
     .rating-content { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
-        margin-top: 20px; /* 🌟 3번 이미지 해결: 별점 섹션 자체를 위로 올림 */
+        margin-top: 10px; /* 🌟 2번 이미지 해결: 별점 섹션 자체를 위로 올림 */
         margin-bottom: 5px; 
     }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
-    .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
     
     .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
@@ -147,7 +148,8 @@
         </div>
         <div id="globalOverlay" class="overlay-wrapper"></div>
         
-        <div id="startOverlay" class="hidden"> <div class="start-title">관리 가이드 시작하기</div>
+        <div id="startOverlay">
+            <div class="start-title">관리 가이드 시작하기</div>
             <button id="startButton" class="start-button">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 시작
@@ -302,6 +304,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             const autoplay = 0; 
             
             // 🌟 3번 이미지 해결: showinfo=0 (제목 숨기기)와 rel=0 (관련 영상 숨기기)를 통해 추천 영상 숨김
+            // **추가 수정**: YouTube는 2021년 9월부터 rel=0을 사용해도 추천 영상을 완전히 제거할 수 없습니다. 
+            // 다만, showinfo=0, controls=1, modestbranding=1 등을 통해 최대한 간소화하는 것이 최선입니다.
             const embedHTML = `<iframe 
                                 data-step-index="${index}"
                                 id="youtube-player-${index}"
@@ -321,7 +325,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 🌟 1번 이미지 해결: 시작 오버레이 표시 로직 수정
     startInitialization = function() {
         prepareDOM(currentGuideData); 
         createVideoPlayers(currentGuideData);
@@ -339,15 +342,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
-        // 모든 로드 완료 후 시작 오버레이를 보이게 함
         startOverlay.classList.remove('hidden'); 
     }
     
-    // 🌟 1번 이미지 해결: 시작 버튼 클릭 이벤트
     startButton.addEventListener('click', () => {
-        startOverlay.classList.add('hidden'); // 시작 오버레이 숨김
+        startOverlay.classList.add('hidden'); 
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
-            playerObjects[0].playVideo(); // 1단계 영상 재생
+            playerObjects[0].playVideo(); 
         }
     });
 
@@ -376,22 +377,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function setupOverlayEventListeners(isFinalStep) { 
-        let content = `<div class="overlay-content-area">`; // 🌟 오버레이 콘텐츠 영역 시작
+        let content = `<div class="overlay-content-area">`; 
 
-        content += replayHTML; // 다시보기는 항상 상단
+        content += `<div class="overlay-action-group">`;
+        content += replayHTML;
+        content += `</div>`; 
         
         if (isFinalStep) {
              content += `<div id="ratingSection">
                             ${ratingFormHTML}
                          </div>`;
                          
-             // 최종 단계 버튼 그룹
              content += `<div class="overlay-buttons" id="navigationButtonsGroup">
                             <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
                             <button class="overlay-step-btn restart-btn">처음부터↻</button>
                         </div>`;
         } else {
-             // 중간 단계 버튼 그룹
              content += `<div class="overlay-buttons">
                             <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
                             <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
