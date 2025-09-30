@@ -16,7 +16,7 @@
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; } 
 
-    /* 🌟 오버레이 - 수정: 배경 블러 효과 추가 */
+    /* 오버레이 */
     .overlay-wrapper { 
         position: absolute; 
         top: 0; 
@@ -27,9 +27,9 @@
         flex-direction: column; 
         align-items: center; 
         justify-content: center; 
-        background-color: rgba(0, 0, 0, 0.3); /* 배경 어둡게 조정 */
-        -webkit-backdrop-filter: blur(10px); /* 블러 효과 (Safari 호환성) */
-        backdrop-filter: blur(10px); /* 블러 효과 */
+        background-color: rgba(0, 0, 0, 0.3);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         z-index: 20; 
         box-sizing: border-box; 
     }
@@ -146,7 +146,7 @@
     <div class="slider-container">
         <div class="slider-wrapper"></div>
         <div id="globalOverlay" class="overlay-wrapper"></div>
-        <div id="startOverlay" class="overlay-wrapper">
+        <div id="startOverlay" class="overlay-wrapper" style="display: none;">
             <div class="overlay-content-area">
                 <div class="start-title">관리 가이드 시작하기</div>
                 <button id="startButton" class="start-button">
@@ -346,8 +346,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         additionalDescription.innerHTML = htmlContent;
 
         stepNavigation.classList.add('disabled');
-        startOverlay.classList.remove('hidden');
-        startOverlay.style.display = 'flex'; // Make sure it's visible
+        startOverlay.classList.remove('hidden'); 
+        // 🌟 수정: 불필요한 인라인 스타일 코드 제거
+        // startOverlay.style.display = 'flex'; 
     }
     
     startButton.addEventListener('click', () => {
