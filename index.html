@@ -48,7 +48,7 @@
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
     .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; margin-bottom: 15px; }
-    .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; }
+    .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; line-height: 1.2; text-align: center; }
     
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
@@ -131,26 +131,26 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </div>
             </form>
         </div>`;
-
+    
     function getOverlayButtonsHTML() {
         if (currentIndex === currentGuideData.length - 1) { // 마지막
             return `<div class="overlay-buttons">
-                        <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                        <button class="overlay-step-btn restart-btn">처음부터↻</button>
+                        <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
+                        <button class="overlay-step-btn restart-btn">처음<br>부터↻</button>
                     </div>`;
         } else if (currentIndex === 0) { // 첫번째
             return `<div class="overlay-buttons">
-                        <button class="overlay-step-btn next-btn single-button">다음단계 ❯</button>
+                        <button class="overlay-step-btn next-btn single-button">다음<br>단계</button>
                     </div>`;
         } else { // 중간
             return `<div class="overlay-buttons">
-                        <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                        <button class="overlay-step-btn next-btn">다음단계 ❯</button>
+                        <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
+                        <button class="overlay-step-btn next-btn">다음<br>단계</button>
                     </div>`;
         }
     }
 
-    async function loadData() { /* ... 이전과 동일 ... */ 
+    async function loadData() {
         try {
             const response = await fetch(sheetURL); if (!response.ok) return null;
             const csvText = await response.text();
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    function submitForm() {  /* ... 이전과 동일 ... */ 
+    function submitForm() { 
         const ratingForm = document.getElementById('ratingForm');
         if (!ratingForm) return;
         const urlParams = new URLSearchParams(window.location.search);
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    function getYouTubeID(url) { /* ... 이전과 동일 ... */ 
+    function getYouTubeID(url) {
         const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
         const match = url.match(regex);
         return match ? match[1] : null;
@@ -216,11 +216,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             slide.innerHTML = youtubeID ? `<iframe id="youtube-player-${index}" src="https://www.youtube.com/embed/${youtubeID}?rel=0&autoplay=0&mute=0&controls=1&loop=0&modestbranding=1&showinfo=0&enablejsapi=1&iv_load_policy=3&disablekb=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : '';
             sliderWrapper.appendChild(slide);
 
+            // ✨ 버튼 생성 코드를 여기로 다시 가져왔습니다.
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
             stepBtn.addEventListener('click', () => {
-                if (startOverlay.classList.contains('hidden')) goToSlide(index);
+                if (!startOverlay.classList.contains('hidden')) return;
+                goToSlide(index);
             });
             stepNavigation.appendChild(stepBtn);
         });
@@ -314,11 +316,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function showOverlay() { 
-        let overlayContent = `<div class="overlay-content-area">`;
+        let overlayContent = `<div class="overlay-content-area">${replayHTML}`;
         if (currentIndex === currentGuideData.length - 1) { // 마지막
-             overlayContent += `${replayHTML}${ratingFormHTML}${getOverlayButtonsHTML()}`;
+             overlayContent += `${ratingFormHTML}${getOverlayButtonsHTML()}`;
         } else { // 중간
-             overlayContent += `${replayHTML}${getOverlayButtonsHTML()}`;
+             overlayContent += `${getOverlayButtonsHTML()}`;
         }
         overlayContent += `</div>`;
         globalOverlay.innerHTML = overlayContent;
