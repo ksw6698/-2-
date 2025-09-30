@@ -58,20 +58,22 @@
         justify-content: space-between;
     }
     
-    /* 아이콘+텍스트 버튼을 감싸는 공통 래퍼 스타일 */
+    /* 🌟 수정: 아이콘+텍스트 래퍼에 고정 너비 부여 */
     .icon-action-wrapper { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
         color: white;
+        width: 80px; /* 고정 너비로 정렬 기준 통일 */
     }
-    /* 버튼 하단 텍스트 공통 스타일 */
+    /* 🌟 수정: 텍스트에 text-align: center 추가 */
     .icon-text { 
         color: white; 
         font-size: 14px; 
         font-weight: bold; 
         margin-top: 8px;
+        text-align: center; /* 텍스트 자체도 중앙 정렬 */
     }
 
     /* 버튼 그룹 (이전/다음/다시보기) */
