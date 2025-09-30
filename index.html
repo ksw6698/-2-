@@ -48,16 +48,20 @@
         justify-content: space-between;
     }
     
-    /* 🌟 다시보기 버튼 그룹 */
+    /* 🌟 다시보기 버튼 그룹 - 글래스모피즘 스타일 적용 */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
+        color: white; /* 아이콘 및 텍스트 색상 */
     }
-    /* 수정: 아이콘 버튼과 크기 맞춤 */
     .replay-action .replay-btn { 
-        border: 1px solid white; 
+        /* 🌟 글래스모피즘 적용 */
+        background-color: rgba(0, 0, 0, 0.4); /* 반투명 검은색 배경 */
+        backdrop-filter: blur(10px); /* 블러 효과 */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* 은은한 테두리 */
+        
         width: 50px;
         height: 50px;
         border-radius: 50%; 
@@ -65,7 +69,12 @@
         place-content: center; 
         display: grid; 
         margin-bottom: 3px; 
-        color: white; 
+        color: white; /* 아이콘 색상 */
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+    .replay-action .replay-btn:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.4);
     }
     .replay-action .replay-text { 
         color: white; 
@@ -74,7 +83,6 @@
     }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
-    /* 수정: 아이콘 버튼 그룹 레이아웃 */
     .overlay-buttons { 
         display: flex; 
         width: 100%;
@@ -84,11 +92,14 @@
         box-sizing: border-box;
     }
 
-    /* 수정: 텍스트 버튼을 원형 아이콘 버튼으로 변경 */
+    /* 🌟 아이콘 버튼 - 글래스모피즘 스타일 적용 */
     .overlay-step-btn { 
-        background-color: #007bff; 
-        color: white; 
-        border: none; 
+        /* 🌟 글래스모피즘 적용 */
+        background-color: rgba(0, 0, 0, 0.4); /* 반투명 검은색 배경 */
+        backdrop-filter: blur(10px); /* 블러 효과 */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* 은은한 테두리 */
+
+        color: white; /* 아이콘 색상 */
         width: 50px;
         height: 50px;
         border-radius: 50%;
@@ -100,10 +111,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background-color 0.2s;
+        transition: background-color 0.2s, border-color 0.2s;
     }
     .overlay-step-btn:hover {
-        background-color: #0056b3;
+        background-color: rgba(0, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.4);
     }
     
     /* 🌟 만족도 폼 관련 스타일 */
@@ -259,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('소중한 의견 감사합니다!');
             
             const finalContent = `<div class="overlay-action-group">
-                                        <button class="overlay-step-btn restart-only-btn">처음부터↻</button>
+                                        <button class="overlay-step-btn restart-only-btn">↻</button>
                                     </div>`;
             globalOverlay.innerHTML = finalContent;
             globalOverlay.querySelector('.restart-only-btn').addEventListener('click', () => goToSlide(0));
@@ -384,14 +396,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (isFinalStep) {
             content += `<div id="ratingSection">${ratingFormHTML}</div>`;
-            // 수정: 버튼 텍스트를 아이콘으로 변경
             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
                             <button class="overlay-step-btn prev-btn">❮</button>
                             ${replayHTML}
                             <button class="overlay-step-btn restart-btn">↻</button>
                         </div>`;
         } else {
-            // 수정: 버튼 텍스트를 아이콘으로 변경
             content += `<div class="overlay-buttons">
                             <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮</button>
                             ${replayHTML}
