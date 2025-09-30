@@ -5,49 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>제품 가이드</title>
 <style>
-    body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
-    .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f0f0f0; }
+    .main-container { width: 100%; max-width: 900px; margin: 20px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; }
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
-    .step-navigation.disabled { pointer-events: none; opacity: 0.5; }
+    .step-navigation.disabled .step-btn { pointer-events: none; opacity: 0.4; }
 
-    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; }
+    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; padding-bottom: 56.25%; }
     .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
     
-    #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
-    #startOverlay.hidden { display: none; }
-    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
+    #startOverlay, .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 25; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background-color: rgba(0, 0, 0, 0.9); }
+    #startOverlay.hidden, .overlay-wrapper.hidden { display: none; }
+    
+    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; text-align: center; padding: 0 10px; }
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 25px; font-size: 1.1em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 22px; height: 22px; }
 
-    .overlay-wrapper {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        display: none; flex-direction: column; align-items: center; justify-content: center;
-        background-color: rgba(0, 0, 0, 0.85);
-        z-index: 20; padding: 20px; box-sizing: border-box;
-    }
-    .overlay-wrapper.show { display: flex; }
-    
-    .overlay-content-area { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; height: 100%; box-sizing: border-box; }
-    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-top: 15px; }
-    .replay-action .replay-btn { border: 1px solid white; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 3px; color: white; }
-    .replay-action .replay-text { color: white; font-size: 14px; font-weight: bold; }
+    .overlay-content-area { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; height: 100%; padding: 20px; box-sizing: border-box; }
+    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .replay-action .replay-btn { border: 1px solid white; width: 35px; height: 35px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; }
+    .replay-action .replay-text { font-size: 14px; font-weight: bold; }
 
     .rating-section { width: 100%; text-align: center; }
     #ratingForm { width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .rating-content { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; }
-    .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
+    .rating-prompt { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
     
-    .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
+    .reason-input-wrapper { margin: 0 auto; width: 100%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
-    .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; margin-bottom: 15px; }
+    .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; }
     .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; line-height: 1.2; text-align: center; }
     
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
@@ -65,7 +58,7 @@
 <div class="main-container" style="display:none;">
     <div class="slider-container">
         <div class="slider-wrapper"></div>
-        <div id="globalOverlay" class="overlay-wrapper"></div>
+        <div id="globalOverlay" class="overlay-wrapper hidden"></div>
         <div id="startOverlay">
             <div class="start-title">관리 가이드 시작하기</div>
             <button id="startButton" class="start-button">
@@ -88,14 +81,14 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 let playerObjects = []; 
 let isDataLoaded = false;
-let startInitialization = null; 
+let currentGuideData = [];
+let onYouTubeAPIReadyCallback = null;
 
 window.onYouTubeIframeAPIReady = function() {
-    if (isDataLoaded) startInitialization();
+    if (onYouTubeAPIReadyCallback) onYouTubeAPIReadyCallback();
 };
 
 document.addEventListener('DOMContentLoaded', async function() {
-    
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
 
     const loadingMessage = document.getElementById('loading-message');
@@ -109,10 +102,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const startButton = document.getElementById('startButton'); 
 
     let currentIndex = 0;
-    let currentGuideData = [];
     
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
-    
     const ratingFormHTML = `
         <div class="rating-section">
             <form id="ratingForm">
@@ -133,16 +124,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>`;
     
     function getOverlayButtonsHTML() {
-        if (currentIndex === currentGuideData.length - 1) { // 마지막
+        if (currentIndex === currentGuideData.length - 1) {
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
                         <button class="overlay-step-btn restart-btn">처음<br>부터↻</button>
                     </div>`;
-        } else if (currentIndex === 0) { // 첫번째
+        } else if (currentIndex === 0) {
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn next-btn single-button">다음<br>단계</button>
                     </div>`;
-        } else { // 중간
+        } else {
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
                         <button class="overlay-step-btn next-btn">다음<br>단계</button>
@@ -184,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
-            globalOverlay.classList.remove('show');
+            globalOverlay.classList.add('hidden');
             globalOverlay.innerHTML = '';
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
@@ -195,16 +186,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         return match ? match[1] : null;
     }
 
-    function createVideoPlayers() {
-        playerObjects = []; 
-        document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
-            playerObjects[index] = new YT.Player(iframe.id, {
-                events: { 'onStateChange': (event) => { if (event.data === YT.PlayerState.ENDED && index === currentIndex) showOverlay(); } }
-            });
-        });
-    }
-
-    function prepareDOM(guideData) {
+    function initializeGuide(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
@@ -220,14 +202,26 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
             stepBtn.addEventListener('click', () => {
-                if (startOverlay.classList.contains('hidden')) goToSlide(index);
+                if (!startOverlay.classList.contains('hidden')) return;
+                goToSlide(index);
             });
             stepNavigation.appendChild(stepBtn);
         });
-    }
 
-    startInitialization = function() {
-        createVideoPlayers();
+        onYouTubeAPIReadyCallback = () => {
+            playerObjects = []; 
+            guideData.forEach((step, index) => {
+                const player = new YT.Player(`Youtubeer-${index}`, {
+                    events: { 'onStateChange': (event) => { if (event.data === YT.PlayerState.ENDED && index === currentIndex) showOverlay(); } }
+                });
+                playerObjects.push(player);
+            });
+        };
+
+        if (typeof YT !== 'undefined' && YT.Player) {
+            onYouTubeAPIReadyCallback();
+        }
+
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
@@ -264,12 +258,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             playerObjects[currentIndex].seekTo(0); 
             playerObjects[currentIndex].playVideo(); 
         }
-        globalOverlay.classList.remove('show');
+        globalOverlay.classList.add('hidden');
     }
     
     function setupOverlayEventListeners() { 
         globalOverlay.querySelector('.replay-action')?.addEventListener('click', () => {
-            globalOverlay.classList.remove('show');
+            globalOverlay.classList.add('hidden');
             if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
                 playerObjects[currentIndex].seekTo(0);
                 playerObjects[currentIndex].playVideo();
@@ -323,7 +317,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         overlayContent += `</div>`;
         globalOverlay.innerHTML = overlayContent;
         setupOverlayEventListeners();
-        globalOverlay.classList.add('show');
+        globalOverlay.classList.remove('hidden');
      }
      
     (async () => {
@@ -348,10 +342,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             if (guideData.length > 0) {
                 isDataLoaded = true;
-                prepareDOM(guideData);
-                if (typeof YT !== 'undefined' && YT.Player) {
-                    startInitialization();
-                } 
+                initializeGuide(guideData);
             } else {
                 loadingMessage.style.display = 'none';
                 errorMessage.style.display = 'block';
