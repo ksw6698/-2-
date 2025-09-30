@@ -35,8 +35,10 @@
     }
     .overlay-wrapper.show { display: flex; }
 
-    /* 시작 화면 오버레이 */
-    #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: none; -webkit-backdrop-filter: none;}
+    /* 🌟 시작 화면 오버레이 - 수정: 블러 효과를 막는 코드 제거 */
+    #startOverlay { 
+        z-index: 25; /* 다른 오버레이보다 위에 있도록 z-index 유지 */
+    }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
@@ -65,7 +67,7 @@
         align-items: center; 
         cursor: pointer; 
         color: white;
-        width: 80px; /* 고정 너비로 정렬 기준 통일 */
+        width: 80px;
     }
     /* 버튼 하단 텍스트 공통 스타일 */
     .icon-text { 
@@ -73,7 +75,7 @@
         font-size: 14px; 
         font-weight: bold; 
         margin-top: 8px;
-        text-align: center; /* 텍스트 자체도 중앙 정렬 */
+        text-align: center;
     }
 
     /* 버튼 그룹 (이전/다음/다시보기) */
@@ -150,9 +152,9 @@
         <div id="globalOverlay" class="overlay-wrapper"></div>
         <div id="startOverlay" class="overlay-wrapper">
             <div class="overlay-content-area">
-                <div class="start-title">관리 가이드</div>
+                <div class="start-title">관리 가이드 시작하기</div>
                 <button id="startButton" class="start-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> 
                     시작
                 </button>
             </div>
@@ -398,12 +400,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                                   <div class="overlay-step-btn">${svgReplay}</div>
                                   <div class="icon-text">다시보기</div>
                                </div>`;
+        const restartBtnHTML = `<div class="icon-action-wrapper">
+                                    <button class="overlay-step-btn restart-btn">${svgReplay}</button>
+                                    <div class="icon-text">처음부터</div>
+                                </div>`;
 
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`; 
 
         if (isFinalStep) {
             content += ratingFormHTML;
-            // 🌟 수정: '다시보기' 버튼만 남기고 '이전', '처음부터' 버튼 제거
             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
                             ${replayBtnHTML}
                         </div>`;
@@ -418,7 +423,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         content += `</div>`;
         globalOverlay.innerHTML = content;
 
-        // '다시보기' 버튼 이벤트 리스너
         const replayAction = globalOverlay.querySelector('.replay-action');
         if (replayAction) {
             replayAction.addEventListener('click', () => {
@@ -430,7 +434,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // '이전', '다음', '처음부터' 버튼 이벤트 리스너 (존재할 경우에만 연결)
         const prevBtn = globalOverlay.querySelector('.prev-btn');
         if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
 
