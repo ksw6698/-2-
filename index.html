@@ -35,9 +35,11 @@
     }
     .overlay-wrapper.show { display: flex; }
 
-    /* 🌟 시작 화면 오버레이 - 수정: 블러 효과를 막는 코드 제거 */
+    /* 시작 화면 오버레이 */
+    /* 🌟 수정: 시작 화면이 기본적으로 보이도록 display: flex 추가 */
     #startOverlay { 
-        z-index: 25; /* 다른 오버레이보다 위에 있도록 z-index 유지 */
+        display: flex;
+        z-index: 25;
     }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
