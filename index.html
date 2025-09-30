@@ -44,9 +44,8 @@
         height: 100%; 
         box-sizing: border-box;
     }
-    /* 🌟 수정: 마지막 단계 오버레이 레이아웃 */
     .overlay-content-area.final-step {
-        justify-content: space-between; /* 상단(만족도), 하단(버튼)으로 분리 */
+        justify-content: space-between;
     }
     
     /* 🌟 다시보기 버튼 그룹 */
@@ -56,12 +55,13 @@
         align-items: center; 
         cursor: pointer; 
     }
+    /* 수정: 아이콘 버튼과 크기 맞춤 */
     .replay-action .replay-btn { 
         border: 1px solid white; 
-        width: 30px; 
-        height: 30px; 
+        width: 50px;
+        height: 50px;
         border-radius: 50%; 
-        font-size: 14px; 
+        font-size: 24px;
         place-content: center; 
         display: grid; 
         margin-bottom: 3px; 
@@ -74,31 +74,40 @@
     }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
+    /* 수정: 아이콘 버튼 그룹 레이아웃 */
     .overlay-buttons { 
         display: flex; 
         width: 100%;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        padding: 0 25px;
+        gap: 25px; /* 버튼 사이 간격 */
         box-sizing: border-box;
     }
 
+    /* 수정: 텍스트 버튼을 원형 아이콘 버튼으로 변경 */
     .overlay-step-btn { 
         background-color: #007bff; 
         color: white; 
         border: none; 
-        padding: 12px 20px; 
-        font-size: 16px; 
-        font-weight: bold; 
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        padding: 0;
+        font-size: 24px;
+        font-weight: bold;
         cursor: pointer; 
-        border-radius: 30px; 
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+    .overlay-step-btn:hover {
+        background-color: #0056b3;
     }
     
     /* 🌟 만족도 폼 관련 스타일 */
-    /* 수정: 구분선 숨기기 */
     #ratingSection .rating-divider { display: none; }
-    /* 수정: 만족도 섹션을 둥근 박스로 스타일링 */
     #ratingSection {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 12px;
@@ -371,21 +380,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function setupOverlayEventListeners(isFinalStep) { 
-        // 🌟 수정: 마지막 단계일 경우 다른 css 클래스를 부여
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`; 
 
         if (isFinalStep) {
             content += `<div id="ratingSection">${ratingFormHTML}</div>`;
+            // 수정: 버튼 텍스트를 아이콘으로 변경
             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
-                            <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
+                            <button class="overlay-step-btn prev-btn">❮</button>
                             ${replayHTML}
-                            <button class="overlay-step-btn restart-btn">처음부터↻</button>
+                            <button class="overlay-step-btn restart-btn">↻</button>
                         </div>`;
         } else {
+            // 수정: 버튼 텍스트를 아이콘으로 변경
             content += `<div class="overlay-buttons">
-                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
+                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮</button>
                             ${replayHTML}
-                            <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
+                            <button class="overlay-step-btn next-step-btn">❯</button>
                         </div>`;
         }
         
@@ -393,7 +403,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         globalOverlay.innerHTML = content;
 
-        // --- 이벤트 리스너 설정 ---
+        // --- 이벤트 리스너 설정 (변경 없음) ---
         globalOverlay.querySelector('.replay-action').addEventListener('click', () => {
             globalOverlay.classList.remove('show');
             if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].seekTo === 'function') {
