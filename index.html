@@ -36,13 +36,17 @@
     .overlay-content-area { 
         display: flex; 
         flex-direction: column; 
-        justify-content: center; /* 만족도 폼을 중앙에 배치 */
+        justify-content: center;
         align-items: center; 
         padding: 20px;
         width: 100%;
         max-width: 400px;
         height: 100%; 
         box-sizing: border-box;
+    }
+    /* 🌟 수정: 마지막 단계 오버레이 레이아웃 */
+    .overlay-content-area.final-step {
+        justify-content: space-between; /* 상단(만족도), 하단(버튼)으로 분리 */
     }
     
     /* 🌟 다시보기 버튼 그룹 */
@@ -70,13 +74,12 @@
     }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
-    /* 수정: absolute 포지션 제거하여 flex 중앙 정렬 적용 */
     .overlay-buttons { 
         display: flex; 
         width: 100%;
-        justify-content: space-between; /* 좌/중/우 정렬 */
-        align-items: center; /* 세로 중앙 정렬 */
-        padding: 0 25px; /* 좌우 여백 */
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 25px;
         box-sizing: border-box;
     }
 
@@ -89,13 +92,23 @@
         font-weight: bold; 
         cursor: pointer; 
         border-radius: 30px; 
-        flex-shrink: 0; /* 버튼 크기 고정 */
+        flex-shrink: 0;
     }
     
     /* 🌟 만족도 폼 관련 스타일 */
-    .rating-divider { width: 100%; max-width: 250px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px auto 15px; }
-    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .rating-content { display: flex; flex-direction: column; align-items: center; margin-top: 0px; margin-bottom: 5px; }
+    /* 수정: 구분선 숨기기 */
+    #ratingSection .rating-divider { display: none; }
+    /* 수정: 만족도 섹션을 둥근 박스로 스타일링 */
+    #ratingSection {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #ratingForm { width: 100%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .rating-content { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
@@ -149,7 +162,6 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 let playerObjects = []; 
 let isDataLoaded = false;
 let startInitialization = null; 
-// 🌟 수정: 시작 버튼 클릭 상태를 추적하기 위한 변수
 let startButtonClicked = false;
 
 window.onYouTubeIframeAPIReady = function() {
@@ -262,9 +274,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             showOverlay(index === currentGuideData.length - 1); 
                         }
                     },
-                    // 🌟 수정: onReady 이벤트를 사용하여 자동재생 문제 해결
                     'onReady': (event) => {
-                        // 첫번째 영상이고 시작 버튼이 이미 클릭된 상태라면, 즉시 재생
                         if (index === 0 && startButtonClicked) {
                             event.target.playVideo();
                         }
@@ -326,13 +336,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         startOverlay.classList.remove('hidden'); 
     }
     
-    // 🌟 수정: 시작 버튼 클릭 시 자동재생 로직 강화
     startButton.addEventListener('click', () => {
-        startButtonClicked = true; // 버튼 클릭 상태 저장
+        startButtonClicked = true;
         startOverlay.classList.add('hidden'); 
         stepNavigation.classList.remove('disabled');
 
-        // 플레이어가 이미 준비되었다면 즉시 재생, 아니라면 onReady 핸들러가 처리
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo(); 
         }
@@ -363,7 +371,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function setupOverlayEventListeners(isFinalStep) { 
-        let content = `<div class="overlay-content-area">`; 
+        // 🌟 수정: 마지막 단계일 경우 다른 css 클래스를 부여
+        let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`; 
 
         if (isFinalStep) {
             content += `<div id="ratingSection">${ratingFormHTML}</div>`;
