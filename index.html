@@ -41,7 +41,8 @@
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
 
     .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; }
-    .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; line-height: 1.2; text-align: center; }
+    .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; line-height: 1.2; text-align: center; width: 120px; }
+    .overlay-step-btn.single-button { width: 150px; }
     
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
     .primary-text { color: #007bff; font-weight: bold; }
@@ -124,16 +125,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>`;
     
     function getOverlayButtonsHTML() {
-        if (currentIndex === currentGuideData.length - 1) {
+        if (currentIndex === currentGuideData.length - 1) { // 마지막
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
                         <button class="overlay-step-btn restart-btn">처음<br>부터↻</button>
                     </div>`;
-        } else if (currentIndex === 0) {
+        } else if (currentIndex === 0) { // 첫번째
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn next-btn single-button">다음<br>단계</button>
                     </div>`;
-        } else {
+        } else { // 중간
             return `<div class="overlay-buttons">
                         <button class="overlay-step-btn prev-btn">❮ 이전<br>단계</button>
                         <button class="overlay-step-btn next-btn">다음<br>단계</button>
@@ -202,8 +203,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
             stepBtn.addEventListener('click', () => {
-                if (!startOverlay.classList.contains('hidden')) return;
-                goToSlide(index);
+                if (startOverlay.classList.contains('hidden')) {
+                    goToSlide(index);
+                }
             });
             stepNavigation.appendChild(stepBtn);
         });
