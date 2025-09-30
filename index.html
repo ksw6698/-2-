@@ -16,15 +16,27 @@
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
     .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; } 
 
-    .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
-    .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
-    
-    /* 오버레이 */
-    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.2); /* 배경을 약간 더 투명하게 조정 */ z-index: 20; box-sizing: border-box; }
+    /* 🌟 오버레이 - 수정: 배경 블러 효과 추가 */
+    .overlay-wrapper { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        display: none; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        background-color: rgba(0, 0, 0, 0.3); /* 배경 어둡게 조정 */
+        -webkit-backdrop-filter: blur(10px); /* 블러 효과 (Safari 호환성) */
+        backdrop-filter: blur(10px); /* 블러 효과 */
+        z-index: 20; 
+        box-sizing: border-box; 
+    }
     .overlay-wrapper.show { display: flex; }
 
     /* 시작 화면 오버레이 */
-    #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
+    #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: none; -webkit-backdrop-filter: none;}
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
@@ -46,7 +58,7 @@
         justify-content: space-between;
     }
     
-    /* 🌟 수정: 아이콘+텍스트 버튼을 감싸는 공통 래퍼 스타일 */
+    /* 아이콘+텍스트 버튼을 감싸는 공통 래퍼 스타일 */
     .icon-action-wrapper { 
         display: flex; 
         flex-direction: column; 
@@ -54,12 +66,12 @@
         cursor: pointer; 
         color: white;
     }
-    /* 🌟 수정: 버튼 하단 텍스트 공통 스타일 */
+    /* 버튼 하단 텍스트 공통 스타일 */
     .icon-text { 
         color: white; 
         font-size: 14px; 
         font-weight: bold; 
-        margin-top: 8px; /* 아이콘과의 간격 조정 */
+        margin-top: 8px;
     }
 
     /* 버튼 그룹 (이전/다음/다시보기) */
@@ -67,7 +79,7 @@
         display: flex; 
         width: 100%;
         justify-content: center;
-        align-items: flex-start; /* 아이콘+텍스트 래퍼의 상단을 기준으로 정렬 */
+        align-items: flex-start;
         gap: 25px;
         box-sizing: border-box;
     }
@@ -75,7 +87,6 @@
     /* 아이콘 버튼 공통 스타일 (글래스모피즘) */
     .overlay-step-btn { 
         background-color: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
         width: 50px;
@@ -135,12 +146,14 @@
     <div class="slider-container">
         <div class="slider-wrapper"></div>
         <div id="globalOverlay" class="overlay-wrapper"></div>
-        <div id="startOverlay">
-            <div class="start-title">관리 가이드 시작하기</div>
-            <button id="startButton" class="start-button">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                시작
-            </button>
+        <div id="startOverlay" class="overlay-wrapper">
+            <div class="overlay-content-area">
+                <div class="start-title">관리 가이드 시작하기</div>
+                <button id="startButton" class="start-button">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    시작
+                </button>
+            </div>
         </div>
     </div>
     <div class="step-navigation"></div>
@@ -333,7 +346,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         additionalDescription.innerHTML = htmlContent;
 
         stepNavigation.classList.add('disabled');
-        startOverlay.classList.remove('hidden'); 
+        startOverlay.classList.remove('hidden');
+        startOverlay.style.display = 'flex'; // Make sure it's visible
     }
     
     startButton.addEventListener('click', () => {
@@ -371,7 +385,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function setupOverlayEventListeners(isFinalStep) { 
-        // 🌟 수정: 모든 버튼을 아이콘+텍스트 구조로 통일하고 HTML 생성
         const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">
                                 <button class="overlay-step-btn prev-btn">${svgPrev}</button>
                                 <div class="icon-text">이전</div>
