@@ -10,7 +10,7 @@
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
-    .step-navigation.disabled .step-btn { pointer-events: none; opacity: 0.5; }
+    .step-navigation.disabled { pointer-events: none; opacity: 0.5; }
 
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; }
     .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             slide.innerHTML = youtubeID ? `<iframe id="youtube-player-${index}" src="https://www.youtube.com/embed/${youtubeID}?rel=0&autoplay=0&mute=0&controls=1&loop=0&modestbranding=1&showinfo=0&enablejsapi=1&iv_load_policy=3&disablekb=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : '';
             sliderWrapper.appendChild(slide);
 
-            // ✨ 버튼 생성 코드를 여기로 다시 가져왔습니다.
+            // ✨ 빠졌던 버튼 생성 코드를 다시 추가했습니다.
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
