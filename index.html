@@ -8,7 +8,6 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; transition: opacity 0.3s ease; }
-    /* 🌟 수정된 내용: 비활성화 상태 스타일 추가 */
     .step-navigation.disabled { pointer-events: none; opacity: 0.6; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
@@ -30,21 +29,84 @@
     #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
-    /* 🌟 수정된 내용: 시작 버튼 padding과 gap 조정 */
-    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
+    .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
     /* 🌟 오버레이 메인 컨텐츠 영역 - 이미지 1, 2 반영 */
-    .overlay-content-area { display: flex; flex-direction: column; justify-content: space-between; /* 🌟 상단, 중앙, 하단 요소가 공간을 나눠갖도록 */ align-items: center; padding: 20px; width: 100%; max-width: 400px; height: 100%; /* 부모(overlay-wrapper)의 꽉 채우도록 */ box-sizing: border-box; }
+    .overlay-content-area { 
+        display: flex; 
+        flex-direction: column; 
+        /* 🌟 수정: 버튼 영역과 다시보기 영역을 분리하여 flex-end로 정렬 */
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        height: 100%; 
+        box-sizing: border-box;
+    }
     
     /* 🌟 다시보기 버튼 그룹 - 이미지 1, 2 반영 (원 크기 대폭 축소) */
-    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */ }
-    .replay-action .replay-btn { border: 1px solid white; /* 🌟 원 테두리 얇게 */ width: 30px; /* 🌟 원 크기 대폭 축소 */ height: 30px; /* 🌟 원 크기 대폭 축소 */ border-radius: 50%; font-size: 14px; /* 🌟 아이콘 폰트 크기 조정 */ place-content: center; display: grid; margin-bottom: 3px; /* 🌟 텍스트와의 간격 줄임 */ color: white; }
-    .replay-action .replay-text { color: white; font-size: 14px; /* 🌟 텍스트 폰트 크기 조정 */ font-weight: bold; }
+    .replay-action { 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        cursor: pointer; 
+        margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */
+        /* 🌟 수정: 오버레이 콘텐츠의 상단에 고정 */
+        position: absolute;
+        top: 20px; /* 적절한 상단 여백 */
+        z-index: 2; /* 버튼보다 위에 오도록 */
+    }
+    .replay-action .replay-btn { 
+        border: 1px solid white; 
+        width: 30px; 
+        height: 30px; 
+        border-radius: 50%; 
+        font-size: 14px; 
+        place-content: center; 
+        display: grid; 
+        margin-bottom: 3px; 
+        color: white; 
+    }
+    .replay-action .replay-text { 
+        color: white; 
+        font-size: 14px; 
+        font-weight: bold; 
+    }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) - 이미지 1, 2 반영 */
-    .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */ }
-    .overlay-step-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; flex-shrink: 1; flex-basis: auto; }
+    .overlay-buttons { 
+        display: flex; 
+        gap: 15px; 
+        width: 100%;
+        /* 🌟 수정: 버튼들을 양 끝으로 정렬 */
+        justify-content: space-between;
+        margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */
+        padding: 0 15px; /* 좌우 여백 추가 */
+        box-sizing: border-box;
+        /* 🌟 추가: 버튼 그룹이 overlay-content-area의 하단에 고정되도록 */
+        position: absolute;
+        bottom: 20px; /* 적절한 하단 여백 */
+        left: 0;
+    }
+    /* 🌟 추가: 마지막 단계의 버튼 그룹 스타일 */
+    .overlay-buttons.final-step-buttons {
+        justify-content: center; /* 마지막 단계는 가운데 정렬 */
+    }
+
+    .overlay-step-btn { 
+        background-color: #007bff; 
+        color: white; 
+        border: none; 
+        padding: 12px 20px; 
+        font-size: 16px; 
+        font-weight: bold; 
+        cursor: pointer; 
+        border-radius: 30px; 
+        flex-shrink: 1; 
+        flex-basis: auto; 
+    }
     
     /* 🌟 만족도 폼 관련 스타일 - 이미지 1, 2 반영 */
     .rating-divider { width: 100%; max-width: 250px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px auto 15px; }
@@ -271,13 +333,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
+        stepNavigation.classList.add('disabled'); // 🌟 초기 로드 시 단계 버튼 비활성화
         startOverlay.classList.remove('hidden'); 
     }
     
     startButton.addEventListener('click', () => {
         startOverlay.classList.add('hidden'); 
-        // 🌟 수정된 내용: 시작 버튼 클릭 시 단계 버튼 활성화
-        stepNavigation.classList.remove('disabled');
+        stepNavigation.classList.remove('disabled'); // 🌟 시작 버튼 클릭 시 단계 버튼 활성화
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo(); 
         }
@@ -317,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                              ${ratingFormHTML}
                            </div>`;
                      
-             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
+             content += `<div class="overlay-buttons final-step-buttons" id="navigationButtonsGroup">
                              <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
                              <button class="overlay-step-btn restart-btn">처음부터↻</button>
                          </div>`;
@@ -412,7 +474,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             if (guideData.length > 0) {
                 prepareDOM(guideData); 
-                // 🌟 수정된 내용: 초기 로드 시 단계 버튼 비활성화
                 stepNavigation.classList.add('disabled');
                 isDataLoaded = true;
                 
