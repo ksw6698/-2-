@@ -10,47 +10,51 @@
     .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
     .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
     .step-btn.active { color: #007bff; border-top-color: #007bff; }
-    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; }
-    .slider-wrapper { display: flex; transition: transform 0.3s ease; }
-    .slide { min-width: 100%; box-sizing: border-box; position: relative; }
-    .slide video { width: 100%; display: block; }
+    .step-navigation.disabled { pointer-events: none; opacity: 0.5; } /* ✨ 시작 전 비활성화 스타일 */
 
-    /* ✨ 오버레이: 동영상 종료 후 표시되는 전체 화면 */
-    .overlay-wrapper {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        display: none; /* JS로 제어 */
-        flex-direction: column; align-items: center; justify-content: space-between; /* ✨ 상/중/하 분리 배치 */
-        background-color: rgba(0, 0, 0, 0.85);
-        z-index: 20; padding: 20px; box-sizing: border-box;
-    }
+    .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; }
+    .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .slide { min-width: 100%; box-sizing: border-box; position: relative; }
+    .slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+    
+    /* ✨ 시작 화면 오버레이 */
+    #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
+    #startOverlay.hidden { display: none; }
+    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
+    /* ✨ 시작 버튼 크기 축소 */
+    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 25px; font-size: 1.1em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
+    #startOverlay .start-button svg { fill: white; width: 22px; height: 22px; }
+
+    /* ✨ 동영상 종료 후 오버레이 */
+    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.85); z-index: 20; padding: 20px; box-sizing: border-box; }
     .overlay-wrapper.show { display: flex; }
 
-    /* ✨ 다시보기 영역 (상단) */
-    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .replay-action .replay-btn { border: 1px solid white; width: 35px; height: 35px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
+    /* ✨ 다시보기 영역 */
+    .replay-action { display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-bottom: 25px; /* 버튼과의 간격 확보 */}
+    .replay-action .replay-btn { border: 1px solid white; width: 40px; height: 40px; border-radius: 50%; font-size: 14px; place-content: center; display: grid; margin-bottom: 5px; color: white; }
     .replay-action .replay-text { color: #e0e0e0; font-size: 0.8em; }
     
-    /* ✨ 만족도 평가 영역 (중앙) */
-    .rating-section { width: 100%; text-align: center; }
+    /* ✨ 오버레이 내부 버튼 (중앙) */
+    .overlay-buttons { display: flex; gap: 20px; width: 100%; justify-content: center; align-items: center; }
+    .overlay-step-btn {
+        background-color: #007bff; color: white; border: none;
+        padding: 15px 0; font-size: 16px; font-weight: bold;
+        cursor: pointer; border-radius: 40px; width: 120px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        line-height: 1.2;
+    }
+    /* 1단계 '다음단계' 버튼 전용 */
+    .overlay-step-btn.single-button { width: 150px; }
+
+
+    /* 만족도 평가 (마지막 단계) */
+    .rating-section { width: 100%; text-align: center; margin-top: auto; margin-bottom: auto; } /* 중앙 영역 차지 */
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; }
-    .satisfaction-rating .star.selected, .satisfaction-rating .star:hover, .satisfaction-rating .star:hover ~ .star { color: #ffc107; }
-    
-    /* ✨ 사유 입력창 */
-    .reason-input-wrapper { margin: 0 auto; width: 100%; max-width: 320px; }
+    .reason-input-wrapper { margin: 20px auto 0; width: 95%; max-width: 320px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 16px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 30px; cursor: pointer; }
-
-    /* ✨ 오버레이 내부 버튼 (하단) */
-    .overlay-buttons { display: flex; gap: 15px; width: 100%; justify-content: center; }
-    .overlay-step-btn {
-        background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white;
-        padding: 12px 24px; font-size: 16px; font-weight: bold;
-        cursor: pointer; border-radius: 30px; flex-grow: 1; max-width: 180px;
-    }
-    .overlay-step-btn.restart { background-color: #007bff; border-color: #007bff; }
-
 
     /* 하단 텍스트 영역 */
     .additional-text-area { max-width: 900px; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; font-size: 1.1em; min-height: 60px; }
@@ -60,9 +64,11 @@
     #loading-message, #error-message { font-size: 1.2em; color: #888; text-align: center; padding: 50px; }
     
     @media (max-width: 768px) {
+        .step-btn { font-size: 14px; padding: 10px 2px; }
         .rating-prompt { font-size: 1em; }
         .satisfaction-rating .star { font-size: 28px; }
-        .overlay-step-btn { font-size: 14px; padding: 10px 15px;}
+        .overlay-step-btn { font-size: 14px; padding: 12px 0; width: 100px; }
+        .overlay-step-btn.single-button { width: 130px; }
     }
 </style>
 </head>
@@ -74,7 +80,15 @@
 <div class="main-container" style="display:none;">
     <div class="slider-container">
         <div class="slider-wrapper"></div>
+        <div id="globalOverlay" class="overlay-wrapper"></div>
+        <div id="startOverlay">
+            <div class="start-title">관리 가이드 시작하기</div>
+            <button id="startButton" class="start-button">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                시작
+            </button>
         </div>
+    </div>
     <div class="step-navigation"></div>
 </div>
 <div class="additional-text-area" style="display:none;">
@@ -82,6 +96,19 @@
 </div>
 
 <script>
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+let playerObjects = []; 
+let isDataLoaded = false;
+let startInitialization = null; 
+
+window.onYouTubeIframeAPIReady = function() {
+    if (isDataLoaded) startInitialization();
+};
+
 document.addEventListener('DOMContentLoaded', async function() {
     
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-M2JIQRYz2Mi2JShdRtVMrOOafxjWPjfrQdZnekJIuos8akOF9W36VT5DYtoNhuzuytc99eogQ4gR/pub?gid=0&single=true&output=csv';
@@ -92,12 +119,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     const additionalTextArea = document.querySelector('.additional-text-area');
     const sliderWrapper = document.querySelector('.slider-wrapper');
     const stepNavigation = document.querySelector('.step-navigation');
-    
+    const globalOverlay = document.getElementById('globalOverlay'); 
+    const startOverlay = document.getElementById('startOverlay'); 
+    const startButton = document.getElementById('startButton'); 
+
     let currentIndex = 0;
     let currentGuideData = [];
-    let videos = [];
-
-    // ✨ 오버레이에 들어갈 HTML 템플릿 재구성
+    
     const replayHTML = `<div class="replay-action"><div class="replay-btn">↻</div><div class="replay-text">다시보기</div></div>`;
     
     const ratingFormHTML = `
@@ -106,7 +134,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
                 <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
                 <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
-                
                 <div class="rating-content">
                     <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
                     <div class="satisfaction-rating">
@@ -121,16 +148,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>`;
 
     function getOverlayButtonsHTML() {
-        if (currentIndex === currentGuideData.length - 1) { // 마지막 단계
-            return `<div class="overlay-buttons">
-                        <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                        <button class="overlay-step-btn restart-btn restart">처음부터↻</button>
+        if (currentIndex === 0) {
+             return `<div class="overlay-buttons">
+                        <button class="overlay-step-btn next-btn single-button">다음<br>단계</button>
                     </div>`;
-        } else { // 중간 단계
-            const prevButtonVisibility = currentIndex > 0 ? '' : 'style="visibility:hidden;"';
+        } else if (currentIndex === currentGuideData.length - 1) {
             return `<div class="overlay-buttons">
-                        <button class="overlay-step-btn prev-btn" ${prevButtonVisibility}>❮ 이전단계</button>
-                        <button class="overlay-step-btn next-btn">다음단계 ❯</button>
+                        <button class="overlay-step-btn prev-btn">이전<br>단계</button>
+                        <button class="overlay-step-btn restart-btn restart">처음<br>부터</button>
+                    </div>`;
+        } else {
+            return `<div class="overlay-buttons">
+                        <button class="overlay-step-btn prev-btn">이전<br>단계</button>
+                        <button class="overlay-step-btn next-btn">다음<br>단계</button>
                     </div>`;
         }
     }
@@ -140,7 +170,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             const response = await fetch(sheetURL);
             if (!response.ok) return null;
             const csvText = await response.text();
-            // ... (CSV 파싱 로직은 이전과 동일)
             const rows = csvText.split(/\r?\n/).map(row => {
                 const result = []; let current = ''; let inQuotes = false;
                 for (const char of row) {
@@ -151,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 result.push(current); return result;
             });
             const headers = rows.shift().map(h => h.trim());
-            return rows.filter(row => row.length === headers.length).map(row => {
+            return rows.filter(row => row.length >= headers.length && row[0]).map(row => {
                 const obj = {};
                 headers.forEach((header, i) => obj[header] = row[i] ? row[i].replace(/^"|"$/g, '').trim() : '');
                 return obj;
@@ -159,13 +188,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    function submitForm(overlay) {
-        const ratingForm = overlay.querySelector('#ratingForm');
+    function submitForm() { 
+        const ratingForm = document.getElementById('ratingForm');
+        if (!ratingForm) return;
         const urlParams = new URLSearchParams(window.location.search);
-        
         ratingForm.querySelector('#guideIdValue').value = urlParams.get('id');
         ratingForm.querySelector('#guideTypeValue').value = urlParams.get('type');
-
         const formData = new FormData(ratingForm);
         const actionURL = 'https://docs.google.com/forms/d/e/1FAIpQLSflz7GqQsTcDlGwcsVaTWnqT8aFr9ZGUHdTbc36cFSFYtH_kA/formResponse';
         
@@ -173,38 +201,86 @@ document.addEventListener('DOMContentLoaded', async function() {
             method: 'POST', body: formData, mode: 'no-cors'
         }).then(() => {
             alert('소중한 의견 감사합니다!');
-            overlay.classList.remove('show');
-            showOverlay(); // 제출 후 다시 기본 오버레이 표시
+            globalOverlay.classList.remove('show');
+            globalOverlay.innerHTML = ''; // 오버레이 비우기
         }).catch(error => { console.error('Submit Error:', error); alert('제출에 실패했습니다.'); });
     }
 
-    function initializeGuide(guideData) {
+    function getYouTubeID(url) {
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    function createVideoPlayers() {
+        playerObjects = []; 
+        document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
+            playerObjects[index] = new YT.Player(iframe.id, {
+                events: {
+                    'onStateChange': (event) => {
+                        if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
+                            showOverlay(); 
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
+        
         guideData.forEach((step, index) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
-            slide.innerHTML = `<video src="${step.video_url}" muted playsinline></video><div class="overlay-wrapper"></div>`;
+            const youtubeID = getYouTubeID(step.video_url); 
+            const embedHTML = youtubeID ? `<iframe 
+                id="youtube-player-${index}"
+                src="https://www.youtube.com/embed/${youtubeID}?rel=0&autoplay=0&mute=0&controls=1&loop=0&modestbranding=1&showinfo=0&enablejsapi=1&iv_load_policy=3&disablekb=1" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>` : '';
+            
+            slide.innerHTML = embedHTML;
             sliderWrapper.appendChild(slide);
 
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
             stepBtn.textContent = `${index + 1}단계`;
-            stepBtn.addEventListener('click', () => goToSlide(index));
+            stepBtn.addEventListener('click', () => {
+                if (!startOverlay.classList.contains('hidden')) return; // 시작 전 클릭 방지
+                goToSlide(index);
+            });
             stepNavigation.appendChild(stepBtn);
         });
-        videos = document.querySelectorAll('.slide video');
-        videos.forEach((video, index) => {
-            video.addEventListener('ended', () => { if (index === currentIndex) showOverlay(); });
-        });
+    }
+
+    startInitialization = function() {
+        createVideoPlayers();
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
-        goToSlide(0);
+        
+        goToSlide(0, true); // 첫 로드임을 알림
+        startOverlay.classList.remove('hidden'); 
+        stepNavigation.classList.add('disabled'); // ✨ 시작 전 하단 버튼 비활성화
     }
+    
+    startButton.addEventListener('click', () => {
+        startOverlay.classList.add('hidden'); 
+        stepNavigation.classList.remove('disabled'); // ✨ 시작 시 하단 버튼 활성화
+        if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
+            playerObjects[0].playVideo(); 
+        }
+    });
 
-    function goToSlide(index) {
+    function goToSlide(index, isInitialLoad = false) {
+        if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
+             playerObjects[currentIndex].stopVideo();
+        }
+
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
         
@@ -214,35 +290,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
-
         stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
         
-        videos.forEach((video, vidIndex) => { 
-            if (vidIndex !== index) { video.pause(); video.currentTime = 0; }
-            sliderWrapper.children[vidIndex].querySelector('.overlay-wrapper').classList.remove('show');
-        });
+        if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
+            playerObjects[currentIndex].seekTo(0); 
+            playerObjects[currentIndex].playVideo(); 
+        }
 
-        if (videos.length > 0) videos[currentIndex].play().catch(e => {});
+        globalOverlay.classList.remove('show');
     }
     
-    function setupOverlayEventListeners(overlay) { 
-        overlay.querySelector('.replay-action')?.addEventListener('click', () => {
-            overlay.classList.remove('show');
-            videos[currentIndex].play();
+    function setupOverlayEventListeners() { 
+        globalOverlay.querySelector('.replay-action')?.addEventListener('click', () => {
+            globalOverlay.classList.remove('show');
+            if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
+                playerObjects[currentIndex].seekTo(0);
+                playerObjects[currentIndex].playVideo();
+            }
         });
-
-        overlay.querySelector('.prev-btn')?.addEventListener('click', () => goToSlide(currentIndex - 1));
-        overlay.querySelector('.next-btn')?.addEventListener('click', () => goToSlide(currentIndex + 1));
-        overlay.querySelector('.restart-btn')?.addEventListener('click', () => goToSlide(0));
         
-        const ratingForm = overlay.querySelector('#ratingForm');
+        globalOverlay.querySelector('.prev-btn')?.addEventListener('click', () => goToSlide(currentIndex - 1));
+        globalOverlay.querySelector('.next-btn')?.addEventListener('click', () => goToSlide(currentIndex + 1));
+        globalOverlay.querySelector('.restart-btn')?.addEventListener('click', () => goToSlide(0));
+        
+        const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
             const ratingContent = ratingForm.querySelector('.rating-content');
             const reasonWrapper = ratingForm.querySelector('.reason-input-wrapper');
-            const replayAction = overlay.querySelector('.replay-action');
-            const divider = overlay.querySelector('.rating-divider');
-            const overlayButtons = overlay.querySelector('.overlay-buttons');
+            const replayAction = globalOverlay.querySelector('.replay-action');
+            const overlayButtons = globalOverlay.querySelector('.overlay-buttons');
 
             stars.forEach(star => {
                 star.addEventListener('click', () => {
@@ -252,11 +329,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     
                     if (selectedRating <= 3) {
                         if(replayAction) replayAction.style.display = 'none';
-                        if(divider) divider.style.display = 'none';
-                        if(ratingContent) ratingContent.style.display = 'none';
                         if(overlayButtons) overlayButtons.style.display = 'none';
+                        if(ratingContent) ratingContent.style.display = 'none';
                         if(reasonWrapper) reasonWrapper.style.display = 'block';
-                    } else { submitForm(overlay); }
+                    } else { submitForm(); }
                 });
             });
 
@@ -265,22 +341,28 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (ratingForm.querySelector('#satisfactionReason').value.trim() === "") {
                     alert("사유를 입력해주세요."); return;
                 }
-                submitForm(overlay);
+                submitForm();
             });
         }
     }
 
     function showOverlay() { 
-        const overlay = sliderWrapper.children[currentIndex].querySelector('.overlay-wrapper');
         let overlayContent = '';
         if (currentIndex === currentGuideData.length - 1) { // 마지막 단계
-             overlayContent = `${replayHTML}${ratingFormHTML}${getOverlayButtonsHTML()}`;
+             overlayContent = `<div style="display:flex; flex-direction:column; justify-content:space-around; align-items:center; height:100%;">
+                                ${replayHTML}
+                                ${ratingFormHTML}
+                                ${getOverlayButtonsHTML()}
+                               </div>`;
         } else { // 중간 단계
-             overlayContent = `${replayHTML}${getOverlayButtonsHTML()}`;
+             overlayContent = `<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%;">
+                                ${replayHTML}
+                                ${getOverlayButtonsHTML()}
+                               </div>`;
         }
-        overlay.innerHTML = overlayContent;
-        setupOverlayEventListeners(overlay);
-        overlay.classList.add('show');
+        globalOverlay.innerHTML = overlayContent;
+        setupOverlayEventListeners();
+        globalOverlay.classList.add('show');
      }
      
     (async () => {
@@ -291,24 +373,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!guideId || !guideType) {
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
+            startOverlay.classList.add('hidden');
             return;
         }
+        
         const allData = await loadData();
+        
         if (allData) {
             const guideData = allData.filter(row => 
                 row.guide_id && row.guide_id.toLowerCase() === guideId.toLowerCase() &&
                 row.guide_type && row.guide_type.toLowerCase() === guideType.toLowerCase()
             );
+            
             if (guideData.length > 0) {
-                initializeGuide(guideData);
+                currentGuideData = guideData; // 데이터를 전역으로 설정
+                isDataLoaded = true;
+                
+                // YouTube API가 이미 준비되었는지 확인
+                if (typeof YT !== 'undefined' && YT.Player) {
+                    startInitialization();
+                } // 아직 준비 안됐으면 onYouTubeIframeAPIReady가 호출해줌
             } else {
                 loadingMessage.style.display = 'none';
                 errorMessage.style.display = 'block';
-            }
+                startOverlay.classList.add('hidden');
+}
         } else {
             loadingMessage.style.display = 'none';
             errorMessage.innerHTML = '데이터를 불러오는 데 실패했습니다.<br>sheetURL 설정을 확인해주세요.';
             errorMessage.style.display = 'block';
+            startOverlay.classList.add('hidden');
         }
     })();
 });
