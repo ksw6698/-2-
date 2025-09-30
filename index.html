@@ -46,7 +46,6 @@
     }
     
     /* 🌟 다시보기 버튼 그룹 */
-    /* 수정: 이제 버튼 그룹의 일부이므로 절대 위치 제거 */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
@@ -71,15 +70,12 @@
     }
 
     /* 🌟 버튼 그룹 (이전/다음/처음부터) */
-    /* 수정: 모든 버튼을 포함하는 컨테이너 스타일 */
+    /* 수정: absolute 포지션 제거하여 flex 중앙 정렬 적용 */
     .overlay-buttons { 
         display: flex; 
         width: 100%;
         justify-content: space-between; /* 좌/중/우 정렬 */
         align-items: center; /* 세로 중앙 정렬 */
-        position: absolute; /* 화면 하단에 고정 */
-        bottom: 20px;
-        left: 0;
         padding: 0 25px; /* 좌우 여백 */
         box-sizing: border-box;
     }
@@ -153,6 +149,8 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 let playerObjects = []; 
 let isDataLoaded = false;
 let startInitialization = null; 
+// 🌟 수정: 시작 버튼 클릭 상태를 추적하기 위한 변수
+let startButtonClicked = false;
 
 window.onYouTubeIframeAPIReady = function() {
     if (isDataLoaded) {
@@ -264,8 +262,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                             showOverlay(index === currentGuideData.length - 1); 
                         }
                     },
+                    // 🌟 수정: onReady 이벤트를 사용하여 자동재생 문제 해결
                     'onReady': (event) => {
-                        // 첫 슬라이드에서만 playVideo를 호출하도록 함. (startButton에서 처리)
+                        // 첫번째 영상이고 시작 버튼이 이미 클릭된 상태라면, 즉시 재생
+                        if (index === 0 && startButtonClicked) {
+                            event.target.playVideo();
+                        }
                     }
                 }
             });
@@ -324,9 +326,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         startOverlay.classList.remove('hidden'); 
     }
     
+    // 🌟 수정: 시작 버튼 클릭 시 자동재생 로직 강화
     startButton.addEventListener('click', () => {
+        startButtonClicked = true; // 버튼 클릭 상태 저장
         startOverlay.classList.add('hidden'); 
         stepNavigation.classList.remove('disabled');
+
+        // 플레이어가 이미 준비되었다면 즉시 재생, 아니라면 onReady 핸들러가 처리
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo(); 
         }
@@ -356,7 +362,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         globalOverlay.classList.remove('show');
     }
     
-    // 🌟 수정: 버튼 HTML 생성을 새로운 레이아웃에 맞게 변경
     function setupOverlayEventListeners(isFinalStep) { 
         let content = `<div class="overlay-content-area">`; 
 
