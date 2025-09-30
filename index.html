@@ -58,7 +58,7 @@
         justify-content: space-between;
     }
     
-    /* 🌟 수정: 아이콘+텍스트 래퍼에 고정 너비 부여 */
+    /* 아이콘+텍스트 버튼을 감싸는 공통 래퍼 스타일 */
     .icon-action-wrapper { 
         display: flex; 
         flex-direction: column; 
@@ -67,7 +67,7 @@
         color: white;
         width: 80px; /* 고정 너비로 정렬 기준 통일 */
     }
-    /* 🌟 수정: 텍스트에 text-align: center 추가 */
+    /* 버튼 하단 텍스트 공통 스타일 */
     .icon-text { 
         color: white; 
         font-size: 14px; 
@@ -398,19 +398,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                                   <div class="overlay-step-btn">${svgReplay}</div>
                                   <div class="icon-text">다시보기</div>
                                </div>`;
-        const restartBtnHTML = `<div class="icon-action-wrapper">
-                                    <button class="overlay-step-btn restart-btn">${svgReplay}</button>
-                                    <div class="icon-text">처음부터</div>
-                                </div>`;
 
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`; 
 
         if (isFinalStep) {
             content += ratingFormHTML;
+            // 🌟 수정: '다시보기' 버튼만 남기고 '이전', '처음부터' 버튼 제거
             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
-                            ${prevBtnHTML.replace('style="visibility: hidden;"', '')}
                             ${replayBtnHTML}
-                            ${restartBtnHTML}
                         </div>`;
         } else {
             content += `<div class="overlay-buttons">
@@ -423,14 +418,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         content += `</div>`;
         globalOverlay.innerHTML = content;
 
-        globalOverlay.querySelector('.replay-action').addEventListener('click', () => {
-            globalOverlay.classList.remove('show');
-            if (playerObjects[currentIndex]) {
-                playerObjects[currentIndex].seekTo(0);
-                playerObjects[currentIndex].playVideo();
-            }
-        });
+        // '다시보기' 버튼 이벤트 리스너
+        const replayAction = globalOverlay.querySelector('.replay-action');
+        if (replayAction) {
+            replayAction.addEventListener('click', () => {
+                globalOverlay.classList.remove('show');
+                if (playerObjects[currentIndex]) {
+                    playerObjects[currentIndex].seekTo(0);
+                    playerObjects[currentIndex].playVideo();
+                }
+            });
+        }
         
+        // '이전', '다음', '처음부터' 버튼 이벤트 리스너 (존재할 경우에만 연결)
         const prevBtn = globalOverlay.querySelector('.prev-btn');
         if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
 
