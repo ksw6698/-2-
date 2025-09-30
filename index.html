@@ -19,20 +19,18 @@
     .button-wrapper { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 10; pointer-events: none; }
     .button-group-left, .button-group-right { display: flex; gap: 15px; pointer-events: auto; }
     
-    .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 1; transform: translateY(0); pointer-events: auto; display: block; }
-    
-    /* 🌟 오버레이: 동영상 종료 후 표시되는 화면 */
-    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.95); border-radius: 0; padding: 0; z-index: 20; box-sizing: border-box; }
+    /* 오버레이 */
+    .overlay-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.2); /* 배경을 약간 더 투명하게 조정 */ z-index: 20; box-sizing: border-box; }
     .overlay-wrapper.show { display: flex; }
 
-    /* 🌟 시작 화면 오버레이 스타일 */
+    /* 시작 화면 오버레이 */
     #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
-    /* 🌟 오버레이 메인 컨텐츠 영역 */
+    /* 오버레이 메인 컨텐츠 영역 */
     .overlay-content-area { 
         display: flex; 
         flex-direction: column; 
@@ -48,49 +46,33 @@
         justify-content: space-between;
     }
     
-    /* 🌟 다시보기 버튼 그룹 */
-    .replay-action { 
+    /* 🌟 수정: 아이콘+텍스트 버튼을 감싸는 공통 래퍼 스타일 */
+    .icon-action-wrapper { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
         color: white;
     }
-    .replay-action .replay-btn { 
-        background-color: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex; /* SVG 중앙 정렬 */
-        align-items: center; /* SVG 중앙 정렬 */
-        justify-content: center; /* SVG 중앙 정렬 */
-        color: white;
-        transition: background-color 0.2s, border-color 0.2s;
-    }
-    .replay-action .replay-btn:hover {
-        background-color: rgba(0, 0, 0, 0.6);
-        border-color: rgba(255, 255, 255, 0.4);
-    }
-    .replay-action .replay-text { 
+    /* 🌟 수정: 버튼 하단 텍스트 공통 스타일 */
+    .icon-text { 
         color: white; 
         font-size: 14px; 
         font-weight: bold; 
-        margin-top: 5px; /* 아이콘과의 간격 */
+        margin-top: 8px; /* 아이콘과의 간격 조정 */
     }
 
-    /* 🌟 버튼 그룹 (이전/다음/처음부터) */
+    /* 버튼 그룹 (이전/다음/다시보기) */
     .overlay-buttons { 
         display: flex; 
         width: 100%;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start; /* 아이콘+텍스트 래퍼의 상단을 기준으로 정렬 */
         gap: 25px;
         box-sizing: border-box;
     }
 
-    /* 🌟 아이콘 버튼 */
+    /* 아이콘 버튼 공통 스타일 (글래스모피즘) */
     .overlay-step-btn { 
         background-color: rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(10px);
@@ -112,14 +94,14 @@
         border-color: rgba(255, 255, 255, 0.4);
     }
     
-    /* 🌟 SVG 아이콘 기본 스타일 */
+    /* SVG 아이콘 기본 스타일 */
     .overlay-buttons svg {
         width: 24px;
         height: 24px;
-        fill: white; /* SVG 색상을 흰색으로 지정 */
+        fill: white;
     }
 
-    /* 🌟 만족도 폼 관련 스타일 */
+    /* 만족도 폼 관련 스타일 */
     #ratingSection .rating-divider { display: none; }
     #ratingSection {
         background-color: rgba(255, 255, 255, 0.1);
@@ -128,13 +110,11 @@
         width: 100%;
         box-sizing: border-box;
     }
-
     #ratingForm { width: 100%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .rating-content { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
-    
     .reason-input-wrapper { margin: 15px auto 0; width: 95%; max-width: 300px; }
     .reason-input-wrapper textarea { width: 100%; padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     .submit-reason-btn { width: 100%; margin-top: 10px; padding: 12px; font-size: 18px; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
@@ -154,12 +134,7 @@
 <div class="main-container" style="display:none;">
     <div class="slider-container">
         <div class="slider-wrapper"></div>
-        <div class="button-wrapper">
-            <div class="button-group-left"></div>
-            <div class="button-group-right"></div>
-        </div>
         <div id="globalOverlay" class="overlay-wrapper"></div>
-        
         <div id="startOverlay">
             <div class="start-title">관리 가이드 시작하기</div>
             <button id="startButton" class="start-button">
@@ -175,17 +150,14 @@
 </div>
 
 <script>
-// 🌟 YouTube Iframe Player API 로드를 위한 코드 추가
 const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-// ▼▼▼▼▼ 여기에 SVG 코드를 붙여넣으세요 ▼▼▼▼▼
-const svgPrev = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>`; // '이전' 아이콘 SVG 코드
-const svgNext = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>`; // '다음' 아이콘 SVG 코드
-const svgReplay = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z"/></svg>`; // '다시보기' 아이콘 SVG 코드
-// ▲▲▲▲▲ 여기에 SVG 코드를 붙여넣으세요 ▲▲▲▲▲
+const svgPrev = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>`;
+const svgNext = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>`;
+const svgReplay = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>`;
 
 let playerObjects = []; 
 let isDataLoaded = false;
@@ -215,27 +187,25 @@ document.addEventListener('DOMContentLoaded', async function() {
     let currentIndex = 0;
     let currentGuideData = [];
     
-    // 수정: '다시보기' 텍스트를 포함하도록 replayHTML 변경
-    const replayHTML = `<div class="replay-action"><div class="replay-btn">${svgReplay}</div><div class="replay-text">다시보기</div></div>`;
-    
     const ratingFormHTML = `
-        <div class="rating-divider"></div>
-        <form id="ratingForm">
-            <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
-            <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
-            <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
-            
-            <div class="rating-content">
-                <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
-                <div class="satisfaction-rating">
-                    <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+        <div id="ratingSection">
+            <div class="rating-divider"></div>
+            <form id="ratingForm">
+                <input type="hidden" id="guideIdValue" name="entry.942710543" value=""> 
+                <input type="hidden" id="guideTypeValue" name="entry.1483034622" value="">
+                <input type="hidden" id="ratingValue" name="entry.1575858144" value="">
+                <div class="rating-content">
+                    <div class="rating-prompt">이 가이드가 얼마나 도움이 되셨나요?</div>
+                    <div class="satisfaction-rating">
+                        <span class="star" data-rating="5">★</span><span class="star" data-rating="4">★</span><span class="star" data-rating="3">★</span><span class="star" data-rating="2">★</span><span class="star" data-rating="1">★</span>
+                    </div>
                 </div>
-            </div>
-            <div class="reason-input-wrapper" style="display: none;">
-                <textarea id="satisfactionReason" name="entry.276276859" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
-                <button type="button" class="submit-reason-btn">제출</button>
-            </div>
-        </form>`;
+                <div class="reason-input-wrapper" style="display: none;">
+                    <textarea id="satisfactionReason" name="entry.276276859" placeholder="개선이 필요한 점을 알려주세요." rows="3"></textarea>
+                    <button type="button" class="submit-reason-btn">제출</button>
+                </div>
+            </form>
+        </div>`;
 
     async function loadData() {
         if (!sheetURL || sheetURL.includes('여기에')) { return null; }
@@ -277,7 +247,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('소중한 의견 감사합니다!');
             
             const finalContent = `<div class="overlay-action-group">
-                                        <button class="overlay-step-btn restart-only-btn">${svgReplay}</button>
+                                        <div class="icon-action-wrapper">
+                                            <button class="overlay-step-btn restart-only-btn">${svgReplay}</button>
+                                            <div class="icon-text">처음부터</div>
+                                        </div>
                                     </div>`;
             globalOverlay.innerHTML = finalContent;
             globalOverlay.querySelector('.restart-only-btn').addEventListener('click', () => goToSlide(0));
@@ -398,43 +371,60 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function setupOverlayEventListeners(isFinalStep) { 
+        // 🌟 수정: 모든 버튼을 아이콘+텍스트 구조로 통일하고 HTML 생성
+        const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">
+                                <button class="overlay-step-btn prev-btn">${svgPrev}</button>
+                                <div class="icon-text">이전</div>
+                             </div>`;
+        const nextBtnHTML = `<div class="icon-action-wrapper">
+                                <button class="overlay-step-btn next-step-btn">${svgNext}</button>
+                                <div class="icon-text">다음</div>
+                             </div>`;
+        const replayBtnHTML = `<div class="icon-action-wrapper replay-action">
+                                  <div class="overlay-step-btn">${svgReplay}</div>
+                                  <div class="icon-text">다시보기</div>
+                               </div>`;
+        const restartBtnHTML = `<div class="icon-action-wrapper">
+                                    <button class="overlay-step-btn restart-btn">${svgReplay}</button>
+                                    <div class="icon-text">처음부터</div>
+                                </div>`;
+
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`; 
 
         if (isFinalStep) {
-            content += `<div id="ratingSection">${ratingFormHTML}</div>`;
+            content += ratingFormHTML;
             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
-                            <button class="overlay-step-btn prev-btn">${svgPrev}</button>
-                            ${replayHTML}
-                            <button class="overlay-step-btn restart-btn">${svgReplay}</button>
+                            ${prevBtnHTML.replace('style="visibility: hidden;"', '')}
+                            ${replayBtnHTML}
+                            ${restartBtnHTML}
                         </div>`;
         } else {
             content += `<div class="overlay-buttons">
-                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">${svgPrev}</button>
-                            ${replayHTML}
-                            <button class="overlay-step-btn next-step-btn">${svgNext}</button>
+                            ${prevBtnHTML}
+                            ${replayBtnHTML}
+                            ${nextBtnHTML}
                         </div>`;
         }
         
         content += `</div>`;
-
         globalOverlay.innerHTML = content;
 
         globalOverlay.querySelector('.replay-action').addEventListener('click', () => {
             globalOverlay.classList.remove('show');
-            if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].seekTo === 'function') {
+            if (playerObjects[currentIndex]) {
                 playerObjects[currentIndex].seekTo(0);
                 playerObjects[currentIndex].playVideo();
             }
         });
         
         const prevBtn = globalOverlay.querySelector('.prev-btn');
-        if (prevBtn) prevBtn.addEventListener('click', () => { goToSlide(currentIndex - 1); });
+        if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
 
         const nextStepBtn = globalOverlay.querySelector('.next-step-btn');
-        if (nextStepBtn) nextStepBtn.addEventListener('click', () => { goToSlide(currentIndex + 1); });
+        if (nextStepBtn) nextStepBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
         const restartBtn = globalOverlay.querySelector('.restart-btn');
-        if (restartBtn) restartBtn.addEventListener('click', () => { goToSlide(0); });
+        if (restartBtn) restartBtn.addEventListener('click', () => goToSlide(0));
         
         const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
@@ -473,8 +463,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupOverlayEventListeners(isFinalStep);
         globalOverlay.classList.add('show');
     }
-    
-    function showBottomButtons() {} 
     
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
