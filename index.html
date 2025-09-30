@@ -29,15 +29,14 @@
     #startOverlay { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 25; flex-direction: column; align-items: center; justify-content: center; color: white; }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
-    .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
+    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
-    /* 🌟 오버레이 메인 컨텐츠 영역 - 이미지 1, 2 반영 */
+    /* 🌟 오버레이 메인 컨텐츠 영역 */
     .overlay-content-area { 
         display: flex; 
         flex-direction: column; 
-        /* 🌟 수정: 버튼 영역과 다시보기 영역을 분리하여 flex-end로 정렬 */
-        justify-content: space-between; 
+        justify-content: center; /* 만족도 폼을 중앙에 배치 */
         align-items: center; 
         padding: 20px;
         width: 100%;
@@ -46,17 +45,13 @@
         box-sizing: border-box;
     }
     
-    /* 🌟 다시보기 버튼 그룹 - 이미지 1, 2 반영 (원 크기 대폭 축소) */
+    /* 🌟 다시보기 버튼 그룹 */
+    /* 수정: 이제 버튼 그룹의 일부이므로 절대 위치 제거 */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
-        margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */
-        /* 🌟 수정: 오버레이 콘텐츠의 상단에 고정 */
-        position: absolute;
-        top: 20px; /* 적절한 상단 여백 */
-        z-index: 2; /* 버튼보다 위에 오도록 */
     }
     .replay-action .replay-btn { 
         border: 1px solid white; 
@@ -75,24 +70,18 @@
         font-weight: bold; 
     }
 
-    /* 🌟 버튼 그룹 (이전/다음/처음부터) - 이미지 1, 2 반영 */
+    /* 🌟 버튼 그룹 (이전/다음/처음부터) */
+    /* 수정: 모든 버튼을 포함하는 컨테이너 스타일 */
     .overlay-buttons { 
         display: flex; 
-        gap: 15px; 
         width: 100%;
-        /* 🌟 수정: 버튼들을 양 끝으로 정렬 */
-        justify-content: space-between;
-        margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */
-        padding: 0 15px; /* 좌우 여백 추가 */
-        box-sizing: border-box;
-        /* 🌟 추가: 버튼 그룹이 overlay-content-area의 하단에 고정되도록 */
-        position: absolute;
-        bottom: 20px; /* 적절한 하단 여백 */
+        justify-content: space-between; /* 좌/중/우 정렬 */
+        align-items: center; /* 세로 중앙 정렬 */
+        position: absolute; /* 화면 하단에 고정 */
+        bottom: 20px;
         left: 0;
-    }
-    /* 🌟 추가: 마지막 단계의 버튼 그룹 스타일 */
-    .overlay-buttons.final-step-buttons {
-        justify-content: center; /* 마지막 단계는 가운데 정렬 */
+        padding: 0 25px; /* 좌우 여백 */
+        box-sizing: border-box;
     }
 
     .overlay-step-btn { 
@@ -104,14 +93,13 @@
         font-weight: bold; 
         cursor: pointer; 
         border-radius: 30px; 
-        flex-shrink: 1; 
-        flex-basis: auto; 
+        flex-shrink: 0; /* 버튼 크기 고정 */
     }
     
-    /* 🌟 만족도 폼 관련 스타일 - 이미지 1, 2 반영 */
+    /* 🌟 만족도 폼 관련 스타일 */
     .rating-divider { width: 100%; max-width: 250px; height: 1px; background-color: rgba(255, 255, 255, 0.4); margin: 15px auto 15px; }
-    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; } /* 🌟 폼이 중앙에 올 수 있도록 flex 속성 추가 */
-    .rating-content { display: flex; flex-direction: column; align-items: center; margin-top: 0px; /* 🌟 중앙 정렬에 맞춰 마진 제거 */ margin-bottom: 5px; }
+    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .rating-content { display: flex; flex-direction: column; align-items: center; margin-top: 0px; margin-bottom: 5px; }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
     .satisfaction-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
     .satisfaction-rating .star { font-size: 30px; color: #bbb; cursor: pointer; transition: color 0.2s; } 
@@ -296,7 +284,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             const youtubeID = getYouTubeID(step.video_url); 
             const autoplay = 0; 
             
-            // 🌟 YouTube API 매개변수를 통해 관련 동영상 및 정보 최대한 숨기기
             const embedHTML = `<iframe 
                                     data-step-index="${index}"
                                     id="youtube-player-${index}"
@@ -333,13 +320,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
-        stepNavigation.classList.add('disabled'); // 🌟 초기 로드 시 단계 버튼 비활성화
+        stepNavigation.classList.add('disabled');
         startOverlay.classList.remove('hidden'); 
     }
     
     startButton.addEventListener('click', () => {
         startOverlay.classList.add('hidden'); 
-        stepNavigation.classList.remove('disabled'); // 🌟 시작 버튼 클릭 시 단계 버튼 활성화
+        stepNavigation.classList.remove('disabled');
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo(); 
         }
@@ -369,28 +356,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         globalOverlay.classList.remove('show');
     }
     
+    // 🌟 수정: 버튼 HTML 생성을 새로운 레이아웃에 맞게 변경
     function setupOverlayEventListeners(isFinalStep) { 
         let content = `<div class="overlay-content-area">`; 
 
-        content += replayHTML; // 다시보기는 항상 상단에 위치
-
         if (isFinalStep) {
-             content += `<div id="ratingSection">
-                             ${ratingFormHTML}
-                           </div>`;
-                     
-             content += `<div class="overlay-buttons final-step-buttons" id="navigationButtonsGroup">
-                             <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                             <button class="overlay-step-btn restart-btn">처음부터↻</button>
-                         </div>`;
+            content += `<div id="ratingSection">${ratingFormHTML}</div>`;
+            content += `<div class="overlay-buttons" id="navigationButtonsGroup">
+                            <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
+                            ${replayHTML}
+                            <button class="overlay-step-btn restart-btn">처음부터↻</button>
+                        </div>`;
         } else {
-             content += `<div class="overlay-buttons">
-                             <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
-                             <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
-                         </div>`;
+            content += `<div class="overlay-buttons">
+                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
+                            ${replayHTML}
+                            <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
+                        </div>`;
         }
         
-        content += `</div>`; // 🌟 오버레이 콘텐츠 영역 끝
+        content += `</div>`;
 
         globalOverlay.innerHTML = content;
 
