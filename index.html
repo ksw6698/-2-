@@ -45,24 +45,8 @@
     }
     #startOverlay.hidden { display: none; }
     #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; color: white; }
-    #startOverlay .start-button {
-        background-color: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        padding: 0;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.2s, border-color 0.2s;
-    }
-    #startOverlay .start-button:hover {
-        background-color: rgba(0, 0, 0, 0.6);
-        border-color: rgba(255, 255, 255, 0.4);
-    }
+    /* 🌟 수정: 시작 버튼 스타일을 원래의 파란색 버튼으로 복원 */
+    #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
     /* 오버레이 메인 컨텐츠 영역 */
@@ -175,7 +159,8 @@
             <div class="overlay-content-area">
                 <div class="start-title">관리 가이드 시작</div>
                 <button id="startButton" class="start-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    시작
                 </button>
             </div>
         </div>
@@ -358,8 +343,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
-        // 🌟 수정: 초기 로드 시 텍스트 영역을 보이지 않게 함
-        // additionalTextArea.style.display = 'block';
         
         currentIndex = 0;
         stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === 0));
@@ -378,8 +361,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         startButtonClicked = true;
         startOverlay.classList.add('hidden'); 
         stepNavigation.classList.remove('disabled');
-
-        // 🌟 수정: 시작 버튼 클릭 시 텍스트 영역을 보이게 함
         additionalTextArea.style.display = 'block';
 
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
