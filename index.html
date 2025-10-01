@@ -36,13 +36,17 @@
     .overlay-wrapper.show { display: flex; }
 
     /* 시작 화면 오버레이 */
-    /* 🌟 수정: 시작 화면이 기본적으로 보이도록 display: flex 추가 */
     #startOverlay { 
         display: flex;
         z-index: 25;
+        /* 🌟 수정: 블러 효과 제거 및 배경색 검정(불투명도 100%)으로 변경 */
+        background-color: rgb(0, 0, 0); 
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
     }
     #startOverlay.hidden { display: none; }
-    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; }
+    /* 🌟 수정: 시작 화면 제목 텍스트 색상 흰색으로 변경 */
+    #startOverlay .start-title { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; color: white; }
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
