@@ -8,10 +8,19 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
 
-/* 🌟 Step Navigation (업그레이드 스타일) */
-@keyframes bounce { /* 통통 튀는 애니메이션 */
-  0%, 100% { transform: scale(1.2); }
-  50% { transform: scale(1.4); }
+/* 🌟 Step Navigation (최종 인터랙션 강화 스타일) */
+@keyframes pop-in { /* 뻥 터지는 듯한 애니메이션 */
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.4); /* 목표보다 더 크게 */
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2); /* 최종 크기로 안착 */
+  }
 }
 
 .step-navigation {
@@ -61,8 +70,8 @@
     background-image: linear-gradient(to top, #0056b3, #007bff);
     color: #fff;
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-    animation: bounce 0.4s ease; /* 애니메이션 적용 */
-    transform: scale(1.2);
+    animation: pop-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 🌟 새 애니메이션 적용 */
+    transform: scale(1.2); /* 최종 상태 크기 */
 }
 .step-btn.completed {
     background-color: #007bff;
@@ -83,7 +92,7 @@
     background-color: #007bff;
     transform: translateY(-50%) scaleX(1);
     transform-origin: left;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 속도감 있는 전환 */
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: -1;
 }
 
