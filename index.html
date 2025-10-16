@@ -7,9 +7,76 @@
 <style>
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
-    .step-navigation { display: flex; background-color: #f8f9fa; padding: 10px; border-top: 1px solid #ddd; }
-    .step-btn { flex-grow: 1; padding: 10px 5px; font-size: 16px; font-weight: bold; text-align: center; background-color: transparent; border: none; border-top: 3px solid transparent; border-bottom: none; cursor: pointer; color: #888; transition: all 0.3s ease; }
-    .step-btn.active { color: #007bff; border-top-color: #007bff; }
+    
+    /* 🌟 Step Navigation (새로운 스타일로 교체) */
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 20px 40px; /* 여백 조정 */
+        border-top: 1px solid #ddd;
+        position: relative;
+    }
+
+    /* 연결선 기본 스타일 (회색) */
+    .step-navigation::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 40px;
+        right: 40px;
+        height: 2px;
+        background-color: #e0e0e0;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .step-btn {
+        position: relative;
+        background-color: #e0e0e0; /* 기본 원 색상 */
+        color: #fff;
+        width: 30px; /* 원 크기 */
+        height: 30px; /* 원 크기 */
+        border-radius: 50%;
+        border: none;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2; /* 선보다 위에 오도록 설정 */
+        transition: all 0.4s ease;
+        padding: 0;
+    }
+    
+    /* 활성화된 단계(현재 단계) 스타일 */
+    .step-btn.active {
+        background-color: #007bff; /* 활성 원 색상 (파란색) */
+        transform: scale(1.2); /* 살짝 커지는 효과 */
+        color: #fff;
+    }
+
+    /* 완료된 단계 스타일 */
+    .step-btn.completed {
+        background-color: #007bff; /* 완료 원 색상 (파란색) */
+        color: #fff;
+    }
+
+    /* 완료된 단계 뒤에 있는 버튼의 연결선을 파란색으로 변경 */
+    .step-btn.completed::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%; /* 다음 버튼까지의 거리 */
+        height: 2px;
+        background-color: #007bff;
+        transform: translateY(-50%);
+        z-index: -1;
+    }
+    
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; /* 16:9 비율 유지 */ }
     .slider-wrapper { display: flex; transition: transform 0.3s ease; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
@@ -20,32 +87,28 @@
     
     .slider-btn { background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid white; padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 30px; transition: all 0.3s ease; opacity: 1; transform: translateY(0); pointer-events: auto; display: block; }
     
-    /* 🌟 오버레이: 동영상 종료 후 표시되는 화면 */
+    /* 오버레이: 동영상 종료 후 표시되는 화면 */
     .overlay-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    
-    /* --- 이 부분을 확인해주세요 --- */
-    background-color: rgba(0, 0, 0, 0.5); /* 투명도를 50%로 설정 */
-    -webkit-backdrop-filter: blur(8px);   /* Safari 등 웹킷 브라우저 지원 */
-    backdrop-filter: blur(10px);           /* 표준 블러 효과 8px, 더 진하게 하기 위해 10px로 수정 진행 */ 
-    /* -------------------------- */
-
-    border-radius: 0;
-    padding: 0;
-    z-index: 20;
-    box-sizing: border-box;
-}
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border-radius: 0;
+        padding: 0;
+        z-index: 20;
+        box-sizing: border-box;
+    }
     .overlay-wrapper.show { display: flex; }
 
-    /* 🌟 시작 화면 오버레이 스타일 */
+    /* 시작 화면 오버레이 스타일 */
     #startOverlay { 
         display: flex; 
         position: absolute; 
@@ -65,51 +128,51 @@
     #startOverlay .start-button { background-color: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; border-radius: 30px; display: flex; align-items: center; gap: 10px; }
     #startOverlay .start-button svg { fill: white; width: 24px; height: 24px; }
     
-    /* 🌟 오버레이 메인 컨텐츠 영역 - 이미지 1, 2 반영 */
+    /* 오버레이 메인 컨텐츠 영역 */
     .overlay-content-area { 
         display: flex; 
         flex-direction: column; 
-        justify-content: space-between; /* 🌟 상단, 중앙, 하단 요소가 공간을 나눠갖도록 */
+        justify-content: space-between;
         align-items: center; 
         padding: 20px;
         width: 100%;
         max-width: 400px;
-        height: 100%; /* 부모(overlay-wrapper)의 꽉 채우도록 */
+        height: 100%;
         box-sizing: border-box;
     }
     
-    /* 🌟 다시보기 버튼 그룹 - 이미지 1, 2 반영 (원 크기 대폭 축소) */
+    /* 다시보기 버튼 그룹 */
     .replay-action { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
         cursor: pointer; 
-        margin-top: 15px; /* 🌟 상단에 배치될 수 있도록 마진 조정 */
+        margin-top: 15px;
     }
     .replay-action .replay-btn { 
-        border: 1px solid white; /* 🌟 원 테두리 얇게 */
-        width: 30px; /* 🌟 원 크기 대폭 축소 */
-        height: 30px; /* 🌟 원 크기 대폭 축소 */
+        border: 1px solid white;
+        width: 30px;
+        height: 30px;
         border-radius: 50%; 
-        font-size: 14px; /* 🌟 아이콘 폰트 크기 조정 */
+        font-size: 14px;
         place-content: center; 
         display: grid; 
-        margin-bottom: 3px; /* 🌟 텍스트와의 간격 줄임 */
+        margin-bottom: 3px;
         color: white; 
     }
     .replay-action .replay-text { 
         color: white; 
-        font-size: 14px; /* 🌟 텍스트 폰트 크기 조정 */
+        font-size: 14px;
         font-weight: bold; 
     }
 
-    /* 🌟 버튼 그룹 (이전/다음/처음부터) - 이미지 1, 2 반영 */
+    /* 버튼 그룹 (이전/다음/처음부터) */
     .overlay-buttons { 
         display: flex; 
         gap: 15px; 
         width: 100%;
         justify-content: center;
-        margin-bottom: 15px; /* 🌟 하단에 배치될 수 있도록 마진 조정 */
+        margin-bottom: 15px;
     }
     .overlay-step-btn { 
         background-color: #007bff; 
@@ -124,7 +187,7 @@
         flex-basis: auto; 
     }
     
-    /* 🌟 만족도 폼 관련 스타일 - 이미지 1, 2 반영 */
+    /* 만족도 폼 관련 스타일 */
     .rating-divider { 
         width: 100%; 
         max-width: 250px; 
@@ -132,12 +195,12 @@
         background-color: rgba(255, 255, 255, 0.4); 
         margin: 15px auto 15px; 
     }
-    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; } /* 🌟 폼이 중앙에 올 수 있도록 flex 속성 추가 */
+    #ratingForm { width: 100%; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .rating-content { 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
-        margin-top: 0px; /* 🌟 중앙 정렬에 맞춰 마진 제거 */
+        margin-top: 0px;
         margin-bottom: 5px; 
     }
     .rating-prompt { color: white; font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }
@@ -183,7 +246,7 @@
 </div>
 
 <script>
-// 🌟 YouTube Iframe Player API 로드를 위한 코드 추가
+// YouTube Iframe Player API 로드
 const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -237,7 +300,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             </div>
         </form>`;
 
-    // --- 데이터 로드 함수 (변경 없음) ---
+    // 데이터 로드 함수 (변경 없음)
     async function loadData() {
         if (!sheetURL || sheetURL.includes('여기에')) { return null; }
         try {
@@ -263,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { console.error('Data Loading Error:', error); return null; }
     }
     
-    // --- 폼 제출 함수 (변경 없음) ---
+    // 폼 제출 함수 (변경 없음)
     function submitForm() { 
         const ratingForm = document.getElementById('ratingForm');
         if (!ratingForm) return;
@@ -279,8 +342,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('소중한 의견 감사합니다!');
             
             const finalContent = `<div class="overlay-action-group">
-                                    <button class="overlay-step-btn restart-only-btn">처음부터↻</button>
-                                  </div>`;
+                                        <button class="overlay-step-btn restart-only-btn">처음부터↻</button>
+                                    </div>`;
             globalOverlay.innerHTML = finalContent;
             globalOverlay.querySelector('.restart-only-btn').addEventListener('click', () => goToSlide(0));
             
@@ -323,21 +386,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             const youtubeID = getYouTubeID(step.video_url); 
             const autoplay = 0; 
             
-            // 🌟 YouTube API 매개변수를 통해 관련 동영상 및 정보 최대한 숨기기
             const embedHTML = `<iframe 
-                                data-step-index="${index}"
-                                id="youtube-player-${index}"
-                                src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=${autoplay}&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1&amp;iv_load_policy=3&amp;disablekb=1&amp;cc_load_policy=3" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen></iframe>`;
+                                    data-step-index="${index}"
+                                    id="youtube-player-${index}"
+                                    src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=${autoplay}&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1&amp;iv_load_policy=3&amp;disablekb=1&amp;cc_load_policy=3" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>`;
             
             slide.innerHTML = embedHTML;
             sliderWrapper.appendChild(slide);
 
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
-            stepBtn.textContent = `${index + 1}단계`;
+            stepBtn.textContent = index + 1; // 🌟 텍스트를 단계 번호로 변경
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepNavigation.appendChild(stepBtn);
         });
@@ -351,14 +413,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         mainContainer.style.display = 'block';
         additionalTextArea.style.display = 'block';
         
-        currentIndex = 0;
-        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === 0));
-        const item = currentGuideData[0];
-        const additionalDescription = document.getElementById('additional-description');
-        let htmlContent = `<span class="primary-text">${item.primary_text}</span>`;
-        if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
-        if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
-        additionalDescription.innerHTML = htmlContent;
+        // 초기 상태 설정
+        currentIndex = -1; // goToSlide에서 첫 상태를 올바르게 설정하기 위해 초기화
+        goToSlide(0, true); // 초기 로드 시에는 영상 재생 안 함
 
         startOverlay.classList.remove('hidden'); 
     }
@@ -370,8 +427,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    function goToSlide(index) {
-        if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
+    // 🌟 goToSlide 함수 수정
+    function goToSlide(index, isInitialLoad = false) {
+        if (currentIndex === index && !isInitialLoad) return; // 같은 슬라이드 재클릭 방지
+
+        // 이전 영상 정지 (초기 로드 시에는 실행 안 함)
+        if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
              playerObjects[currentIndex].stopVideo();
         }
 
@@ -384,9 +445,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
-        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => btn.classList.toggle('active', btnIndex === index));
+
+        // --- Step Navigation 버튼 상태 업데이트 로직 ---
+        stepNavigation.querySelectorAll('.step-btn').forEach((btn, btnIndex) => {
+            btn.classList.remove('active', 'completed'); // 모든 상태 초기화
+            if (btnIndex < index) {
+                btn.classList.add('completed'); // 현재 인덱스보다 작으면 '완료'
+            } else if (btnIndex === index) {
+                btn.classList.add('active'); // 현재 인덱스와 같으면 '활성'
+            }
+        });
         
-        if (playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
+        // 새 영상 재생 (초기 로드 시에는 실행 안 함)
+        if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
             playerObjects[currentIndex].seekTo(0); 
             playerObjects[currentIndex].playVideo(); 
         }
@@ -400,22 +471,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         content += replayHTML; // 다시보기는 항상 상단에 위치
 
         if (isFinalStep) {
-             content += `<div id="ratingSection">
-                            ${ratingFormHTML}
-                         </div>`;
-                         
-             content += `<div class="overlay-buttons" id="navigationButtonsGroup">
-                            <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
-                            <button class="overlay-step-btn restart-btn">처음부터↻</button>
-                        </div>`;
+              content += `<div id="ratingSection">
+                                  ${ratingFormHTML}
+                               </div>`;
+                                
+              content += `<div class="overlay-buttons" id="navigationButtonsGroup">
+                                  <button class="overlay-step-btn prev-btn">❮ 이전단계</button>
+                                  <button class="overlay-step-btn restart-btn">처음부터↻</button>
+                              </div>`;
         } else {
-             content += `<div class="overlay-buttons">
-                            <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
-                            <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
-                        </div>`;
+              content += `<div class="overlay-buttons">
+                                  <button class="overlay-step-btn prev-btn" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};">❮ 이전단계</button>
+                                  <button class="overlay-step-btn next-step-btn">다음단계 ❯</button>
+                              </div>`;
         }
         
-        content += `</div>`; // 🌟 오버레이 콘텐츠 영역 끝
+        content += `</div>`;
 
         globalOverlay.innerHTML = content;
 
@@ -475,8 +546,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         globalOverlay.classList.add('show');
     }
     
-    function showBottomButtons() {} 
-    
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
@@ -498,8 +567,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             );
             
             if (guideData.length > 0) {
-                prepareDOM(guideData); 
                 isDataLoaded = true;
+                currentGuideData = guideData; // currentGuideData를 먼저 할당
                 
                 if (typeof YT !== 'undefined' && YT.Player) {
                     startInitialization();
