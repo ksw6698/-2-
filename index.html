@@ -384,37 +384,43 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 🌟 prepareDOM 함수 수정
-    function prepareDOM(guideData) {
-        currentGuideData = guideData;
-        sliderWrapper.innerHTML = '';
-        stepNavigation.innerHTML = '';
-        
-        guideData.forEach((step, index) => {
-            const slide = document.createElement('div');
-            slide.className = 'slide';
+    // 🌟 prepareDOM 함수 전체를 아래 코드로 교체하세요.
+function prepareDOM(guideData) {
+    currentGuideData = guideData;
+    sliderWrapper.innerHTML = '';
+    stepNavigation.innerHTML = '';
+    
+    guideData.forEach((step, index) => {
+        // 슬라이드 생성 (기존과 동일)
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        const youtubeID = getYouTubeID(step.video_url); 
+        const embedHTML = `<iframe data-step-index="${index}" id="youtube-player-${index}" src="https://www.youtube.com/embed/${youtubeID}?rel=0&autoplay=0&mute=0&controls=1&loop=0&modestbranding=1&showinfo=0&enablejsapi=1&iv_load_policy=3&disablekb=1&cc_load_policy=3" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        slide.innerHTML = embedHTML;
+        sliderWrapper.appendChild(slide);
 
-            const youtubeID = getYouTubeID(step.video_url); 
-            const autoplay = 0; 
-            
-            const embedHTML = `<iframe 
-                                    data-step-index="${index}"
-                                    id="youtube-player-${index}"
-                                    src="https://www.youtube.com/embed/${youtubeID}?rel=0&amp;autoplay=${autoplay}&amp;mute=0&amp;controls=1&amp;loop=0&amp;modestbranding=1&amp;showinfo=0&amp;enablejsapi=1&amp;iv_load_policy=3&amp;disablekb=1&amp;cc_load_policy=3" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen></iframe>`;
-            
-            slide.innerHTML = embedHTML;
-            sliderWrapper.appendChild(slide);
+        // 단계 버튼 생성 (기존과 동일)
+        const stepBtn = document.createElement('button');
+        stepBtn.className = 'step-btn';
+        stepBtn.textContent = index + 1;
+        stepBtn.addEventListener('click', () => goToSlide(index));
+        stepNavigation.appendChild(stepBtn);
 
-            const stepBtn = document.createElement('button');
-            stepBtn.className = 'step-btn';
-            stepBtn.textContent = index + 1; // 🌟 텍스트를 숫자만으로 변경
-            stepBtn.addEventListener('click', () => goToSlide(index));
-            stepNavigation.appendChild(stepBtn);
-        });
-    }
+        // 🌟 마지막 버튼이 아닐 경우, 버튼 사이에 SVG 연결선 추가
+        if (index < guideData.length - 1) {
+            const connector = document.createElement('div');
+            connector.className = 'connector';
+            // SVG 내부에 두 개의 path(선)를 만듭니다: 하나는 배경(회색), 하나는 애니메이션(파란색)
+            connector.innerHTML = `
+                <svg class="connector-svg" viewBox="0 0 100 2">
+                    <path class="line-bg" d="M 0 1 L 100 1"></path>
+                    <path class="line-animated" d="M 0 1 L 100 1"></path>
+                </svg>
+            `;
+            stepNavigation.appendChild(connector);
+        }
+    });
+}
 
     // 🌟 startInitialization 함수 수정
     startInitialization = function() {
