@@ -8,7 +8,12 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
 
-   /* 🌟 Step Navigation (업그레이드 스타일) */
+/* 🌟 Step Navigation (업그레이드 스타일) */
+@keyframes bounce { /* 통통 튀는 애니메이션 */
+  0%, 100% { transform: scale(1.2); }
+  50% { transform: scale(1.4); }
+}
+
 .step-navigation {
     display: flex;
     justify-content: space-between;
@@ -37,7 +42,7 @@
 .step-btn {
     position: relative;
     background-color: #e0e0e0;
-    color: #888; /* 비활성 숫자 색상 */
+    color: #888;
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -53,18 +58,18 @@
     padding: 0;
 }
 .step-btn.active {
-    background-color: #007bff;
     background-image: linear-gradient(to top, #0056b3, #007bff);
-    transform: scale(1.2);
     color: #fff;
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+    animation: bounce 0.4s ease; /* 애니메이션 적용 */
+    transform: scale(1.2);
 }
 .step-btn.completed {
     background-color: #007bff;
-    font-size: 0; /* 숫자 숨기기 */
+    font-size: 0;
 }
 .step-btn.completed::before {
-    content: '✓'; /* 체크 아이콘 표시 */
+    content: '✓';
     font-size: 16px;
     color: white;
 }
@@ -78,7 +83,7 @@
     background-color: #007bff;
     transform: translateY(-50%) scaleX(1);
     transform-origin: left;
-    transition: transform 0.4s ease-in-out;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 속도감 있는 전환 */
     z-index: -1;
 }
 
