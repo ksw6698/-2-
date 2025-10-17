@@ -27,7 +27,7 @@
         background-color: #f8f9fa;
         padding: 20px 40px;
         border-top: 1px solid #ddd;
-        position: relative;
+        position: relative; /* 🌟 선의 기준점이 됨 */
         transition: opacity 0.3s ease;
     }
     .step-navigation.disabled {
@@ -36,7 +36,7 @@
     }
 
     .step-btn {
-        position: relative; /* 🌟 선의 기준점이 됨 */
+        position: relative;
         background-color: #e0e0e0;
         color: #888;
         width: 30px;
@@ -49,7 +49,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 2;
+        z-index: 2; /* 선보다 위에 오도록 */
         transition: all 0.4s ease;
         padding: 0;
         flex-shrink: 0;
@@ -75,10 +75,9 @@
     .connector {
         position: absolute;
         top: 50%;
-        left: 50%; /* JS에서 계산된 위치로 설정됨 */
         height: 2px;
         transform: translateY(-50%);
-        z-index: 1;
+        z-index: 1; /* 버튼보다 아래에 오도록 */
     }
     .connector-svg {
         width: 100%;
@@ -327,13 +326,39 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         });
     }
+    
+    // 🌟 추가: 선 위치 계산 및 적용 함수
+    function positionConnectors() {
+        const buttons = Array.from(stepNavigation.querySelectorAll('.step-btn'));
+        const connectors = Array.from(stepNavigation.querySelectorAll('.connector'));
+        if (buttons.length < 2 || connectors.length === 0) return;
 
-    // 🌟 prepareDOM 함수 수정
+        const navRect = stepNavigation.getBoundingClientRect();
+
+        connectors.forEach((connector, index) => {
+            const btn = buttons[index];
+            const nextBtn = buttons[index + 1];
+
+            if (btn && nextBtn) {
+                const btnRect = btn.getBoundingClientRect();
+                const nextBtnRect = nextBtn.getBoundingClientRect();
+
+                const left = btnRect.right - navRect.left;
+                const width = nextBtnRect.left - btnRect.right;
+                
+                connector.style.left = `${left}px`;
+                connector.style.width = `${width}px`;
+            }
+        });
+    }
+
     function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
         stepNavigation.innerHTML = '';
 
+        // 🌟 버튼과 선을 분리해서 생성
+        // 1. 버튼 먼저 생성
         guideData.forEach((step, index) => {
             const slide = document.createElement('div');
             slide.className = 'slide';
@@ -349,27 +374,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             stepNavigation.appendChild(stepBtn);
         });
 
-        // 🌟 버튼 생성 후 선(connector)을 별도로 생성
-        const buttons = stepNavigation.querySelectorAll('.step-btn');
-        buttons.forEach((btn, index) => {
-            if (index < buttons.length - 1) {
-                const nextBtn = buttons[index + 1];
+        // 2. 그 다음 선(connector)들 생성
+        guideData.forEach((step, index) => {
+            if (index < guideData.length - 1) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
-
-                // 🌟 버튼과 버튼 사이의 거리를 계산하여 선의 너비와 위치 설정
-                const btnRect = btn.getBoundingClientRect();
-                const nextBtnRect = nextBtn.getBoundingClientRect();
-                const navRect = stepNavigation.getBoundingClientRect();
-
-                const left = btnRect.right - navRect.left;
-                const width = nextBtnRect.left - btnRect.right;
-                
-                connector.style.left = `${left}px`;
-                connector.style.width = `${width}px`;
-
                 connector.innerHTML = `<svg class="connector-svg" viewBox="0 0 100 2" preserveAspectRatio="none"><path class="line-bg" d="M 0 1 L 100 1"></path><path class="line-animated" d="M 0 1 L 100 1"></path></svg>`;
-                // 🌟 step-btn이 아닌 step-navigation에 추가
                 stepNavigation.appendChild(connector);
             }
         });
@@ -381,6 +391,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         loadingMessage.style.display = 'none';
         mainContainer.style.display = 'block';
+
+        // 🌟 DOM이 그려진 후 커넥터 위치 계산 (타이밍 문제 해결)
+        setTimeout(positionConnectors, 0);
 
         additionalTextArea.style.display = 'none';
         stepNavigation.classList.add('disabled');
@@ -403,7 +416,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // 🌟 goToSlide 함수 수정
     function goToSlide(index, isInitialLoad = false) {
         if (!isInitialLoad && index === currentIndex) return;
 
@@ -430,7 +442,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        // 🌟 Connector 상태 업데이트 로직 수정
         stepNavigation.querySelectorAll('.connector').forEach((connector, connectorIndex) => {
             if (connectorIndex < index) {
                 connector.classList.add('completed');
@@ -451,8 +462,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};"><button class="overlay-step-btn prev-btn">${svgPrev}</button><div class="icon-text">이전</div></div>`;
         const nextBtnHTML = `<div class="icon-action-wrapper"><button class="overlay-step-btn next-step-btn">${svgNext}</button><div class="icon-text">다음</div></div>`;
         const replayBtnHTML = `<div class="icon-action-wrapper replay-action"><div class="overlay-step-btn">${svgReplay}</div><div class="icon-text">다시보기</div></div>`;
-        const restartBtnHTML = `<div class="icon-action-wrapper"><button class="overlay-step-btn restart-btn">${svgReplay}</button><div class="icon-text">처음부터</div></div>`;
-
+        
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`;
 
         if (isFinalStep) {
@@ -480,9 +490,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
         const nextStepBtn = globalOverlay.querySelector('.next-step-btn');
         if (nextStepBtn) nextStepBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
-        const restartBtn = globalOverlay.querySelector('.restart-btn');
-        if (restartBtn) restartBtn.addEventListener('click', () => goToSlide(0));
-
+        
         const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
@@ -520,6 +528,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupOverlayEventListeners(isFinalStep);
         globalOverlay.classList.add('show');
     }
+    
+    // 🌟 화면 크기 변경 시 선 위치 다시 계산
+    window.addEventListener('resize', positionConnectors);
 
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
