@@ -8,7 +8,7 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
 
-    /* 🌟 Step Navigation (프로그레스 바 적용 스타일) */
+    /* Step Navigation */
     @keyframes pop-in {
       0% { transform: scale(0.9); opacity: 0.7; }
       50% { transform: scale(1.4); opacity: 1; }
@@ -44,7 +44,7 @@
     }
 
     .step-btn {
-        position: relative; /* ::after의 기준 */
+        position: relative;
         background-color: #e0e0e0;
         color: #888;
         width: 30px;
@@ -61,11 +61,11 @@
         transition: all 0.4s ease;
         padding: 0;
         flex-shrink: 0;
-        overflow: hidden; /* 내부 진행률 요소 숨김 */
+        overflow: hidden;
     }
     .step-btn.active {
-        background-color: #e0e0e0; /* 배경은 비활성 색 */
-        color: #888;              /* 텍스트 색상도 비활성 색 */
+        background-color: #e0e0e0;
+        color: #888;
         box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         animation: pop-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         transform: scale(1.2);
@@ -79,16 +79,16 @@
         width: 100%;
         height: 100%;
         background-image: linear-gradient(to top, #0056b3, #007bff);
-        transform: scaleX(var(--progress, 0)); /* CSS 변수로 너비 조절 */
+        transform: scaleX(var(--progress, 0));
         transform-origin: left;
-        transition: transform 0.1s linear; /* 부드러운 전환 */
-        z-index: 1; /* span 숫자보다 아래 */
+        transition: transform 0.2s linear; /* 🌟 부드러운 전환 시간 */
+        z-index: 1;
     }
-    /* 활성 버튼 숫자 스타일 (항상 보이도록) */
+    /* 활성 버튼 숫자 스타일 */
     .step-btn.active span {
         position: relative;
         color: #fff;
-        z-index: 2; /* 진행률 바보다 위에 */
+        z-index: 2;
     }
     .step-btn.completed {
         background-color: #007bff;
@@ -125,6 +125,7 @@
         animation: wave 1s ease-in-out 0.5s;
     }
 
+    /* --- 이하 스타일은 변경 없음 --- */
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; }
     .slider-wrapper { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.4s ease; }
     .slide { min-width: 100%; box-sizing: border-box; position: relative; }
@@ -240,7 +241,7 @@ const svgReplay = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox
 let playerObjects = [];
 let isDataLoaded = false;
 let startInitialization = null;
-let progressInterval = null; // 🌟 추가: 진행률 인터벌 ID
+let progressInterval = null;
 
 window.onYouTubeIframeAPIReady = function() {
     if (isDataLoaded) {
@@ -335,7 +336,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return match ? match[1] : url;
     }
 
-    // 🌟 진행률 업데이트 함수
     function updateProgress() {
         if (currentIndex < 0 || !playerObjects[currentIndex] || typeof playerObjects[currentIndex].getCurrentTime !== 'function') {
             return;
@@ -352,7 +352,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // 🌟 플레이어 이벤트 핸들러 수정
     function createVideoPlayers(guideData) {
         playerObjects = [];
         document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
@@ -362,7 +361,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                         if (index === currentIndex) {
                             if (event.data === YT.PlayerState.PLAYING) {
                                 if (!progressInterval) {
-                                    progressInterval = setInterval(updateProgress, 250);
+                                    // 🌟 인터벌 간격 수정
+                                    progressInterval = setInterval(updateProgress, 100);
                                 }
                             } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
                                 if (progressInterval) {
@@ -383,7 +383,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 🌟 prepareDOM 함수 수정
     function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
@@ -402,7 +401,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
-            stepBtn.innerHTML = `<span>${index + 1}</span>`; // 숫자를 span으로 감싸기
+            stepBtn.innerHTML = `<span>${index + 1}</span>`;
             stepBtn.addEventListener('click', () => goToSlide(index));
             stepItem.appendChild(stepBtn);
 
@@ -431,7 +430,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         startOverlay.classList.remove('hidden');
     }
 
-    // 🌟 startButton 클릭 핸들러 수정
     startButton.addEventListener('click', () => {
         startOverlay.classList.add('hidden');
         stepNavigation.classList.remove('disabled');
@@ -442,17 +440,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo();
-            if (!progressInterval) { // 인터벌 시작
-                progressInterval = setInterval(updateProgress, 250);
+            if (!progressInterval) {
+                // 🌟 인터벌 간격 수정
+                progressInterval = setInterval(updateProgress, 100);
             }
         }
     });
 
-    // 🌟 goToSlide 함수 수정
     function goToSlide(index, isInitialLoad = false) {
         if (!isInitialLoad && index === currentIndex) return;
 
-        // 이전 인터벌 중지 및 스타일 초기화
         if (progressInterval) {
             clearInterval(progressInterval);
             progressInterval = null;
@@ -460,8 +457,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         const prevActiveBtn = stepNavigation.querySelector('.step-btn.active');
         if (prevActiveBtn) {
             prevActiveBtn.style.setProperty('--progress', 0);
-             const prevSpan = prevActiveBtn.querySelector('span');
-             //if(prevSpan) prevSpan.style.color = '#888'; // 더 이상 필요 없음 (CSS에서 처리)
         }
 
         if (!isInitialLoad && currentIndex >= 0 && playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
@@ -478,12 +473,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
-        // 버튼 및 아이템 상태 업데이트
         stepNavigation.querySelectorAll('.step-item').forEach((item, itemIndex) => {
             const btn = item.querySelector('.step-btn');
             item.classList.remove('completed');
             btn.classList.remove('active', 'completed');
-            btn.style.setProperty('--progress', 0); // 모든 버튼 진행률 초기화
+            btn.style.setProperty('--progress', 0);
 
             if (itemIndex < index) {
                 item.classList.add('completed');
@@ -496,12 +490,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
             playerObjects[currentIndex].seekTo(0);
             playerObjects[currentIndex].playVideo();
-            // 새 인터벌 시작
             if (!progressInterval) {
-                progressInterval = setInterval(updateProgress, 250);
+                // 🌟 인터벌 간격 수정
+                progressInterval = setInterval(updateProgress, 100);
             }
         } else if (isInitialLoad) {
-             // 첫 버튼 활성화
              const firstBtn = stepNavigation.querySelector('.step-btn');
              if(firstBtn) firstBtn.classList.add('active');
         }
@@ -513,7 +506,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};"><button class="overlay-step-btn prev-btn">${svgPrev}</button><div class="icon-text">이전</div></div>`;
         const nextBtnHTML = `<div class="icon-action-wrapper"><button class="overlay-step-btn next-step-btn">${svgNext}</button><div class="icon-text">다음</div></div>`;
         const replayBtnHTML = `<div class="icon-action-wrapper replay-action"><div class="overlay-step-btn">${svgReplay}</div><div class="icon-text">다시보기</div></div>`;
-        
+
         let content = `<div class="overlay-content-area ${isFinalStep ? 'final-step' : ''}">`;
 
         if (isFinalStep) {
@@ -541,7 +534,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
         const nextStepBtn = globalOverlay.querySelector('.next-step-btn');
         if (nextStepBtn) nextStepBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
-        
+
         const ratingForm = globalOverlay.querySelector('#ratingForm');
         if (ratingForm) {
             const stars = ratingForm.querySelectorAll('.star');
@@ -579,8 +572,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupOverlayEventListeners(isFinalStep);
         globalOverlay.classList.add('show');
     }
-    
-    // 리사이즈 이벤트 제거
 
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
