@@ -8,23 +8,18 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
 
-    /* Step Navigation */
-    @keyframes pop-in {
-      0% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.4); opacity: 1; }
-      100% { transform: scale(1.2); }
-    }
-    @keyframes wave {
-      0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(1.5); }
+    /* 🌟 Step Navigation (Dot + Text 최종 스타일) */
+    @keyframes pop-in-text { /* 텍스트 강조 애니메이션 */
+      0%, 100% { transform: scale(1.2); }
+      50% { transform: scale(1.4); }
     }
 
     .step-navigation {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start; /* 🌟 상단 정렬 (텍스트 기준) */
         background-color: #f8f9fa;
-        padding: 20px 40px;
+        padding: 15px 40px; /* 상하 패딩 조정 */
         border-top: 1px solid #ddd;
         position: relative;
         transition: opacity 0.3s ease;
@@ -34,95 +29,82 @@
         opacity: 0.6;
     }
 
+    /* 🌟 step-item 스타일 */
     .step-item {
         display: flex;
+        flex-direction: column; /* 숫자와 점을 세로로 배치 */
         align-items: center;
-        flex-grow: 1;
-    }
-    .step-item:last-child {
-        flex-grow: 0;
-    }
-
-    .step-btn {
-        position: relative;
-        background-color: #e0e0e0;
-        color: #888;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: none;
-        font-size: 14px;
-        font-weight: bold;
+        text-align: center;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 2;
-        transition: all 0.4s ease;
-        padding: 0;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-    .step-btn.active {
-        background-color: #e0e0e0;
-        color: #888;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        animation: pop-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        transform: scale(1.2);
-    }
-    /* 활성 버튼 내 진행률 표시 요소 */
-    .step-btn.active::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: linear-gradient(to top, #0056b3, #007bff);
-        transform: scaleX(var(--progress, 0));
-        transform-origin: left;
-        transition: transform 0.2s linear; /* 🌟 부드러운 전환 시간 */
-        z-index: 1;
-    }
-    /* 활성 버튼 숫자 스타일 */
-    .step-btn.active span {
-        position: relative;
-        color: #fff;
-        z-index: 2;
-    }
-    .step-btn.completed {
-        background-color: #007bff;
-        font-size: 0;
-    }
-    .step-btn.completed::before {
-        content: '✓';
-        font-size: 16px;
-        color: white;
+        flex: 1; /* 공간 균등 분배 */
+        padding: 0 5px; /* 좌우 간격 */
+        position: relative; /* 선의 기준점 */
     }
 
-    .connector {
-        flex-grow: 1;
-        height: 2px;
-        background-color: #e0e0e0;
-        position: relative;
-        margin: 0 5px;
-        z-index: 1;
+    /* 🌟 숫자 텍스트 스타일 */
+    .step-text {
+        font-size: 16px;
+        font-weight: bold;
+        color: #888; /* 기본 회색 */
+        margin-bottom: 8px; /* 점과의 간격 */
+        transition: color 0.3s ease, transform 0.3s ease;
     }
-    .connector::after {
+    .step-item.active .step-text {
+        color: #007bff; /* 활성 파란색 */
+        animation: pop-in-text 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: scale(1.2); /* 최종 크기 */
+    }
+    .step-item.completed .step-text {
+        color: #888; /* 완료 회색 */
+    }
+
+    /* 🌟 점(Dot) 기본 스타일 */
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #e0e0e0; /* 예정 회색 */
+        position: relative; /* 진행률 표시 기준 */
+        overflow: hidden; /* 진행률 요소 숨김 */
+        transition: background-color 0.3s ease;
+    }
+    .step-item.completed .dot {
+        background-color: #007bff; /* 완료 파란색 */
+    }
+    .step-item.active .dot {
+        background-color: #e0e0e0; /* 활성 배경 회색 */
+        transform: scale(1.2);
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* 🌟 활성 점 내부 진행률 표시 (아래에서 위로 채워짐) */
+    .step-item.active .dot::after {
         content: '';
         position: absolute;
-        top: 0;
+        bottom: 0; /* 아래에서 시작 */
         left: 0;
         width: 100%;
-        height: 100%;
+        height: calc(100% * var(--dot-progress, 0)); /* CSS 변수로 높이 조절 */
         background-color: #007bff;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.8s ease-in-out;
+        transition: height 0.2s linear; /* 부드러운 전환 */
     }
-    .step-item.completed .connector::after {
-        transform: scaleX(1);
-        animation: wave 1s ease-in-out 0.5s;
+
+    /* 🌟 선(Connector) 스타일 - 각 step-item 기준으로 그림 */
+    .step-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        /* 숫자높이(16px * line-height ~1.2) + 간격(8px) + 점 반지름(5px) = 점의 수직 중앙 */
+        top: calc(16px * 1.2 / 2 + 8px + 5px);
+        left: calc(50% + 5px + 5px); /* 현재 아이템 중앙 + 점 반지름 + 약간의 간격 */
+        right: calc(-50% + 5px + 5px);/* 다음 아이템 중앙 - 점 반지름 - 약간의 간격 */
+        height: 2px;
+        background-color: #e0e0e0; /* 기본 회색 선 */
+        z-index: -1; /* 점 뒤로 */
+        transition: background-color 0.8s ease-in-out; /* 🌟 부드러운 색상 변경 추가 */
+    }
+    /* 완료된 아이템의 선 스타일 */
+    .step-item.completed::after {
+         background-color: #007bff; /* 파란색 선 */
     }
 
     /* --- 이하 스타일은 변경 없음 --- */
@@ -336,6 +318,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         return match ? match[1] : url;
     }
 
+    // 진행률 업데이트 함수
     function updateProgress() {
         if (currentIndex < 0 || !playerObjects[currentIndex] || typeof playerObjects[currentIndex].getCurrentTime !== 'function') {
             return;
@@ -345,13 +328,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         const duration = player.getDuration();
         if (duration > 0) {
             const progress = currentTime / duration;
-            const activeBtn = stepNavigation.querySelector('.step-btn.active');
-            if (activeBtn) {
-                activeBtn.style.setProperty('--progress', progress);
+            const activeItem = stepNavigation.querySelector('.step-item.active');
+            if (activeItem) {
+                 const activeDot = activeItem.querySelector('.dot');
+                 if(activeDot) activeDot.style.setProperty('--dot-progress', progress);
             }
         }
     }
 
+    // 플레이어 이벤트 핸들러
     function createVideoPlayers(guideData) {
         playerObjects = [];
         document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
@@ -361,8 +346,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         if (index === currentIndex) {
                             if (event.data === YT.PlayerState.PLAYING) {
                                 if (!progressInterval) {
-                                    // 🌟 인터벌 간격 수정
-                                    progressInterval = setInterval(updateProgress, 100);
+                                    progressInterval = setInterval(updateProgress, 100); // 부드럽게
                                 }
                             } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
                                 if (progressInterval) {
@@ -370,8 +354,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     progressInterval = null;
                                 }
                                 if (event.data === YT.PlayerState.ENDED) {
-                                    const activeBtn = stepNavigation.querySelector('.step-btn.active');
-                                    if (activeBtn) activeBtn.style.setProperty('--progress', 1);
+                                    const activeItem = stepNavigation.querySelector('.step-item.active');
+                                     if (activeItem) {
+                                         const activeDot = activeItem.querySelector('.dot');
+                                         if(activeDot) activeDot.style.setProperty('--dot-progress', 1);
+                                     }
                                     showOverlay(index === currentGuideData.length - 1);
                                 }
                             }
@@ -383,6 +370,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // DOM 준비 함수
     function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
@@ -398,23 +386,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             const stepItem = document.createElement('div');
             stepItem.className = 'step-item';
+             stepItem.addEventListener('click', () => goToSlide(index));
 
-            const stepBtn = document.createElement('button');
-            stepBtn.className = 'step-btn';
-            stepBtn.innerHTML = `<span>${index + 1}</span>`;
-            stepBtn.addEventListener('click', () => goToSlide(index));
-            stepItem.appendChild(stepBtn);
+            const stepText = document.createElement('span');
+            stepText.className = 'step-text';
+            stepText.textContent = index + 1;
+            stepItem.appendChild(stepText);
 
-            if (index < guideData.length - 1) {
-                const connector = document.createElement('div');
-                connector.className = 'connector';
-                stepItem.appendChild(connector);
-            }
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            stepItem.appendChild(dot);
 
             stepNavigation.appendChild(stepItem);
         });
     }
 
+    // 초기화 함수
     startInitialization = function() {
         prepareDOM(currentGuideData);
         createVideoPlayers(currentGuideData);
@@ -430,6 +417,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         startOverlay.classList.remove('hidden');
     }
 
+    // 시작 버튼 클릭 핸들러
     startButton.addEventListener('click', () => {
         startOverlay.classList.add('hidden');
         stepNavigation.classList.remove('disabled');
@@ -441,12 +429,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo();
             if (!progressInterval) {
-                // 🌟 인터벌 간격 수정
-                progressInterval = setInterval(updateProgress, 100);
+                progressInterval = setInterval(updateProgress, 100); // 부드럽게
             }
         }
     });
 
+    // 슬라이드 이동 함수
     function goToSlide(index, isInitialLoad = false) {
         if (!isInitialLoad && index === currentIndex) return;
 
@@ -454,9 +442,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             clearInterval(progressInterval);
             progressInterval = null;
         }
-        const prevActiveBtn = stepNavigation.querySelector('.step-btn.active');
-        if (prevActiveBtn) {
-            prevActiveBtn.style.setProperty('--progress', 0);
+        const prevActiveItem = stepNavigation.querySelector('.step-item.active');
+        if (prevActiveItem) {
+             const prevActiveDot = prevActiveItem.querySelector('.dot');
+             if(prevActiveDot) prevActiveDot.style.setProperty('--dot-progress', 0);
         }
 
         if (!isInitialLoad && currentIndex >= 0 && playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
@@ -466,24 +455,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         sliderWrapper.style.transform = `translateX(-${index * 100}%)`;
         currentIndex = index;
 
-        const item = currentGuideData[index];
+        const itemData = currentGuideData[index];
         const additionalDescription = document.getElementById('additional-description');
-        let htmlContent = `<span class="primary-text">${item.primary_text}</span>`;
-        if (item.secondary_text) htmlContent += `<span class="secondary-text">${item.secondary_text}</span>`;
-        if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
+        let htmlContent = `<span class="primary-text">${itemData.primary_text}</span>`;
+        if (itemData.secondary_text) htmlContent += `<span class="secondary-text">${itemData.secondary_text}</span>`;
+        if (itemData.tertiary_text) htmlContent += `<span class="tertiary-text">${itemData.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
         stepNavigation.querySelectorAll('.step-item').forEach((item, itemIndex) => {
-            const btn = item.querySelector('.step-btn');
-            item.classList.remove('completed');
-            btn.classList.remove('active', 'completed');
-            btn.style.setProperty('--progress', 0);
+            item.classList.remove('active', 'completed');
+             const dot = item.querySelector('.dot');
+             if(dot) dot.style.setProperty('--dot-progress', 0);
 
             if (itemIndex < index) {
                 item.classList.add('completed');
-                btn.classList.add('completed');
             } else if (itemIndex === index) {
-                btn.classList.add('active');
+                item.classList.add('active');
             }
         });
 
@@ -491,17 +478,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             playerObjects[currentIndex].seekTo(0);
             playerObjects[currentIndex].playVideo();
             if (!progressInterval) {
-                // 🌟 인터벌 간격 수정
-                progressInterval = setInterval(updateProgress, 100);
+                progressInterval = setInterval(updateProgress, 100); // 부드럽게
             }
         } else if (isInitialLoad) {
-             const firstBtn = stepNavigation.querySelector('.step-btn');
-             if(firstBtn) firstBtn.classList.add('active');
+             const firstItem = stepNavigation.querySelector('.step-item');
+             if(firstItem) firstItem.classList.add('active');
         }
 
         globalOverlay.classList.remove('show');
     }
 
+    // 오버레이 설정 함수
     function setupOverlayEventListeners(isFinalStep) {
         const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};"><button class="overlay-step-btn prev-btn">${svgPrev}</button><div class="icon-text">이전</div></div>`;
         const nextBtnHTML = `<div class="icon-action-wrapper"><button class="overlay-step-btn next-step-btn">${svgNext}</button><div class="icon-text">다음</div></div>`;
@@ -568,11 +555,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    // 오버레이 표시 함수
     function showOverlay(isFinalStep) {
         setupOverlayEventListeners(isFinalStep);
         globalOverlay.classList.add('show');
     }
 
+    // 비동기 즉시 실행 함수
     (async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
