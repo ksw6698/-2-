@@ -8,21 +8,21 @@
     body { font-family: sans-serif; margin: 0; background-color: #f0f0f0; }
     .main-container { width: 100%; max-width: 900px; margin: 40px auto; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); overflow: hidden; }
 
-    /* 🌟 Step Navigation (최종 Flexbox 기반 스타일) */
+    /* 🌟 Step Navigation (프로그레스 바 적용 스타일) */
     @keyframes pop-in {
       0% { transform: scale(0.9); opacity: 0.7; }
       50% { transform: scale(1.4); opacity: 1; }
       100% { transform: scale(1.2); }
     }
-    @keyframes wave { /* SVG 경로는 더 이상 사용하지 않음 */
+    @keyframes wave {
       0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(1.5); } /* 간단한 위아래 움직임으로 대체 */
+      50% { transform: scaleY(1.5); }
     }
 
     .step-navigation {
         display: flex;
         justify-content: space-between;
-        align-items: center; /* 수직 중앙 정렬 */
+        align-items: center;
         background-color: #f8f9fa;
         padding: 20px 40px;
         border-top: 1px solid #ddd;
@@ -34,18 +34,17 @@
         opacity: 0.6;
     }
 
-    /* 🌟 step-item 추가: 버튼과 선을 묶는 단위 */
     .step-item {
         display: flex;
         align-items: center;
-        flex-grow: 1; /* 공간을 균등하게 차지 */
+        flex-grow: 1;
     }
     .step-item:last-child {
-        flex-grow: 0; /* 마지막 아이템은 선이 없으므로 늘어나지 않음 */
+        flex-grow: 0;
     }
 
     .step-btn {
-        position: relative;
+        position: relative; /* ::after의 기준 */
         background-color: #e0e0e0;
         color: #888;
         width: 30px;
@@ -62,13 +61,34 @@
         transition: all 0.4s ease;
         padding: 0;
         flex-shrink: 0;
+        overflow: hidden; /* 내부 진행률 요소 숨김 */
     }
     .step-btn.active {
-        background-image: linear-gradient(to top, #0056b3, #007bff);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+        background-color: #e0e0e0; /* 배경은 비활성 색 */
+        color: #888;              /* 텍스트 색상도 비활성 색 */
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         animation: pop-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         transform: scale(1.2);
+    }
+    /* 활성 버튼 내 진행률 표시 요소 */
+    .step-btn.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(to top, #0056b3, #007bff);
+        transform: scaleX(var(--progress, 0)); /* CSS 변수로 너비 조절 */
+        transform-origin: left;
+        transition: transform 0.1s linear; /* 부드러운 전환 */
+        z-index: 1; /* span 숫자보다 아래 */
+    }
+    /* 활성 버튼 숫자 스타일 (항상 보이도록) */
+    .step-btn.active span {
+        position: relative;
+        color: #fff;
+        z-index: 2; /* 진행률 바보다 위에 */
     }
     .step-btn.completed {
         background-color: #007bff;
@@ -80,16 +100,14 @@
         color: white;
     }
 
-    /* 🌟 Connector 스타일을 Flexbox 기반으로 변경 */
     .connector {
-        flex-grow: 1; /* 버튼 사이의 남는 공간을 모두 차지 */
+        flex-grow: 1;
         height: 2px;
         background-color: #e0e0e0;
-        position: relative; /* 애니메이션 선의 기준점 */
-        margin: 0 5px; /* 버튼과의 간격 */
+        position: relative;
+        margin: 0 5px;
         z-index: 1;
     }
-    /* 애니메이션 선 */
     .connector::after {
         content: '';
         position: absolute;
@@ -98,16 +116,14 @@
         width: 100%;
         height: 100%;
         background-color: #007bff;
-        transform: scaleX(0); /* 초기 상태: 숨김 */
+        transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.8s ease-in-out;
     }
-    /* completed 상태일 때 선 애니메이션 */
     .step-item.completed .connector::after {
-        transform: scaleX(1); /* 선을 채움 */
+        transform: scaleX(1);
         animation: wave 1s ease-in-out 0.5s;
     }
-
 
     .slider-container { width: 100%; margin: 0; position: relative; overflow: hidden; background-color: #000; box-shadow: none; border-radius: 0; padding-bottom: 56.25%; }
     .slider-wrapper { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.4s ease; }
@@ -224,6 +240,7 @@ const svgReplay = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox
 let playerObjects = [];
 let isDataLoaded = false;
 let startInitialization = null;
+let progressInterval = null; // 🌟 추가: 진행률 인터벌 ID
 
 window.onYouTubeIframeAPIReady = function() {
     if (isDataLoaded) {
@@ -269,7 +286,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>`;
 
     async function loadData() {
-        // ... (데이터 로드 로직은 변경 없음) ...
         if (!sheetURL || sheetURL.includes('여기에')) { return null; }
         try {
             const response = await fetch(sheetURL);
@@ -295,7 +311,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function submitForm() {
-        // ... (폼 제출 로직은 변경 없음) ...
         const ratingForm = document.getElementById('ratingForm');
         if (!ratingForm) return;
         const urlParams = new URLSearchParams(window.location.search);
@@ -315,21 +330,51 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function getYouTubeID(url) {
-        // ... (ID 추출 로직은 변경 없음) ...
         const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
         const match = url.match(regex);
         return match ? match[1] : url;
     }
 
+    // 🌟 진행률 업데이트 함수
+    function updateProgress() {
+        if (currentIndex < 0 || !playerObjects[currentIndex] || typeof playerObjects[currentIndex].getCurrentTime !== 'function') {
+            return;
+        }
+        const player = playerObjects[currentIndex];
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        if (duration > 0) {
+            const progress = currentTime / duration;
+            const activeBtn = stepNavigation.querySelector('.step-btn.active');
+            if (activeBtn) {
+                activeBtn.style.setProperty('--progress', progress);
+            }
+        }
+    }
+
+    // 🌟 플레이어 이벤트 핸들러 수정
     function createVideoPlayers(guideData) {
-        // ... (플레이어 생성 로직은 변경 없음) ...
         playerObjects = [];
         document.querySelectorAll('.slide iframe').forEach((iframe, index) => {
             playerObjects[index] = new YT.Player(iframe.id, {
                 events: {
                     'onStateChange': (event) => {
-                        if (event.data === YT.PlayerState.ENDED && index === currentIndex) {
-                            showOverlay(index === currentGuideData.length - 1);
+                        if (index === currentIndex) {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                if (!progressInterval) {
+                                    progressInterval = setInterval(updateProgress, 250);
+                                }
+                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                                if (progressInterval) {
+                                    clearInterval(progressInterval);
+                                    progressInterval = null;
+                                }
+                                if (event.data === YT.PlayerState.ENDED) {
+                                    const activeBtn = stepNavigation.querySelector('.step-btn.active');
+                                    if (activeBtn) activeBtn.style.setProperty('--progress', 1);
+                                    showOverlay(index === currentGuideData.length - 1);
+                                }
+                            }
                         }
                     },
                     'onReady': (event) => {}
@@ -338,14 +383,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 🌟 prepareDOM 함수 수정 (Flexbox 구조 생성)
+    // 🌟 prepareDOM 함수 수정
     function prepareDOM(guideData) {
         currentGuideData = guideData;
         sliderWrapper.innerHTML = '';
-        stepNavigation.innerHTML = ''; // 네비게이션 영역 초기화
+        stepNavigation.innerHTML = '';
 
         guideData.forEach((step, index) => {
-            // 슬라이드 생성 (기존과 동일)
             const slide = document.createElement('div');
             slide.className = 'slide';
             const youtubeID = getYouTubeID(step.video_url);
@@ -353,28 +397,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             slide.innerHTML = embedHTML;
             sliderWrapper.appendChild(slide);
 
-            // step-item (버튼 + 선 묶음) 생성
             const stepItem = document.createElement('div');
             stepItem.className = 'step-item';
 
-            // 단계 버튼 생성
             const stepBtn = document.createElement('button');
             stepBtn.className = 'step-btn';
-            stepBtn.textContent = index + 1;
+            stepBtn.innerHTML = `<span>${index + 1}</span>`; // 숫자를 span으로 감싸기
             stepBtn.addEventListener('click', () => goToSlide(index));
-            stepItem.appendChild(stepBtn); // 버튼을 step-item에 추가
+            stepItem.appendChild(stepBtn);
 
-            // 마지막 버튼이 아닐 경우, 선(connector) 생성
             if (index < guideData.length - 1) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
-                stepItem.appendChild(connector); // 선을 step-item에 추가
+                stepItem.appendChild(connector);
             }
 
-            stepNavigation.appendChild(stepItem); // 완성된 step-item을 네비게이션 영역에 추가
+            stepNavigation.appendChild(stepItem);
         });
     }
-
 
     startInitialization = function() {
         prepareDOM(currentGuideData);
@@ -391,6 +431,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         startOverlay.classList.remove('hidden');
     }
 
+    // 🌟 startButton 클릭 핸들러 수정
     startButton.addEventListener('click', () => {
         startOverlay.classList.add('hidden');
         stepNavigation.classList.remove('disabled');
@@ -401,12 +442,27 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (playerObjects[0] && typeof playerObjects[0].playVideo === 'function') {
             playerObjects[0].playVideo();
+            if (!progressInterval) { // 인터벌 시작
+                progressInterval = setInterval(updateProgress, 250);
+            }
         }
     });
 
-    // 🌟 goToSlide 함수 수정 (step-item 기준으로 클래스 제어)
+    // 🌟 goToSlide 함수 수정
     function goToSlide(index, isInitialLoad = false) {
         if (!isInitialLoad && index === currentIndex) return;
+
+        // 이전 인터벌 중지 및 스타일 초기화
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+        const prevActiveBtn = stepNavigation.querySelector('.step-btn.active');
+        if (prevActiveBtn) {
+            prevActiveBtn.style.setProperty('--progress', 0);
+             const prevSpan = prevActiveBtn.querySelector('span');
+             //if(prevSpan) prevSpan.style.color = '#888'; // 더 이상 필요 없음 (CSS에서 처리)
+        }
 
         if (!isInitialLoad && currentIndex >= 0 && playerObjects[currentIndex] && typeof playerObjects[currentIndex].stopVideo === 'function') {
              playerObjects[currentIndex].stopVideo();
@@ -422,31 +478,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (item.tertiary_text) htmlContent += `<span class="tertiary-text">${item.tertiary_text}</span>`;
         additionalDescription.innerHTML = htmlContent;
 
-        // 버튼과 아이템 상태 업데이트
+        // 버튼 및 아이템 상태 업데이트
         stepNavigation.querySelectorAll('.step-item').forEach((item, itemIndex) => {
             const btn = item.querySelector('.step-btn');
-            item.classList.remove('completed'); // 아이템의 completed 클래스 초기화
-            btn.classList.remove('active', 'completed'); // 버튼 클래스 초기화
+            item.classList.remove('completed');
+            btn.classList.remove('active', 'completed');
+            btn.style.setProperty('--progress', 0); // 모든 버튼 진행률 초기화
 
             if (itemIndex < index) {
-                item.classList.add('completed'); // 아이템에 completed 클래스 추가 (선 애니메이션용)
-                btn.classList.add('completed'); // 버튼에 completed 클래스 추가 (체크 아이콘용)
+                item.classList.add('completed');
+                btn.classList.add('completed');
             } else if (itemIndex === index) {
-                btn.classList.add('active'); // 활성 버튼
+                btn.classList.add('active');
             }
         });
-
 
         if (!isInitialLoad && playerObjects[currentIndex] && typeof playerObjects[currentIndex].playVideo === 'function') {
             playerObjects[currentIndex].seekTo(0);
             playerObjects[currentIndex].playVideo();
+            // 새 인터벌 시작
+            if (!progressInterval) {
+                progressInterval = setInterval(updateProgress, 250);
+            }
+        } else if (isInitialLoad) {
+             // 첫 버튼 활성화
+             const firstBtn = stepNavigation.querySelector('.step-btn');
+             if(firstBtn) firstBtn.classList.add('active');
         }
 
         globalOverlay.classList.remove('show');
     }
 
     function setupOverlayEventListeners(isFinalStep) {
-        // ... (오버레이 이벤트 리스너 설정 로직은 변경 없음) ...
         const prevBtnHTML = `<div class="icon-action-wrapper" style="visibility: ${currentIndex > 0 ? 'visible' : 'hidden'};"><button class="overlay-step-btn prev-btn">${svgPrev}</button><div class="icon-text">이전</div></div>`;
         const nextBtnHTML = `<div class="icon-action-wrapper"><button class="overlay-step-btn next-step-btn">${svgNext}</button><div class="icon-text">다음</div></div>`;
         const replayBtnHTML = `<div class="icon-action-wrapper replay-action"><div class="overlay-step-btn">${svgReplay}</div><div class="icon-text">다시보기</div></div>`;
@@ -513,16 +576,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function showOverlay(isFinalStep) {
-        // ... (오버레이 표시 로직은 변경 없음) ...
         setupOverlayEventListeners(isFinalStep);
         globalOverlay.classList.add('show');
     }
     
-    // 🌟 리사이즈 이벤트 리스너 제거 (더 이상 필요 없음)
-    // window.addEventListener('resize', positionConnectors);
+    // 리사이즈 이벤트 제거
 
     (async () => {
-        // ... (초기 데이터 로드 및 실행 로직은 변경 없음) ...
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
         const guideType = urlParams.get('type');
